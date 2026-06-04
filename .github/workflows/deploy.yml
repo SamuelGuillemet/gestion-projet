@@ -39,6 +39,8 @@ jobs:
         run: pnpm install
 
       - name: Build
+        env:
+          VITE_BASE_URL: /${{ github.event.repository.name }}/
         run: pnpm build
 
       - name: Setup Pages
