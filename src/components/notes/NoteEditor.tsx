@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Markdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
+import remarkGithubAlerts from "remark-github-alerts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -159,7 +160,7 @@ export function NotesPage() {
             </span>
             <div className="flex-1 overflow-y-auto border rounded-lg p-5 bg-card min-h-0">
               <article className="prose prose-sm prose-slate max-w-none prose-headings:font-bold prose-a:text-primary prose-code:text-primary/80 prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-muted prose-pre:border">
-                <Markdown remarkPlugins={[remarkGfm, remarkBreaks]}>
+                <Markdown remarkPlugins={[remarkGfm, remarkBreaks, remarkGithubAlerts]}>
                   {content || "*Aucun contenu...*"}
                 </Markdown>
               </article>

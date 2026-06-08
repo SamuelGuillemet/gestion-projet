@@ -2,6 +2,8 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
+@import "remark-github-alerts/styles/github-colors-light.css";
+@import "remark-github-alerts/styles/github-base.css";
 
 @plugin "@tailwindcss/typography";
 
@@ -113,4 +115,8 @@ input[type="color"]::-webkit-color-swatch-wrapper {
   border: none;
   border-radius: 50%;
   padding: 0;
+}
+
+.markdown-alert p + p > br:first-child {
+  display: none;
 }
