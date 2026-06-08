@@ -105,7 +105,7 @@ export function NotesPage() {
   }
 
   return (
-    <div className="h-full flex overflow-hidden">
+    <div className="h-[calc(100vh-100px)] flex overflow-hidden">
       {/* Left sidebar: note list */}
       <div className="w-52 shrink-0 border-r flex flex-col">
         <div className="p-2 border-b flex items-center justify-between">
@@ -142,28 +142,36 @@ export function NotesPage() {
 
       {/* Right: editor + preview */}
       {activeNote ? (
-        <div className="flex-1 grid grid-cols-2 gap-4 p-4 min-w-0">
-          <div className="flex flex-col min-h-0 p-1">
-            <span className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">
-              Édition
-            </span>
-            <Textarea
-              value={content}
-              onChange={(e) => handleChange(e.target.value)}
-              className="flex-1 resize-none font-mono text-sm min-h-0"
-              placeholder="Écrivez vos notes en Markdown..."
-            />
-          </div>
-          <div className="flex flex-col min-h-0 p-1">
-            <span className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">
-              Prévisualisation
-            </span>
-            <div className="flex-1 overflow-y-auto border rounded-lg p-5 bg-card min-h-0">
-              <article className="prose prose-sm prose-slate max-w-none prose-headings:font-bold prose-a:text-primary prose-code:text-primary/80 prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-muted prose-pre:border">
-                <Markdown remarkPlugins={[remarkGfm, remarkBreaks, remarkGithubAlerts]}>
-                  {content || "*Aucun contenu...*"}
-                </Markdown>
-              </article>
+        <div className="overflow-y-auto grow">
+          <div className="flex-1 grid grid-cols-2 gap-4 p-4 min-w-0 h-min min-h-full">
+            <div className="flex flex-col min-h-0 p-1">
+              <span className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">
+                Édition
+              </span>
+              <Textarea
+                value={content}
+                onChange={(e) => handleChange(e.target.value)}
+                className="flex-1 resize-none font-mono text-sm min-h-0"
+                placeholder="Écrivez vos notes en Markdown..."
+              />
+            </div>
+            <div className="flex flex-col min-h-0 p-1">
+              <span className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">
+                Prévisualisation
+              </span>
+              <div className="flex-1 overflow-y-auto border rounded-lg p-5 bg-card min-h-0">
+                <article className="prose prose-sm prose-slate max-w-none prose-headings:font-bold prose-a:text-primary prose-code:text-primary/80 prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-muted prose-pre:border">
+                  <Markdown
+                    remarkPlugins={[
+                      remarkGfm,
+                      remarkBreaks,
+                      remarkGithubAlerts,
+                    ]}
+                  >
+                    {content || "*Aucun contenu...*"}
+                  </Markdown>
+                </article>
+              </div>
             </div>
           </div>
         </div>
