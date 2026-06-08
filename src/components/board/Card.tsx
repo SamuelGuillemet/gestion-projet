@@ -40,14 +40,6 @@ export function Card({ task, isDragging }: CardProps) {
         className={`group rounded-lg border bg-card p-3 shadow-sm cursor-pointer hover:shadow-md hover:border-primary/30 transition-all ${
           isDragging ? "opacity-60 rotate-1 shadow-lg" : ""
         } ${task.done ? "opacity-70" : ""}`}
-        style={
-          task.color
-            ? {
-                borderLeftColor: task.color,
-                borderLeftWidth: 4,
-              }
-            : undefined
-        }
         onClick={() => setDetailOpen(true)}
         onKeyDown={(e) => e.key === "Enter" && setDetailOpen(true)}
       >

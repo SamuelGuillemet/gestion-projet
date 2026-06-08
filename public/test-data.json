@@ -1,0 +1,704 @@
+{
+  "state": {
+    "projects": [
+      {
+        "id": "proj-1",
+        "name": "Site Web E-commerce",
+        "color": "#3b82f6",
+        "createdAt": "2026-03-01T09:00:00.000Z",
+        "updatedAt": "2026-06-01T14:30:00.000Z"
+      },
+      {
+        "id": "proj-2",
+        "name": "Application Mobile",
+        "color": "#10b981",
+        "createdAt": "2026-03-15T10:00:00.000Z",
+        "updatedAt": "2026-05-28T11:00:00.000Z"
+      },
+      {
+        "id": "proj-3",
+        "name": "Refonte Infrastructure",
+        "color": "#f59e0b",
+        "createdAt": "2026-04-01T08:00:00.000Z",
+        "updatedAt": "2026-06-05T16:00:00.000Z"
+      }
+    ],
+    "activeProjectId": "proj-1",
+    "tags": [
+      { "id": "tag-1", "name": "Bug", "color": "#ef4444" },
+      { "id": "tag-2", "name": "Feature", "color": "#6366f1" },
+      { "id": "tag-3", "name": "UI/UX", "color": "#a855f7" },
+      { "id": "tag-4", "name": "Backend", "color": "#0ea5e9" },
+      { "id": "tag-5", "name": "Performance", "color": "#f97316" },
+      { "id": "tag-6", "name": "Sécurité", "color": "#dc2626" },
+      { "id": "tag-7", "name": "Urgent", "color": "#f43f5e" },
+      { "id": "tag-8", "name": "Documentation", "color": "#64748b" }
+    ],
+    "tasks": [
+      {
+        "id": "task-101",
+        "projectId": "proj-1",
+        "title": "Créer la page d'accueil",
+        "description": "Développer la landing page avec hero banner, mise en avant des produits phares et bloc CTA. Respecter la charte graphique validée en sprint 1.",
+        "columnId": "todo",
+        "order": 0,
+        "tags": ["tag-2", "tag-3"],
+        "done": false
+      },
+      {
+        "id": "task-102",
+        "projectId": "proj-1",
+        "title": "Implémenter le panier d'achat",
+        "description": "Panier persistant avec gestion des quantités, suppression d'articles et calcul du total TTC. Synchronisation avec le backend via API REST.",
+        "columnId": "todo",
+        "order": 1,
+        "tags": ["tag-2", "tag-4"],
+        "done": false
+      },
+      {
+        "id": "task-103",
+        "projectId": "proj-1",
+        "title": "Ajouter les filtres produits",
+        "description": "Filtres par catégorie, prix, note et disponibilité. Implémentation côté frontend avec debounce sur les inputs.",
+        "columnId": "todo",
+        "order": 2,
+        "tags": ["tag-2", "tag-3"],
+        "done": false
+      },
+      {
+        "id": "task-104",
+        "projectId": "proj-1",
+        "title": "Développer l'API produits",
+        "description": "Endpoints CRUD pour les produits : liste paginée, détail, création, mise à jour et suppression. Inclure la gestion des images via S3.",
+        "columnId": "in-progress",
+        "order": 0,
+        "tags": ["tag-4"],
+        "done": false
+      },
+      {
+        "id": "task-105",
+        "projectId": "proj-1",
+        "title": "Intégrer Stripe pour le paiement",
+        "description": "Intégration du SDK Stripe : paiement par carte, gestion des webhooks pour les confirmations de commande et les remboursements.",
+        "columnId": "in-progress",
+        "order": 1,
+        "tags": ["tag-4", "tag-6"],
+        "done": false
+      },
+      {
+        "id": "task-106",
+        "projectId": "proj-1",
+        "title": "Validation des maquettes avec le client",
+        "description": "Présenter les maquettes Figma finalisées (desktop + mobile) au client pour validation formelle avant implémentation.",
+        "columnId": "waiting",
+        "order": 0,
+        "tags": ["tag-3"],
+        "done": false
+      },
+      {
+        "id": "task-107",
+        "projectId": "proj-1",
+        "title": "Recette fonctionnelle sprint 3",
+        "description": "Session de recette avec le client sur l'ensemble des fonctionnalités du sprint 3 : catalogue, panier et tunnel de commande.",
+        "columnId": "waiting",
+        "order": 1,
+        "tags": [],
+        "done": false
+      },
+      {
+        "id": "task-108",
+        "projectId": "proj-1",
+        "title": "Setup base de données PostgreSQL",
+        "description": "Initialisation du schéma PostgreSQL, mise en place des migrations avec Prisma et configuration des environnements dev/staging/prod.",
+        "columnId": "done",
+        "order": 0,
+        "tags": ["tag-4", "tag-8"],
+        "done": true
+      },
+      {
+        "id": "task-109",
+        "projectId": "proj-1",
+        "title": "Authentification utilisateurs JWT",
+        "description": "Système d'auth complet : inscription, connexion, refresh token, déconnexion et réinitialisation de mot de passe par email.",
+        "columnId": "done",
+        "order": 1,
+        "tags": ["tag-4", "tag-6"],
+        "done": true
+      },
+      {
+        "id": "task-110",
+        "projectId": "proj-1",
+        "title": "Modèle de données produit",
+        "description": "Définition du modèle produit avec catégories, variantes, images et métadonnées SEO. Inclure les index de recherche.",
+        "columnId": "done",
+        "order": 2,
+        "tags": ["tag-4", "tag-8"],
+        "done": true
+      },
+      {
+        "id": "task-111",
+        "projectId": "proj-1",
+        "title": "Corriger bug d'affichage prix",
+        "description": "Sur mobile, le prix barré s'affiche par-dessus le prix promo. Reproduit sur iOS 17 et Android 14.",
+        "columnId": "todo",
+        "order": 3,
+        "tags": ["tag-1", "tag-3", "tag-7"],
+        "done": false
+      },
+      {
+        "id": "task-201",
+        "projectId": "proj-2",
+        "title": "Écran de connexion",
+        "description": "Écran de login avec email/password, connexion Google OAuth et récupération de mot de passe. Validation des champs en temps réel.",
+        "columnId": "todo",
+        "order": 0,
+        "tags": ["tag-2", "tag-3"],
+        "done": false
+      },
+      {
+        "id": "task-202",
+        "projectId": "proj-2",
+        "title": "Notifications push",
+        "description": "Intégration Firebase Cloud Messaging pour les notifications push. Gestion des permissions, désinscription et historique des notifications.",
+        "columnId": "todo",
+        "order": 1,
+        "tags": ["tag-2"],
+        "done": false
+      },
+      {
+        "id": "task-203",
+        "projectId": "proj-2",
+        "title": "Mode hors-ligne",
+        "description": "Mise en cache locale avec SQLite via WatermelonDB. L'app doit rester fonctionnelle sans connexion et synchroniser à la reconnexion.",
+        "columnId": "todo",
+        "order": 2,
+        "tags": ["tag-4", "tag-5"],
+        "done": false
+      },
+      {
+        "id": "task-204",
+        "projectId": "proj-2",
+        "title": "Navigation principale",
+        "description": "Implémentation de la navigation par onglets (React Navigation 6) avec les écrans : Accueil, Recherche, Favoris, Profil.",
+        "columnId": "in-progress",
+        "order": 0,
+        "tags": ["tag-2", "tag-3"],
+        "done": false
+      },
+      {
+        "id": "task-205",
+        "projectId": "proj-2",
+        "title": "Synchronisation des données",
+        "description": "Stratégie de sync bidirectionnelle entre le serveur et le cache local. Gestion des conflits avec last-write-wins.",
+        "columnId": "in-progress",
+        "order": 1,
+        "tags": ["tag-4", "tag-5"],
+        "done": false
+      },
+      {
+        "id": "task-206",
+        "projectId": "proj-2",
+        "title": "Review App Store Connect",
+        "description": "Soumission pour revue Apple : remplir les métadonnées, captures d'écran et description. En attente de validation (délai 3-5 jours).",
+        "columnId": "waiting",
+        "order": 0,
+        "tags": [],
+        "done": false
+      },
+      {
+        "id": "task-207",
+        "projectId": "proj-2",
+        "title": "Tests bêta utilisateurs",
+        "description": "Phase de bêta avec 20 utilisateurs externes. Collecte des retours via Instabug, analyse des crashs et synthèse.",
+        "columnId": "waiting",
+        "order": 1,
+        "tags": ["tag-8"],
+        "done": false
+      },
+      {
+        "id": "task-208",
+        "projectId": "proj-2",
+        "title": "Setup React Native",
+        "description": "Initialisation du projet React Native avec Expo, configuration TypeScript, ESLint, Prettier et structure des dossiers.",
+        "columnId": "done",
+        "order": 0,
+        "tags": ["tag-4"],
+        "done": true
+      },
+      {
+        "id": "task-209",
+        "projectId": "proj-2",
+        "title": "Couche d'appels API",
+        "description": "Abstraction Axios avec intercepteurs pour l'auth, la gestion d'erreurs centralisée et le retry automatique.",
+        "columnId": "done",
+        "order": 1,
+        "tags": ["tag-4"],
+        "done": true
+      },
+      {
+        "id": "task-210",
+        "projectId": "proj-2",
+        "title": "Gestion de l'état Redux Toolkit",
+        "description": "Setup Redux Toolkit avec RTK Query pour la gestion du cache serveur, reducers par feature et persistance avec redux-persist.",
+        "columnId": "done",
+        "order": 2,
+        "tags": ["tag-4"],
+        "done": true
+      },
+      {
+        "id": "task-211",
+        "projectId": "proj-2",
+        "title": "Optimiser les performances de liste",
+        "description": "Profiler les FlatList avec 500+ éléments. Implémenter la virtualisation et réduire les re-renders avec memo et useCallback.",
+        "columnId": "todo",
+        "order": 3,
+        "tags": ["tag-5", "tag-1"],
+        "done": false
+      },
+      {
+        "id": "task-301",
+        "projectId": "proj-3",
+        "title": "Migration vers Kubernetes",
+        "description": "Containeriser les services existants et déployer sur un cluster K8s géré (EKS). Définir les manifests Helm et les politiques réseau.",
+        "columnId": "todo",
+        "order": 0,
+        "tags": ["tag-5", "tag-7"],
+        "done": false
+      },
+      {
+        "id": "task-302",
+        "projectId": "proj-3",
+        "title": "Setup monitoring Grafana / Prometheus",
+        "description": "Déployer la stack Prometheus + Grafana + AlertManager. Créer les dashboards pour CPU, mémoire, latence et taux d'erreur.",
+        "columnId": "todo",
+        "order": 1,
+        "tags": ["tag-8"],
+        "done": false
+      },
+      {
+        "id": "task-303",
+        "projectId": "proj-3",
+        "title": "Backup automatique vers S3",
+        "description": "Mise en place de cronjobs pour sauvegardes quotidiennes des bases de données et fichiers critiques vers S3 avec rétention 30 jours.",
+        "columnId": "todo",
+        "order": 2,
+        "tags": ["tag-6"],
+        "done": false
+      },
+      {
+        "id": "task-304",
+        "projectId": "proj-3",
+        "title": "Configuration pipeline CI/CD",
+        "description": "Pipeline GitHub Actions : lint, tests, build Docker, push registry et déploiement automatique sur staging. Déploiement manuel en prod.",
+        "columnId": "in-progress",
+        "order": 0,
+        "tags": ["tag-4"],
+        "done": false
+      },
+      {
+        "id": "task-305",
+        "projectId": "proj-3",
+        "title": "Renouvellement certificats SSL",
+        "description": "Migrer vers Let's Encrypt avec cert-manager sur K8s pour le renouvellement automatique des certificats.",
+        "columnId": "in-progress",
+        "order": 1,
+        "tags": ["tag-6", "tag-7"],
+        "done": false
+      },
+      {
+        "id": "task-306",
+        "projectId": "proj-3",
+        "title": "Validation audit sécurité",
+        "description": "Attente du rapport final du prestataire de pentest. En cours de review interne avant présentation à la direction.",
+        "columnId": "waiting",
+        "order": 0,
+        "tags": ["tag-6"],
+        "done": false
+      },
+      {
+        "id": "task-307",
+        "projectId": "proj-3",
+        "title": "Approbation budget cloud",
+        "description": "Devis AWS soumis à la DSI pour approbation. Montant estimé : 2 400 €/mois. En attente du comité financier du 15 juin.",
+        "columnId": "waiting",
+        "order": 1,
+        "tags": [],
+        "done": false
+      },
+      {
+        "id": "task-308",
+        "projectId": "proj-3",
+        "title": "Audit infrastructure existante",
+        "description": "Inventaire complet de l'infrastructure actuelle : 12 VM, 3 serveurs bare-metal, dépendances logicielles et dette technique identifiée.",
+        "columnId": "done",
+        "order": 0,
+        "tags": ["tag-8"],
+        "done": true
+      },
+      {
+        "id": "task-309",
+        "projectId": "proj-3",
+        "title": "Inventaire des serveurs",
+        "description": "Cartographie réseau et inventaire des serveurs physiques et virtuels avec leurs rôles, IPs et configurations.",
+        "columnId": "done",
+        "order": 1,
+        "tags": ["tag-8"],
+        "done": true
+      }
+    ],
+    "notes": [
+      {
+        "id": "note-1",
+        "projectId": "proj-1",
+        "title": "Spécifications techniques",
+        "content": "# Stack technique\n\n## Frontend\n- **Framework** : React 18 + TypeScript\n- **Styling** : Tailwind CSS + shadcn/ui\n- **State** : Zustand\n- **Router** : React Router v6\n\n## Backend\n- **Runtime** : Node.js 20 + Fastify\n- **BDD** : PostgreSQL 16 + Prisma ORM\n- **Auth** : JWT (access 15min / refresh 7j)\n- **Stockage fichiers** : AWS S3\n\n## Infrastructure\n- Hébergement : AWS (EC2 + RDS + S3)\n- CDN : CloudFront\n- CI/CD : GitHub Actions\n\n## Contraintes non-fonctionnelles\n- TTFB < 200ms sur toutes les pages\n- Score Lighthouse ≥ 90\n- Conformité RGPD obligatoire"
+      },
+      {
+        "id": "note-2",
+        "projectId": "proj-1",
+        "title": "Compte-rendu réunion Sprint 3",
+        "content": "# Réunion Sprint 3 — 2 juin 2026\n\n**Participants** : Marie (PO), Thomas (Tech Lead), Julie (Dev), Karim (Dev)\n\n## Points abordés\n\n### ✅ Terminé\n- Modèle produit finalisé et mergé\n- Auth JWT opérationnelle en staging\n\n### 🔄 En cours\n- API produits : 70% réalisé, blocage sur gestion des images multi-tailles\n- Intégration Stripe : webhooks en cours de test\n\n### ⚠️ Points de vigilance\n- La date de recette client est fixée au **20 juin** — pas de marge\n- Waiting sur validation maquettes, relancer Marie avant fin de semaine\n\n## Décisions\n1. Repousser les filtres avancés au sprint 4 pour tenir la deadline\n2. Ajouter Karim à 50% sur l'API pour débloquer la situation\n\n## Prochaine réunion\nLundi 9 juin, 9h30"
+      },
+      {
+        "id": "note-3",
+        "projectId": "proj-2",
+        "title": "Architecture mobile",
+        "content": "# Architecture Application Mobile\n\n## Structure des dossiers\n```\nsrc/\n  api/          # Couche Axios + RTK Query\n  components/   # Composants réutilisables\n  features/     # Slices Redux par fonctionnalité\n  navigation/   # Stack & Tab navigators\n  screens/      # Écrans de l'app\n  utils/        # Helpers\n```\n\n## Gestion de l'état\n- **Serveur** : RTK Query (cache, invalidation automatique)\n- **UI local** : useState / useReducer\n- **Persistance** : redux-persist → AsyncStorage\n\n## Conventions de nommage\n- Composants : PascalCase\n- Hooks : `use` + camelCase\n- Fichiers écrans : `NomScreen.tsx`\n\n## Gestion des erreurs\nToast global via `react-native-toast-message`, ErrorBoundary sur les navigateurs principaux."
+      },
+      {
+        "id": "note-4",
+        "projectId": "proj-2",
+        "title": "Stratégie de déploiement",
+        "content": "# Stratégie de déploiement App Mobile\n\n## Environnements\n| Env | Canal | Trigger |\n|-----|-------|---------|\n| Dev | Expo Go | Push sur `develop` |\n| Staging | TestFlight / Firebase | Push sur `staging` |\n| Prod | App Store / Play Store | Tag `v*.*.*` |\n\n## Versioning\nSuivre SemVer. Le `versionCode` Android et `buildNumber` iOS s'incrémentent automatiquement via EAS Build.\n\n## Rollback\nEn cas de crash critique en prod → patch hotfix sur la branche release, soumission accélérée (utiliser le flag \"rollout\" App Store).\n\n## Métriques de succès post-release\n- Crash-free rate ≥ 99,5%\n- Crash volume < 50 sessions/jour\n- Note App Store ≥ 4,2"
+      },
+      {
+        "id": "note-5",
+        "projectId": "proj-3",
+        "title": "Rapport d'audit infrastructure",
+        "content": "# Rapport d'audit — Avril 2026\n\n## Périmètre\n12 machines virtuelles (VMware), 3 serveurs bare-metal, 1 datacenter on-premise.\n\n## Constats principaux\n\n### Points critiques 🔴\n- 4 VM sous Ubuntu 18.04 (EOL) — mise à jour urgente\n- Aucun monitoring centralisé en place\n- Backups manuels irréguliers, aucun test de restauration depuis 18 mois\n\n### Points d'amélioration 🟡\n- Pas de pipeline CI/CD — déploiements manuels via SSH\n- Certificats SSL renouvelés manuellement (3 expirations en 2025)\n- Aucune politique de rotation des secrets\n\n### Points satisfaisants 🟢\n- Firewall correctement configuré\n- Séparation réseau prod / dev\n- Logs centralisés sur le serveur principal\n\n## Recommandations prioritaires\n1. Migration vers K8s pour l'orchestration\n2. Mise en place d'une stack de monitoring (Prometheus + Grafana)\n3. Automatisation complète via CI/CD\n4. Backup automatisé vers S3 avec tests de restauration mensuels"
+      },
+      {
+        "id": "note-6",
+        "projectId": "proj-3",
+        "title": "Plan de migration Kubernetes",
+        "content": "# Plan de migration K8s\n\n## Phase 1 — Préparation (terminée ✅)\n- Audit de l'existant\n- Inventaire des services à containeriser\n- Choix de la solution : **Amazon EKS**\n\n## Phase 2 — CI/CD (en cours 🔄)\n- Dockerisation des services\n- Mise en place GitHub Actions\n- Registry Docker : AWS ECR\n\n## Phase 3 — Migration (à venir)\n1. Déployer les services non-critiques en premier\n2. Tests de charge sur EKS staging\n3. Basculement progressif avec blue/green deployment\n4. Surveillance pendant 2 semaines avant décommissionnement des VM\n\n## Phase 4 — Stabilisation\n- Monitoring complet opérationnel\n- Runbooks documentés\n- Formation équipe Ops\n\n## Risques identifiés\n| Risque | Probabilité | Impact | Mitigation |\n|--------|------------|--------|------------|\n| Downtime lors du basculement | Moyenne | Élevé | Blue/green deploy |\n| Dépassement budget | Faible | Moyen | Cap alerting AWS |\n| Résistance équipe | Faible | Faible | Formation en amont |"
+      }
+    ],
+    "questions": [
+      {
+        "id": "q-1",
+        "projectId": "proj-1",
+        "title": "Limite du nombre de produits par catégorie ?",
+        "description": "Est-ce que le client a une contrainte sur le nombre maximum de produits affichables par catégorie ? Cela impacte la stratégie de pagination.",
+        "recipient": "Chef de projet",
+        "answer": null,
+        "status": "to-ask"
+      },
+      {
+        "id": "q-2",
+        "projectId": "proj-1",
+        "title": "Support des devises multiples ?",
+        "description": "Le site doit-il gérer plusieurs devises (EUR, USD, GBP) avec taux de change dynamiques, ou uniquement l'euro dans un premier temps ?",
+        "recipient": "Client",
+        "answer": null,
+        "status": "pending"
+      },
+      {
+        "id": "q-3",
+        "projectId": "proj-1",
+        "title": "Prestataire de paiement validé ?",
+        "description": "Confirmation du choix du prestataire de paiement pour lancer l'intégration technique.",
+        "recipient": "Client",
+        "answer": "Stripe est validé. Contrat signé le 28 mai. Contact technique : api-support@stripe.com. Utiliser le mode test jusqu'à la recette.",
+        "status": "resolved"
+      },
+      {
+        "id": "q-4",
+        "projectId": "proj-1",
+        "title": "Politique de retour produit à afficher ?",
+        "description": "Le client souhaite-t-il une page dédiée aux CGV/politique de retour ou un simple lien vers un document externe ?",
+        "recipient": "Client",
+        "answer": null,
+        "status": "to-ask"
+      },
+      {
+        "id": "q-5",
+        "projectId": "proj-2",
+        "title": "Versions Android et iOS à supporter ?",
+        "description": "Quelle est la version minimale d'Android et iOS à supporter ? Cela impacte les APIs disponibles et les tests QA.",
+        "recipient": "Équipe QA",
+        "answer": null,
+        "status": "pending"
+      },
+      {
+        "id": "q-6",
+        "projectId": "proj-2",
+        "title": "Notifications opt-in ou opt-out par défaut ?",
+        "description": "Par défaut, les notifications push sont-elles activées ou désactivées ? Impact sur l'onboarding et le taux d'engagement.",
+        "recipient": "Product Owner",
+        "answer": "Opt-in obligatoire au premier lancement de l'app. Un écran de permission sera affiché après le tutoriel d'onboarding.",
+        "status": "resolved"
+      },
+      {
+        "id": "q-7",
+        "projectId": "proj-3",
+        "title": "Budget total alloué pour le cloud AWS ?",
+        "description": "Quel est le plafond budgétaire mensuel autorisé pour l'infrastructure AWS ? Nécessaire pour dimensionner le cluster EKS.",
+        "recipient": "DSI",
+        "answer": null,
+        "status": "to-ask"
+      },
+      {
+        "id": "q-8",
+        "projectId": "proj-3",
+        "title": "Maintenir l'ancienne infra en parallèle ?",
+        "description": "Pendant la migration, faut-il maintenir les serveurs on-premise en parallèle comme fallback, ou peut-on les décommissionner progressivement ?",
+        "recipient": "Équipe Ops",
+        "answer": null,
+        "status": "pending"
+      }
+    ],
+    "deliverables": [
+      {
+        "id": "del-1",
+        "projectId": "proj-1",
+        "title": "Cahier des charges fonctionnel",
+        "type": "Document",
+        "description": "Document complet décrivant toutes les fonctionnalités attendues, les personas utilisateurs et les règles métier.",
+        "version": "v1.0",
+        "done": true
+      },
+      {
+        "id": "del-2",
+        "projectId": "proj-1",
+        "title": "Maquettes Figma (desktop + mobile)",
+        "type": "Design",
+        "description": "Ensemble des maquettes haute-fidélité pour les parcours principaux : catalogue, fiche produit, panier et commande.",
+        "version": "v2.3",
+        "done": false
+      },
+      {
+        "id": "del-3",
+        "projectId": "proj-1",
+        "title": "Documentation API REST",
+        "type": "Technique",
+        "description": "Spécification OpenAPI 3.0 de tous les endpoints, publiée sur Swagger UI.",
+        "version": "v0.8",
+        "done": false
+      },
+      {
+        "id": "del-4",
+        "projectId": "proj-1",
+        "title": "Plan de tests E2E",
+        "type": "Document",
+        "description": "Scénarios de tests end-to-end pour les parcours critiques : achat, retour et gestion de compte.",
+        "version": "v0.2",
+        "done": false
+      },
+      {
+        "id": "del-5",
+        "projectId": "proj-2",
+        "title": "Prototype interactif (Figma)",
+        "type": "Design",
+        "description": "Prototype cliquable des 5 écrans principaux de l'app avec animations de transition.",
+        "version": "v1.0",
+        "done": true
+      },
+      {
+        "id": "del-6",
+        "projectId": "proj-2",
+        "title": "APK / IPA de test",
+        "type": "Build",
+        "description": "Build de test distribué via TestFlight (iOS) et Firebase App Distribution (Android).",
+        "version": "v0.3",
+        "done": false
+      },
+      {
+        "id": "del-7",
+        "projectId": "proj-2",
+        "title": "Guide utilisateur",
+        "type": "Document",
+        "description": "Documentation utilisateur intégrée à l'app (onboarding) et version PDF pour le support.",
+        "version": "v0.1",
+        "done": false
+      },
+      {
+        "id": "del-8",
+        "projectId": "proj-3",
+        "title": "Rapport d'audit infrastructure",
+        "type": "Document",
+        "description": "Rapport complet de l'état de l'infrastructure existante avec recommandations priorisées.",
+        "version": "v1.0",
+        "done": true
+      },
+      {
+        "id": "del-9",
+        "projectId": "proj-3",
+        "title": "Schéma d'architecture cible",
+        "type": "Technique",
+        "description": "Diagramme d'architecture de la cible K8s : namespaces, services, ingress, volumes et accès externes.",
+        "version": "v1.2",
+        "done": false
+      },
+      {
+        "id": "del-10",
+        "projectId": "proj-3",
+        "title": "Runbook de déploiement",
+        "type": "Document",
+        "description": "Procédures détaillées pour les déploiements, rollbacks et interventions d'urgence sur le cluster K8s.",
+        "version": "v0.5",
+        "done": false
+      }
+    ],
+    "milestones": [
+      {
+        "id": "ms-1",
+        "projectId": "proj-1",
+        "name": "Lancement Beta privée",
+        "date": "2026-06-15",
+        "description": "Première version bêta disponible pour un panel de 50 utilisateurs invités."
+      },
+      {
+        "id": "ms-2",
+        "projectId": "proj-1",
+        "name": "MVP en production",
+        "date": "2026-07-01",
+        "description": "Version minimale viable complète : catalogue, panier et paiement opérationnels."
+      },
+      {
+        "id": "ms-3",
+        "projectId": "proj-1",
+        "name": "Lancement officiel v1.0",
+        "date": "2026-09-01",
+        "description": "Release publique avec toutes les fonctionnalités du scope initial validées."
+      },
+      {
+        "id": "ms-4",
+        "projectId": "proj-2",
+        "name": "Alpha interne",
+        "date": "2026-05-15",
+        "description": "Première version testable distribuée à l'équipe interne (10 personnes)."
+      },
+      {
+        "id": "ms-5",
+        "projectId": "proj-2",
+        "name": "Bêta publique",
+        "date": "2026-07-15",
+        "description": "Ouverture de la bêta sur TestFlight et Google Play (programme bêta fermé)."
+      },
+      {
+        "id": "ms-6",
+        "projectId": "proj-2",
+        "name": "Release v1.0",
+        "date": "2026-10-01",
+        "description": "Publication sur App Store et Google Play. Campagne de lancement prévue."
+      },
+      {
+        "id": "ms-7",
+        "projectId": "proj-3",
+        "name": "Phase 1 terminée — Audit",
+        "date": "2026-04-30",
+        "description": "Audit et inventaire complets. Rapport remis à la direction."
+      },
+      {
+        "id": "ms-8",
+        "projectId": "proj-3",
+        "name": "Phase 2 — CI/CD opérationnel",
+        "date": "2026-06-30",
+        "description": "Pipelines de déploiement automatisés actifs pour tous les services critiques."
+      },
+      {
+        "id": "ms-9",
+        "projectId": "proj-3",
+        "name": "Migration K8s complète",
+        "date": "2026-08-15",
+        "description": "Ensemble des services migrés sur EKS. Infra on-premise décommissionnée."
+      }
+    ],
+    "timeEntries": [
+      { "id": "te-1",  "taskId": "task-108", "projectId": "proj-1", "date": "2026-03-20", "minutes": 240 },
+      { "id": "te-2",  "taskId": "task-108", "projectId": "proj-1", "date": "2026-03-21", "minutes": 90 },
+      { "id": "te-3",  "taskId": "task-109", "projectId": "proj-1", "date": "2026-03-25", "minutes": 180 },
+      { "id": "te-4",  "taskId": "task-109", "projectId": "proj-1", "date": "2026-03-28", "minutes": 120 },
+      { "id": "te-5",  "taskId": "task-110", "projectId": "proj-1", "date": "2026-04-08", "minutes": 120 },
+      { "id": "te-6",  "taskId": "task-104", "projectId": "proj-1", "date": "2026-04-10", "minutes": 120 },
+      { "id": "te-7",  "taskId": "task-104", "projectId": "proj-1", "date": "2026-04-15", "minutes": 90 },
+      { "id": "te-8",  "taskId": "task-104", "projectId": "proj-1", "date": "2026-04-22", "minutes": 150 },
+      { "id": "te-9",  "taskId": "task-105", "projectId": "proj-1", "date": "2026-04-25", "minutes": 60 },
+      { "id": "te-10", "taskId": "task-105", "projectId": "proj-1", "date": "2026-05-03", "minutes": 180 },
+      { "id": "te-11", "taskId": "task-105", "projectId": "proj-1", "date": "2026-05-17", "minutes": 120 },
+      { "id": "te-12", "taskId": "task-101", "projectId": "proj-1", "date": "2026-06-07", "minutes": 90 },
+      { "id": "te-13", "taskId": "task-102", "projectId": "proj-1", "date": "2026-06-06", "minutes": 60 },
+      { "id": "te-14", "taskId": "task-103", "projectId": "proj-1", "date": "2026-06-08", "minutes": 45 },
+      { "id": "te-15", "taskId": "task-208", "projectId": "proj-2", "date": "2026-04-01", "minutes": 300 },
+      { "id": "te-16", "taskId": "task-208", "projectId": "proj-2", "date": "2026-04-02", "minutes": 240 },
+      { "id": "te-17", "taskId": "task-209", "projectId": "proj-2", "date": "2026-04-10", "minutes": 150 },
+      { "id": "te-18", "taskId": "task-209", "projectId": "proj-2", "date": "2026-04-12", "minutes": 120 },
+      { "id": "te-19", "taskId": "task-210", "projectId": "proj-2", "date": "2026-04-20", "minutes": 180 },
+      { "id": "te-20", "taskId": "task-210", "projectId": "proj-2", "date": "2026-04-22", "minutes": 120 },
+      { "id": "te-21", "taskId": "task-204", "projectId": "proj-2", "date": "2026-05-10", "minutes": 120 },
+      { "id": "te-22", "taskId": "task-204", "projectId": "proj-2", "date": "2026-05-17", "minutes": 90 },
+      { "id": "te-23", "taskId": "task-205", "projectId": "proj-2", "date": "2026-05-20", "minutes": 180 },
+      { "id": "te-24", "taskId": "task-205", "projectId": "proj-2", "date": "2026-05-27", "minutes": 150 },
+      { "id": "te-25", "taskId": "task-308", "projectId": "proj-3", "date": "2026-04-05", "minutes": 180 },
+      { "id": "te-26", "taskId": "task-308", "projectId": "proj-3", "date": "2026-04-06", "minutes": 240 },
+      { "id": "te-27", "taskId": "task-309", "projectId": "proj-3", "date": "2026-04-07", "minutes": 90 },
+      { "id": "te-28", "taskId": "task-304", "projectId": "proj-3", "date": "2026-05-24", "minutes": 120 },
+      { "id": "te-29", "taskId": "task-304", "projectId": "proj-3", "date": "2026-06-01", "minutes": 150 },
+      { "id": "te-30", "taskId": "task-304", "projectId": "proj-3", "date": "2026-06-03", "minutes": 90 },
+      { "id": "te-31", "taskId": "task-305", "projectId": "proj-3", "date": "2026-06-05", "minutes": 60 },
+      { "id": "te-32", "taskId": "task-301", "projectId": "proj-3", "date": "2026-06-07", "minutes": 75 }
+    ],
+    "relations": [
+      {
+        "id": "rel-1",
+        "sourceId": "task-102",
+        "targetId": "task-104",
+        "type": "blocked-by"
+      },
+      {
+        "id": "rel-2",
+        "sourceId": "task-104",
+        "targetId": "task-101",
+        "type": "blocks"
+      },
+      {
+        "id": "rel-3",
+        "sourceId": "task-105",
+        "targetId": "task-107",
+        "type": "blocks"
+      },
+      {
+        "id": "rel-4",
+        "sourceId": "task-301",
+        "targetId": "task-304",
+        "type": "blocked-by"
+      },
+      {
+        "id": "rel-5",
+        "sourceId": "task-305",
+        "targetId": "task-306",
+        "type": "relates"
+      },
+      {
+        "id": "rel-6",
+        "sourceId": "task-203",
+        "targetId": "task-205",
+        "type": "relates"
+      },
+      {
+        "id": "rel-7",
+        "sourceId": "task-201",
+        "targetId": "task-106",
+        "type": "relates"
+      },
+      {
+        "id": "rel-8",
+        "sourceId": "task-111",
+        "targetId": "task-101",
+        "type": "relates"
+      }
+    ]
+  },
+  "version": 1
+}

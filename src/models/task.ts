@@ -6,6 +6,5 @@ export interface Task {
   columnId: string;
   order: number;
   tags: string[];
-  color: string;
   done: boolean;
 }

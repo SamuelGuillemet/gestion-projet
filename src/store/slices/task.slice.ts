@@ -37,7 +37,6 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
             columnId: BOARD_COLUMNS[0].id,
             order: columnTasks.length,
             tags: [],
-            color: "",
             done: false,
           },
         ],

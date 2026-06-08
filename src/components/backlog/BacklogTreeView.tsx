@@ -24,6 +24,7 @@ import type { Question, QuestionStatus } from "@/models/question";
 import type { Task } from "@/models/task";
 import { useAppStore } from "@/store";
 import { TagBadge } from "../board/TagBadge";
+import { TaskDetailContent } from "../board/TaskDetailContent";
 import { RelationManager } from "./RelationManager";
 
 const QUESTION_STATUSES: {
@@ -136,7 +137,7 @@ export function BacklogPage() {
       : null;
 
   return (
-    <div className="h-full flex gap-4 overflow-hidden">
+    <div className="h-[calc(100vh-100px)] flex gap-4">
       {/* Left panel: list */}
       <div className="flex-1 overflow-y-auto space-y-4 min-w-0">
         {/* Tag filter */}
@@ -266,7 +267,7 @@ export function BacklogPage() {
 
       {/* Right panel: detail */}
       {selectedDetail && (
-        <div className="w-150 shrink-0 border-l pl-4 overflow-y-auto">
+        <div className="w-150 shrink-0 border-l pl-4">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-sm">Détail</h3>
             <Button
@@ -280,7 +281,7 @@ export function BacklogPage() {
           </div>
 
           {selectedTask && (
-            <TaskDetailPanel
+            <TaskDetailContent
               task={selectedTask}
               onUpdate={(data) => updateTask(selectedTask.id, data)}
               onDelete={() => {
@@ -539,118 +540,6 @@ function DeliverableRow({
       >
         <Trash2 className="h-3 w-3" />
       </Button>
-    </div>
-  );
-}
-
-// --- Task Detail Panel ---
-
-function TaskDetailPanel({
-  task,
-  onUpdate,
-  onDelete,
-}: {
-  task: Task;
-  onUpdate: (data: Partial<Omit<Task, "id" | "projectId">>) => void;
-  onDelete: () => void;
-}) {
-  const tags = useAppStore((s) => s.tags);
-
-  const toggleTag = (tagId: string) => {
-    const newTags = task.tags.includes(tagId)
-      ? task.tags.filter((id) => id !== tagId)
-      : [...task.tags, tagId];
-    onUpdate({ tags: newTags });
-  };
-
-  return (
-    <div className="space-y-4">
-      <div>
-        <Label className="text-xs text-muted-foreground">Titre</Label>
-        <Input
-          value={task.title}
-          onChange={(e) => onUpdate({ title: e.target.value })}
-          className="mt-1"
-        />
-      </div>
-
-      <div>
-        <Label className="text-xs text-muted-foreground">Description</Label>
-        <Textarea
-          value={task.description}
-          onChange={(e) => onUpdate({ description: e.target.value })}
-          className="mt-1 min-h-24"
-          placeholder="Ajouter une description..."
-        />
-      </div>
-
-      <div>
-        <Label className="text-xs text-muted-foreground">Statut</Label>
-        <div className="flex gap-1 mt-1">
-          {BOARD_COLUMNS.map((col) => (
-            <button
-              key={col.id}
-              type="button"
-              onClick={() =>
-                onUpdate({ columnId: col.id, done: col.id === "done" })
-              }
-              className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
-                task.columnId === col.id
-                  ? "ring-2 ring-offset-1"
-                  : "opacity-60 hover:opacity-100"
-              }`}
-              style={{
-                backgroundColor: `${col.color}20`,
-                color: col.color,
-              }}
-            >
-              {col.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <Label className="text-xs text-muted-foreground">
-          Tags ({task.tags.length})
-        </Label>
-        <div className="flex flex-wrap gap-1 mt-1">
-          {tags.map((tag) => (
-            <button
-              key={tag.id}
-              type="button"
-              onClick={() => toggleTag(tag.id)}
-              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-colors ${
-                task.tags.includes(tag.id)
-                  ? "border-primary bg-primary/10"
-                  : "border-border hover:border-primary/50"
-              }`}
-            >
-              <span
-                className="h-2 w-2 rounded-full"
-                style={{ backgroundColor: tag.color }}
-              />
-              {tag.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <RelationManager itemId={task.id} projectId={task.projectId} />
-
-      <div className="pt-2 border-t">
-        <ConfirmDialog
-          trigger={
-            <Button variant="destructive" size="sm" className="w-full">
-              <Trash2 className="h-3 w-3 mr-1" />
-              Supprimer
-            </Button>
-          }
-          title="Supprimer la tâche"
-          description="Cette action est irréversible. La tâche et toutes ses relations seront supprimées."
-          onConfirm={onDelete}
-        />
-      </div>
     </div>
   );
 }

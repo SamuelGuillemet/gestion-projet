@@ -1,5 +1,6 @@
 import { Clock, FileText, KanbanSquare, List } from "lucide-react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { ActivityReport } from "@/components/time/ActivityReport";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DataActions } from "./DataActions";
 import { ProjectSelector } from "./ProjectSelector";
@@ -46,6 +47,7 @@ export function AppLayout() {
             </TabsList>
           </div>
           <div className="flex items-center gap-3">
+            <ActivityReport />
             <TagManager />
             <DataActions />
             <ProjectSelector />
