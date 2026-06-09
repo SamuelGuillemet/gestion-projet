@@ -267,7 +267,7 @@ export function BacklogPage() {
 
       {/* Right panel: detail */}
       {selectedDetail && (
-        <div className="w-150 shrink-0 border-l pl-4">
+        <div className="w-150 shrink-0 border-l pl-4 overflow-y-auto">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-sm">Détail</h3>
             <Button
