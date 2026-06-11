@@ -1,17 +1,21 @@
 import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useTimeTracking } from "@/hooks/useTimeTracking";
+import { useTimeActions } from "@/hooks/useTimeTracking";
+import { useTimeStore } from "@/store";
 
 interface MilestoneTimelineProps {
   projectId: string;
 }
 
 export function MilestoneTimeline({ projectId }: MilestoneTimelineProps) {
-  const { milestones, addMilestone, deleteMilestone } =
-    useTimeTracking(projectId);
+  const milestones = useTimeStore(
+    useShallow((s) => s.milestones.filter((m) => m.projectId === projectId)),
+  );
+  const { addMilestone, deleteMilestone } = useTimeActions();
   const [name, setName] = useState("");
   const [date, setDate] = useState("");
 
@@ -58,7 +62,7 @@ export function MilestoneTimeline({ projectId }: MilestoneTimelineProps) {
             return (
               <div key={m.id} className="relative group">
                 <div
-                  className={`absolute -left-[25px] top-1 h-4 w-4 rounded-full border-2 ${
+                  className={`absolute -left-6.25 top-1 h-4 w-4 rounded-full border-2 ${
                     isPast
                       ? "bg-green-500 border-green-500"
                       : "bg-background border-primary"

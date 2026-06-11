@@ -1,5 +1,6 @@
 import { Check, Pencil, Plus, Tags, Trash2, X } from "lucide-react";
 import { useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,13 +10,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useAppStore } from "@/store";
+import { useTagStore } from "@/store";
 
 export function TagManager() {
-  const tags = useAppStore((s) => s.tags);
-  const addTag = useAppStore((s) => s.addTag);
-  const updateTag = useAppStore((s) => s.updateTag);
-  const deleteTag = useAppStore((s) => s.deleteTag);
+  const tags = useTagStore(useShallow((s) => s.tags));
+  const addTag = useTagStore((s) => s.addTag);
+  const updateTag = useTagStore((s) => s.updateTag);
+  const deleteTag = useTagStore((s) => s.deleteTag);
 
   const [newName, setNewName] = useState("");
   const [newColor, setNewColor] = useState("#6366f1");

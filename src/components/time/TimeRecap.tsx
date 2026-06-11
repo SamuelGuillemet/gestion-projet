@@ -1,17 +1,27 @@
 import { Trash2 } from "lucide-react";
 import { useMemo } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/button";
-import { useTasks } from "@/hooks/useTasks";
-import { useTimeTracking } from "@/hooks/useTimeTracking";
+import { useTimeActions } from "@/hooks/useTimeTracking";
+import { useTaskStore, useTimeStore } from "@/store";
 
 interface TimeRecapProps {
   projectId: string;
 }
 
 export function TimeRecap({ projectId }: TimeRecapProps) {
-  const { timeEntries, totalMinutes, deleteTimeEntry } =
-    useTimeTracking(projectId);
-  const { tasks } = useTasks(projectId);
+  const timeEntries = useTimeStore(
+    useShallow((s) => s.timeEntries.filter((e) => e.projectId === projectId)),
+  );
+  const { deleteTimeEntry } = useTimeActions();
+  const tasks = useTaskStore(
+    useShallow((s) => s.tasks.filter((t) => t.projectId === projectId)),
+  );
+
+  const totalMinutes = useMemo(
+    () => timeEntries.reduce((sum, e) => sum + e.minutes, 0),
+    [timeEntries],
+  );
 
   const taskMap = useMemo(() => {
     const map = new Map<string, string>();

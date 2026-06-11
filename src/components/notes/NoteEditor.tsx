@@ -7,7 +7,7 @@ import remarkGithubAlerts from "remark-github-alerts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useNotes } from "@/hooks/useNotes";
+import { useNote, useNoteActions, useNoteIds } from "@/hooks/useNotes";
 import { useProjects } from "@/hooks/useProjects";
 
 const LAST_NOTE_KEY = "gestion-projet-last-note";
@@ -37,23 +37,24 @@ function setLastNoteId(projectId: string | null, noteId: string | null) {
 
 export function NotesPage() {
   const { activeProjectId } = useProjects();
-  const { notes, addNote, updateNote, deleteNote } = useNotes(activeProjectId);
+  const noteIds = useNoteIds(activeProjectId);
+  const { addNote, updateNote, deleteNote } = useNoteActions();
   const [activeNoteId, setActiveNoteId] = useState<string | null>(() =>
     getLastNoteId(activeProjectId),
   );
   const [content, setContent] = useState("");
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const activeNote = notes.find((n) => n.id === activeNoteId) ?? null;
+  const activeNote = useNote(activeNoteId ?? "");
 
   // Auto-select last opened note or first note when project changes
   useEffect(() => {
-    if (notes.length > 0 && !notes.find((n) => n.id === activeNoteId)) {
+    if (noteIds.length > 0 && !noteIds.includes(activeNoteId ?? "")) {
       const lastId = getLastNoteId(activeProjectId);
-      const restored = lastId && notes.find((n) => n.id === lastId);
-      setActiveNoteId(restored ? lastId : notes[0].id);
+      const restored = lastId && noteIds.includes(lastId);
+      setActiveNoteId(restored ? lastId : noteIds[0]);
     }
-  }, [notes, activeNoteId, activeProjectId]);
+  }, [noteIds, activeNoteId, activeProjectId]);
 
   // Persist active note selection
   useEffect(() => {
@@ -87,8 +88,8 @@ export function NotesPage() {
   const handleDelete = (id: string) => {
     deleteNote(id);
     if (activeNoteId === id) {
-      const remaining = notes.filter((n) => n.id !== id);
-      setActiveNoteId(remaining.length > 0 ? remaining[0].id : null);
+      const remaining = noteIds.filter((nid) => nid !== id);
+      setActiveNoteId(remaining.length > 0 ? remaining[0] : null);
     }
   };
 
@@ -122,19 +123,19 @@ export function NotesPage() {
           </Button>
         </div>
         <div className="flex-1 overflow-y-auto py-1">
-          {notes.length === 0 && (
+          {noteIds.length === 0 && (
             <p className="text-xs text-muted-foreground p-3 text-center">
               Aucune note. Cliquez + pour en créer une.
             </p>
           )}
-          {notes.map((note) => (
+          {noteIds.map((id) => (
             <NoteFileItem
-              key={note.id}
-              title={note.title}
-              active={note.id === activeNoteId}
-              onSelect={() => setActiveNoteId(note.id)}
-              onRename={(title) => handleRename(note.id, title)}
-              onDelete={() => handleDelete(note.id)}
+              key={id}
+              noteId={id}
+              active={id === activeNoteId}
+              onSelect={() => setActiveNoteId(id)}
+              onRename={(title) => handleRename(id, title)}
+              onDelete={() => handleDelete(id)}
             />
           ))}
         </div>
@@ -188,20 +189,23 @@ export function NotesPage() {
 }
 
 function NoteFileItem({
-  title,
+  noteId,
   active,
   onSelect,
   onRename,
   onDelete,
 }: {
-  title: string;
+  noteId: string;
   active: boolean;
   onSelect: () => void;
   onRename: (title: string) => void;
   onDelete: () => void;
 }) {
+  const note = useNote(noteId);
   const [editing, setEditing] = useState(false);
-  const [editValue, setEditValue] = useState(title);
+  const [editValue, setEditValue] = useState(note?.title ?? "");
+
+  if (!note) return null;
 
   const handleSubmit = () => {
     const trimmed = editValue.trim();
@@ -238,11 +242,11 @@ function NoteFileItem({
           className="text-xs truncate flex-1"
           onDoubleClick={(e) => {
             e.stopPropagation();
-            setEditValue(title);
+            setEditValue(note.title);
             setEditing(true);
           }}
         >
-          {title}
+          {note.title}
         </span>
       )}
       <Button

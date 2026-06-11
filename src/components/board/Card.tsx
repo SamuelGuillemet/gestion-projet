@@ -1,22 +1,25 @@
 import { useSortable } from "@dnd-kit/react/sortable";
 import { CheckCircle2, Circle, GripVertical } from "lucide-react";
 import { useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { DONE_COLUMN_ID, TODO_COLUMN_ID } from "@/constants/board-columns";
-import type { Task } from "@/models/task";
-import { useAppStore } from "@/store";
+import { useTask, useTaskActions } from "@/hooks/useTasks";
+import { useTagStore } from "@/store";
+import { TagBadge } from "../shared/TagBadge";
 import { CardDetail } from "./CardDetail";
-import { TagBadge } from "./TagBadge";
 
 interface CardProps {
-  task: Task;
+  taskId: string;
   isDragging?: boolean;
 }
 
-export function Card({ task, isDragging }: CardProps) {
-  const tags = useAppStore((s) => s.tags);
-  const updateTask = useAppStore((s) => s.updateTask);
-  const moveTask = useAppStore((s) => s.moveTask);
+export function Card({ taskId, isDragging }: CardProps) {
+  const task = useTask(taskId);
+  const tags = useTagStore(useShallow((s) => s.tags));
+  const { updateTask, moveTask } = useTaskActions();
   const [detailOpen, setDetailOpen] = useState(false);
+
+  if (!task) return null;
 
   const taskTags = tags.filter((t) => task.tags.includes(t.id));
 
@@ -24,7 +27,6 @@ export function Card({ task, isDragging }: CardProps) {
     e.stopPropagation();
     const newDone = !task.done;
     updateTask(task.id, { done: newDone });
-    // Move to "done" column when marking as done, back to first column otherwise
     if (newDone && task.columnId !== DONE_COLUMN_ID) {
       moveTask(task.id, DONE_COLUMN_ID, 0);
     } else if (!newDone && task.columnId === DONE_COLUMN_ID) {
@@ -77,17 +79,27 @@ export function Card({ task, isDragging }: CardProps) {
           </div>
         )}
       </div>
-      <CardDetail task={task} open={detailOpen} onOpenChange={setDetailOpen} />
+      <CardDetail
+        taskId={task.id}
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+      />
     </>
   );
 }
 
-export function SortableCard({ task, index }: { task: Task; index: number }) {
-  const sortable = useSortable({ id: task.id, index });
+export function SortableCard({
+  taskId,
+  index,
+}: {
+  taskId: string;
+  index: number;
+}) {
+  const sortable = useSortable({ id: taskId, index });
 
   return (
     <div ref={sortable.ref}>
-      <Card task={task} isDragging={sortable.isDragging} />
+      <Card taskId={taskId} isDragging={sortable.isDragging} />
     </div>
   );
 }

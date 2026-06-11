@@ -1,5 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,16 +10,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useTasks } from "@/hooks/useTasks";
-import { useTimeTracking } from "@/hooks/useTimeTracking";
+import { useTimeActions } from "@/hooks/useTimeTracking";
+import { useTaskStore } from "@/store";
 
 interface TimeEntryFormProps {
   projectId: string;
 }
 
 export function TimeEntryForm({ projectId }: TimeEntryFormProps) {
-  const { addTimeEntry } = useTimeTracking(projectId);
-  const { tasks } = useTasks(projectId);
+  const { addTimeEntry } = useTimeActions();
+  const tasks = useTaskStore(
+    useShallow((s) => s.tasks.filter((t) => t.projectId === projectId)),
+  );
   const [taskId, setTaskId] = useState("");
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [minutes, setMinutes] = useState("");
@@ -51,7 +54,7 @@ export function TimeEntryForm({ projectId }: TimeEntryFormProps) {
                 </Button>
               }
             />
-            <DropdownMenuContent className="w-[300px]">
+            <DropdownMenuContent className="w-75">
               {tasks.map((t) => (
                 <DropdownMenuItem key={t.id} onClick={() => setTaskId(t.id)}>
                   <span className="truncate">{t.title}</span>

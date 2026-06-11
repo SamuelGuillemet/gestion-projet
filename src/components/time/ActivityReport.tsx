@@ -1,5 +1,6 @@
 import { BarChart3 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useAppStore } from "@/store";
+import { useProjectStore, useTimeStore } from "@/store";
 
 function formatMinutes(minutes: number): string {
   const h = Math.floor(minutes / 60);
@@ -20,8 +21,8 @@ function formatMinutes(minutes: number): string {
 
 export function ActivityReport() {
   const [open, setOpen] = useState(false);
-  const timeEntries = useAppStore((s) => s.timeEntries);
-  const projects = useAppStore((s) => s.projects);
+  const timeEntries = useTimeStore(useShallow((s) => s.timeEntries));
+  const projects = useProjectStore(useShallow((s) => s.projects));
 
   const report = useMemo(() => {
     const byDate: Record<string, Record<string, number>> = {};

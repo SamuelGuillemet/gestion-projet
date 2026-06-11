@@ -9,11 +9,12 @@ import {
   X,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RELATION_LABELS, type RelationType } from "@/models/relation";
-import { useAppStore } from "@/store";
+import { useNoteStore, useRelationStore, useTaskStore } from "@/store";
 
 const RELATION_STYLES: Record<
   RelationType,
@@ -43,12 +44,12 @@ interface RelationManagerProps {
 }
 
 export function RelationManager({ itemId, projectId }: RelationManagerProps) {
-  const relations = useAppStore((s) => s.relations);
-  const addRelation = useAppStore((s) => s.addRelation);
-  const deleteRelation = useAppStore((s) => s.deleteRelation);
-  const tasks = useAppStore((s) => s.tasks);
-  const questions = useAppStore((s) => s.questions);
-  const deliverables = useAppStore((s) => s.deliverables);
+  const relations = useRelationStore(useShallow((s) => s.relations));
+  const addRelation = useRelationStore((s) => s.addRelation);
+  const deleteRelation = useRelationStore((s) => s.deleteRelation);
+  const tasks = useTaskStore(useShallow((s) => s.tasks));
+  const questions = useNoteStore(useShallow((s) => s.questions));
+  const deliverables = useNoteStore(useShallow((s) => s.deliverables));
 
   const [adding, setAdding] = useState(false);
   const [relType, setRelType] = useState<RelationType>("relates");

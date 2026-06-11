@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BOARD_COLUMNS, DONE_COLUMN_ID } from "@/constants/board-columns";
 import { useProjects } from "@/hooks/useProjects";
-import { useTasks } from "@/hooks/useTasks";
+import { useTaskActions, useTaskIds } from "@/hooks/useTasks";
+import { useTaskStore } from "@/store";
 import { Column } from "./Column";
 
 export function BoardPage() {
   const { activeProjectId } = useProjects();
-  const { tasks, addTask, moveTask, updateTask } = useTasks(activeProjectId);
+  const { addTask, moveTask, updateTask } = useTaskActions();
   const [newTaskTitle, setNewTaskTitle] = useState("");
 
   if (!activeProjectId) {
@@ -46,9 +47,13 @@ export function BoardPage() {
     // Dropped on a column
     const targetColumn = BOARD_COLUMNS.find((c) => c.id === overId);
     if (targetColumn) {
-      const columnTasks = tasks.filter((t) => t.columnId === targetColumn.id);
-      moveTask(taskId, targetColumn.id, columnTasks.length);
-      // Mark done/undone based on target column
+      const columnTaskIds = useTaskStore
+        .getState()
+        .tasks.filter(
+          (t) =>
+            t.projectId === activeProjectId && t.columnId === targetColumn.id,
+        );
+      moveTask(taskId, targetColumn.id, columnTaskIds.length);
       if (targetColumn.id === DONE_COLUMN_ID) {
         updateTask(taskId, { done: true });
       } else {
@@ -58,7 +63,7 @@ export function BoardPage() {
     }
 
     // Dropped on another task — move to same column
-    const overTask = tasks.find((t) => t.id === overId);
+    const overTask = useTaskStore.getState().tasks.find((t) => t.id === overId);
     if (overTask) {
       moveTask(taskId, overTask.columnId, overTask.order);
       if (overTask.columnId === DONE_COLUMN_ID) {
@@ -87,16 +92,26 @@ export function BoardPage() {
 
       <DragDropProvider onDragEnd={handleDragEnd} onDragStart={() => {}}>
         <div className="flex flex-1 gap-4 p-2 overflow-x-auto">
-          {BOARD_COLUMNS.map((column) => {
-            const columnTasks = tasks
-              .filter((t) => t.columnId === column.id)
-              .sort((a, b) => a.order - b.order);
-            return (
-              <Column key={column.id} column={column} tasks={columnTasks} />
-            );
-          })}
+          {BOARD_COLUMNS.map((column) => (
+            <ColumnContainer
+              key={column.id}
+              column={column}
+              projectId={activeProjectId}
+            />
+          ))}
         </div>
       </DragDropProvider>
     </div>
   );
+}
+
+function ColumnContainer({
+  column,
+  projectId,
+}: {
+  column: (typeof BOARD_COLUMNS)[number];
+  projectId: string;
+}) {
+  const taskIds = useTaskIds(projectId, column.id);
+  return <Column column={column} taskIds={taskIds} />;
 }

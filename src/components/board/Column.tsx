@@ -1,14 +1,13 @@
 import { useDroppable } from "@dnd-kit/react";
 import type { BoardColumn } from "@/constants/board-columns";
-import type { Task } from "@/models/task";
 import { SortableCard } from "./Card";
 
 interface ColumnProps {
   column: BoardColumn;
-  tasks: Task[];
+  taskIds: string[];
 }
 
-export function Column({ column, tasks }: ColumnProps) {
+export function Column({ column, taskIds }: ColumnProps) {
   const droppable = useDroppable({ id: column.id });
 
   return (
@@ -32,15 +31,15 @@ export function Column({ column, tasks }: ColumnProps) {
           {column.label}
         </span>
         <span className="bg-secondary/80 ml-auto px-2 py-0.5 rounded-full font-mono text-muted-foreground text-xs">
-          {tasks.length}
+          {taskIds.length}
         </span>
       </div>
 
       <div className="flex-1 space-y-2.5 p-3 overflow-y-auto">
-        {tasks.map((task, index) => (
-          <SortableCard key={task.id} task={task} index={index} />
+        {taskIds.map((id, index) => (
+          <SortableCard key={id} taskId={id} index={index} />
         ))}
-        {tasks.length === 0 && (
+        {taskIds.length === 0 && (
           <div className="py-10 border border-border/30 border-dashed rounded-xl text-muted-foreground/40 text-xs text-center">
             Glissez des tâches ici
           </div>

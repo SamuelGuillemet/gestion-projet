@@ -1,14 +1,16 @@
 import { Clock, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { BOARD_COLUMNS } from "@/constants/board-columns";
+import { useTimeEntriesByTaskId } from "@/hooks/useTimeTracking";
 import type { Task } from "@/models/task";
-import { useAppStore } from "@/store";
-import { RelationManager } from "../backlog/RelationManager";
+import { useTagStore, useTimeStore } from "@/store";
+import { RelationManager } from "./RelationManager";
 
 interface TaskDetailContentProps {
   task: Task;
@@ -21,19 +23,14 @@ export function TaskDetailContent({
   onUpdate,
   onDelete,
 }: TaskDetailContentProps) {
-  const tags = useAppStore((s) => s.tags);
-  const timeEntries = useAppStore((s) => s.timeEntries);
-  const addTimeEntry = useAppStore((s) => s.addTimeEntry);
+  const tags = useTagStore(useShallow((s) => s.tags));
+  const taskTimeEntries = useTimeEntriesByTaskId(task.id);
+  const addTimeEntry = useTimeStore((s) => s.addTimeEntry);
 
   const [entryDate, setEntryDate] = useState(
     new Date().toISOString().slice(0, 10),
   );
   const [entryMinutes, setEntryMinutes] = useState("");
-
-  const taskTimeEntries = useMemo(
-    () => timeEntries.filter((e) => e.taskId === task.id),
-    [timeEntries, task.id],
-  );
 
   const totalMinutes = useMemo(
     () => taskTimeEntries.reduce((sum, e) => sum + e.minutes, 0),

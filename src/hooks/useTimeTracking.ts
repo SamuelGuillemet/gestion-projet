@@ -1,38 +1,25 @@
-import { useMemo } from "react";
-import { useAppStore } from "@/store";
+import { useShallow } from "zustand/react/shallow";
+import { useTimeStore } from "@/store";
 
-export function useTimeTracking(projectId: string | null) {
-  const timeEntries = useAppStore((s) => s.timeEntries);
-  const addTimeEntry = useAppStore((s) => s.addTimeEntry);
-  const updateTimeEntry = useAppStore((s) => s.updateTimeEntry);
-  const deleteTimeEntry = useAppStore((s) => s.deleteTimeEntry);
-  const milestones = useAppStore((s) => s.milestones);
-  const addMilestone = useAppStore((s) => s.addMilestone);
-  const updateMilestone = useAppStore((s) => s.updateMilestone);
-  const deleteMilestone = useAppStore((s) => s.deleteMilestone);
-
-  const projectTimeEntries = useMemo(
-    () => timeEntries.filter((e) => e.projectId === projectId),
-    [timeEntries, projectId],
+/** Returns time entries for a task. */
+export function useTimeEntriesByTaskId(taskId: string | null) {
+  return useTimeStore(
+    useShallow((s) => s.timeEntries.filter((e) => e.taskId === taskId)),
   );
+}
 
-  const projectMilestones = useMemo(
-    () => milestones.filter((m) => m.projectId === projectId),
-    [milestones, projectId],
-  );
-
-  const totalMinutes = useMemo(
-    () => projectTimeEntries.reduce((sum, e) => sum + e.minutes, 0),
-    [projectTimeEntries],
-  );
-
+/** Returns time action functions only (stable references). */
+export function useTimeActions() {
+  const addTimeEntry = useTimeStore((s) => s.addTimeEntry);
+  const updateTimeEntry = useTimeStore((s) => s.updateTimeEntry);
+  const deleteTimeEntry = useTimeStore((s) => s.deleteTimeEntry);
+  const addMilestone = useTimeStore((s) => s.addMilestone);
+  const updateMilestone = useTimeStore((s) => s.updateMilestone);
+  const deleteMilestone = useTimeStore((s) => s.deleteMilestone);
   return {
-    timeEntries: projectTimeEntries,
-    totalMinutes,
     addTimeEntry,
     updateTimeEntry,
     deleteTimeEntry,
-    milestones: projectMilestones,
     addMilestone,
     updateMilestone,
     deleteMilestone,

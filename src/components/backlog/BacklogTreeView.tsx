@@ -9,68 +9,64 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { create } from "zustand";
+import { useShallow } from "zustand/react/shallow";
+import { DeliverableDetailContent } from "@/components/shared/DeliverableDetailContent";
+import { QuestionDetailContent } from "@/components/shared/QuestionDetailContent";
+import { QuestionStatusBadge } from "@/components/shared/QuestionStatusBadge";
+import { TagBadge } from "@/components/shared/TagBadge";
+import { TaskDetailContent } from "@/components/shared/TaskDetailContent";
+import { StatusBadge } from "@/components/shared/TaskStatusBadge";
 import { Button } from "@/components/ui/button";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { BOARD_COLUMNS } from "@/constants/board-columns";
-import { useNotes } from "@/hooks/useNotes";
+import {
+  useDeliverable,
+  useDeliverableIds,
+  useNoteActions,
+  useQuestion,
+  useQuestionIds,
+} from "@/hooks/useNotes";
 import { useProjects } from "@/hooks/useProjects";
-import { useTasks } from "@/hooks/useTasks";
-import type { Deliverable } from "@/models/deliverable";
-import type { Question, QuestionStatus } from "@/models/question";
-import type { Task } from "@/models/task";
-import { useAppStore } from "@/store";
-import { TagBadge } from "../board/TagBadge";
-import { TaskDetailContent } from "../board/TaskDetailContent";
-import { RelationManager } from "./RelationManager";
+import { useTask, useTaskActions, useTaskIds } from "@/hooks/useTasks";
+import { useTagStore } from "@/store";
 
-const QUESTION_STATUSES: {
-  value: QuestionStatus;
-  label: string;
-  color: string;
-}[] = [
-  { value: "to-ask", label: "À poser", color: "#6b7280" },
-  { value: "pending", label: "En attente", color: "#f59e0b" },
-  { value: "resolved", label: "Résolu", color: "#10b981" },
-];
-
-function QuestionStatusBadge({ status }: { status: QuestionStatus }) {
-  const s =
-    QUESTION_STATUSES.find((q) => q.value === status) ?? QUESTION_STATUSES[0];
-  return (
-    <span
-      className="text-[10px] px-1.5 py-0.5 rounded font-medium shrink-0"
-      style={{ backgroundColor: `${s.color}20`, color: s.color }}
-    >
-      {s.label}
-    </span>
-  );
-}
-
-type Section = "tasks" | "questions" | "deliverables";
+// --- Local UI store for backlog selection (avoids parent re-renders) ---
 type DetailSelection =
   | { type: "task"; id: string }
   | { type: "question"; id: string }
   | { type: "deliverable"; id: string }
   | null;
 
+interface BacklogUIState {
+  selectedDetail: DetailSelection;
+  select: (detail: DetailSelection) => void;
+  clear: () => void;
+  clearIfSelected: (id: string) => void;
+}
+
+const useBacklogUI = create<BacklogUIState>((set, get) => ({
+  selectedDetail: null,
+  select: (detail) => set({ selectedDetail: detail }),
+  clear: () => set({ selectedDetail: null }),
+  clearIfSelected: (id) => {
+    if (get().selectedDetail?.id === id) set({ selectedDetail: null });
+  },
+}));
+
+type Section = "tasks" | "questions" | "deliverables";
+
 export function BacklogPage() {
   const { activeProjectId } = useProjects();
-  const { tasks, addTask, deleteTask, updateTask } = useTasks(activeProjectId);
-  const {
-    questions,
-    deliverables,
-    addQuestion,
-    addDeliverable,
-    updateQuestion,
-    deleteQuestion,
-    updateDeliverable,
-    deleteDeliverable,
-  } = useNotes(activeProjectId);
-  const tags = useAppStore((s) => s.tags);
+  const taskIds = useTaskIds(activeProjectId);
+  const { addTask } = useTaskActions();
+  const questionIds = useQuestionIds(activeProjectId);
+  const deliverableIds = useDeliverableIds(activeProjectId);
+  const { addQuestion, addDeliverable } = useNoteActions();
+  const tags = useTagStore(useShallow((s) => s.tags));
+
+  const select = useBacklogUI((s) => s.select);
+  const hasSelection = useBacklogUI((s) => s.selectedDetail !== null);
 
   const [expanded, setExpanded] = useState<Record<Section, boolean>>({
     tasks: true,
@@ -84,13 +80,7 @@ export function BacklogPage() {
     deliverables: "",
   });
 
-  const [selectedDetail, setSelectedDetail] = useState<DetailSelection>(null);
   const [filterTag, setFilterTag] = useState<string | null>(null);
-
-  const filteredTasks = useMemo(() => {
-    if (!filterTag) return tasks;
-    return tasks.filter((t) => t.tags.includes(filterTag));
-  }, [tasks, filterTag]);
 
   if (!activeProjectId) {
     return (
@@ -112,7 +102,7 @@ export function BacklogPage() {
     if (section === "deliverables") id = addDeliverable(activeProjectId, value);
     setNewItems((prev) => ({ ...prev, [section]: "" }));
     if (id)
-      setSelectedDetail({
+      select({
         type:
           section === "tasks"
             ? "task"
@@ -122,19 +112,6 @@ export function BacklogPage() {
         id,
       });
   };
-
-  const selectedTask =
-    selectedDetail?.type === "task"
-      ? tasks.find((t) => t.id === selectedDetail.id)
-      : null;
-  const selectedQuestion =
-    selectedDetail?.type === "question"
-      ? questions.find((q) => q.id === selectedDetail.id)
-      : null;
-  const selectedDeliverable =
-    selectedDetail?.type === "deliverable"
-      ? deliverables.find((d) => d.id === selectedDetail.id)
-      : null;
 
   return (
     <div className="h-[calc(100vh-100px)] flex gap-4">
@@ -180,23 +157,13 @@ export function BacklogPage() {
 
         {/* Tasks */}
         <TreeSection
-          title={`Tâches (${filteredTasks.length})`}
+          title={`Tâches (${taskIds.length})`}
           expanded={expanded.tasks}
           onToggle={() => toggle("tasks")}
           accentColor="bg-blue-500"
         >
-          {filteredTasks.map((task) => (
-            <TaskRow
-              key={task.id}
-              task={task}
-              selected={selectedDetail?.id === task.id}
-              onSelect={() => setSelectedDetail({ type: "task", id: task.id })}
-              onToggleDone={() => updateTask(task.id, { done: !task.done })}
-              onDelete={() => {
-                deleteTask(task.id);
-                if (selectedDetail?.id === task.id) setSelectedDetail(null);
-              }}
-            />
+          {taskIds.map((id) => (
+            <TaskRow key={id} taskId={id} filterTag={filterTag} />
           ))}
           <AddItemRow
             value={newItems.tasks}
@@ -208,22 +175,13 @@ export function BacklogPage() {
 
         {/* Questions */}
         <TreeSection
-          title={`Questions (${questions.length})`}
+          title={`Questions (${questionIds.length})`}
           expanded={expanded.questions}
           onToggle={() => toggle("questions")}
           accentColor="bg-amber-500"
         >
-          {questions.map((q) => (
-            <QuestionRow
-              key={q.id}
-              question={q}
-              selected={selectedDetail?.id === q.id}
-              onSelect={() => setSelectedDetail({ type: "question", id: q.id })}
-              onDelete={() => {
-                deleteQuestion(q.id);
-                if (selectedDetail?.id === q.id) setSelectedDetail(null);
-              }}
-            />
+          {questionIds.map((id) => (
+            <QuestionRow key={id} questionId={id} />
           ))}
           <AddItemRow
             value={newItems.questions}
@@ -235,24 +193,13 @@ export function BacklogPage() {
 
         {/* Deliverables */}
         <TreeSection
-          title={`Livrables (${deliverables.length})`}
+          title={`Livrables (${deliverableIds.length})`}
           expanded={expanded.deliverables}
           onToggle={() => toggle("deliverables")}
           accentColor="bg-emerald-500"
         >
-          {deliverables.map((d) => (
-            <DeliverableRow
-              key={d.id}
-              deliverable={d}
-              selected={selectedDetail?.id === d.id}
-              onSelect={() =>
-                setSelectedDetail({ type: "deliverable", id: d.id })
-              }
-              onDelete={() => {
-                deleteDeliverable(d.id);
-                if (selectedDetail?.id === d.id) setSelectedDetail(null);
-              }}
-            />
+          {deliverableIds.map((id) => (
+            <DeliverableRow key={id} deliverableId={id} />
           ))}
           <AddItemRow
             value={newItems.deliverables}
@@ -266,74 +213,8 @@ export function BacklogPage() {
       </div>
 
       {/* Right panel: detail */}
-      {selectedDetail && (
-        <div className="w-150 shrink-0 border-l pl-4 overflow-y-auto">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-sm">Détail</h3>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6"
-              onClick={() => setSelectedDetail(null)}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-
-          {selectedTask && (
-            <TaskDetailContent
-              task={selectedTask}
-              onUpdate={(data) => updateTask(selectedTask.id, data)}
-              onDelete={() => {
-                deleteTask(selectedTask.id);
-                setSelectedDetail(null);
-              }}
-            />
-          )}
-          {selectedQuestion && (
-            <QuestionDetailPanel
-              question={selectedQuestion}
-              onUpdate={(data) => updateQuestion(selectedQuestion.id, data)}
-              onDelete={() => {
-                deleteQuestion(selectedQuestion.id);
-                setSelectedDetail(null);
-              }}
-            />
-          )}
-          {selectedDeliverable && (
-            <DeliverableDetailPanel
-              deliverable={selectedDeliverable}
-              onUpdate={(data) =>
-                updateDeliverable(selectedDeliverable.id, data)
-              }
-              onDelete={() => {
-                deleteDeliverable(selectedDeliverable.id);
-                setSelectedDetail(null);
-              }}
-            />
-          )}
-        </div>
-      )}
+      {hasSelection && <DetailPanel />}
     </div>
-  );
-}
-
-// --- Utility: column status badge ---
-
-function StatusBadge({ columnId }: { columnId: string }) {
-  const col = BOARD_COLUMNS.find((c) => c.id === columnId);
-  if (!col) return null;
-  return (
-    <span
-      className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium shrink-0"
-      style={{ backgroundColor: `${col.color}20`, color: col.color }}
-    >
-      <span
-        className="h-1.5 w-1.5 rounded-full"
-        style={{ backgroundColor: col.color }}
-      />
-      {col.label}
-    </span>
   );
 }
 
@@ -375,19 +256,23 @@ function TreeSection({
 // --- Task Row ---
 
 function TaskRow({
-  task,
-  selected,
-  onSelect,
-  onToggleDone,
-  onDelete,
+  taskId,
+  filterTag,
 }: {
-  task: Task;
-  selected: boolean;
-  onSelect: () => void;
-  onToggleDone: () => void;
-  onDelete: () => void;
+  taskId: string;
+  filterTag: string | null;
 }) {
-  const tags = useAppStore((s) => s.tags);
+  const task = useTask(taskId);
+  const { updateTask, deleteTask } = useTaskActions();
+  const tags = useTagStore(useShallow((s) => s.tags));
+  const selected = useBacklogUI((s) => s.selectedDetail?.id === taskId);
+  const select = useBacklogUI((s) => s.select);
+  const clearIfSelected = useBacklogUI((s) => s.clearIfSelected);
+
+  if (!task) return null;
+  // Apply tag filter
+  if (filterTag && !task.tags.includes(filterTag)) return null;
+
   const taskTags = tags.filter((t) => task.tags.includes(t.id));
 
   return (
@@ -395,8 +280,10 @@ function TaskRow({
       className={`flex items-center gap-2 pl-4 pr-2 py-2 group rounded-md cursor-pointer transition-colors ${
         selected ? "bg-primary/5 border border-primary/20" : "hover:bg-muted/30"
       }`}
-      onClick={onSelect}
-      onKeyDown={(e) => e.key === "Enter" && onSelect()}
+      onClick={() => select({ type: "task", id: taskId })}
+      onKeyDown={(e) =>
+        e.key === "Enter" && select({ type: "task", id: taskId })
+      }
       role="button"
       tabIndex={0}
     >
@@ -404,7 +291,7 @@ function TaskRow({
         type="button"
         onClick={(e) => {
           e.stopPropagation();
-          onToggleDone();
+          updateTask(task.id, { done: !task.done });
         }}
         className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
       >
@@ -433,7 +320,8 @@ function TaskRow({
         className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
         onClick={(e) => {
           e.stopPropagation();
-          onDelete();
+          deleteTask(taskId);
+          clearIfSelected(taskId);
         }}
       >
         <Trash2 className="h-3 w-3" />
@@ -444,24 +332,24 @@ function TaskRow({
 
 // --- Question Row ---
 
-function QuestionRow({
-  question,
-  selected,
-  onSelect,
-  onDelete,
-}: {
-  question: Question;
-  selected: boolean;
-  onSelect: () => void;
-  onDelete: () => void;
-}) {
+function QuestionRow({ questionId }: { questionId: string }) {
+  const question = useQuestion(questionId);
+  const { deleteQuestion } = useNoteActions();
+  const selected = useBacklogUI((s) => s.selectedDetail?.id === questionId);
+  const select = useBacklogUI((s) => s.select);
+  const clearIfSelected = useBacklogUI((s) => s.clearIfSelected);
+
+  if (!question) return null;
+
   return (
     <div
       className={`flex items-center gap-2 pl-4 pr-2 py-2 group rounded-md cursor-pointer transition-colors ${
         selected ? "bg-primary/5 border border-primary/20" : "hover:bg-muted/30"
       }`}
-      onClick={onSelect}
-      onKeyDown={(e) => e.key === "Enter" && onSelect()}
+      onClick={() => select({ type: "question", id: questionId })}
+      onKeyDown={(e) =>
+        e.key === "Enter" && select({ type: "question", id: questionId })
+      }
       role="button"
       tabIndex={0}
     >
@@ -485,7 +373,8 @@ function QuestionRow({
         className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
         onClick={(e) => {
           e.stopPropagation();
-          onDelete();
+          deleteQuestion(questionId);
+          clearIfSelected(questionId);
         }}
       >
         <Trash2 className="h-3 w-3" />
@@ -496,24 +385,24 @@ function QuestionRow({
 
 // --- Deliverable Row ---
 
-function DeliverableRow({
-  deliverable,
-  selected,
-  onSelect,
-  onDelete,
-}: {
-  deliverable: Deliverable;
-  selected: boolean;
-  onSelect: () => void;
-  onDelete: () => void;
-}) {
+function DeliverableRow({ deliverableId }: { deliverableId: string }) {
+  const deliverable = useDeliverable(deliverableId);
+  const { deleteDeliverable } = useNoteActions();
+  const selected = useBacklogUI((s) => s.selectedDetail?.id === deliverableId);
+  const select = useBacklogUI((s) => s.select);
+  const clearIfSelected = useBacklogUI((s) => s.clearIfSelected);
+
+  if (!deliverable) return null;
+
   return (
     <div
       className={`flex items-center gap-2 pl-4 pr-2 py-2 group rounded-md cursor-pointer transition-colors ${
         selected ? "bg-primary/5 border border-primary/20" : "hover:bg-muted/30"
       }`}
-      onClick={onSelect}
-      onKeyDown={(e) => e.key === "Enter" && onSelect()}
+      onClick={() => select({ type: "deliverable", id: deliverableId })}
+      onKeyDown={(e) =>
+        e.key === "Enter" && select({ type: "deliverable", id: deliverableId })
+      }
       role="button"
       tabIndex={0}
     >
@@ -525,7 +414,7 @@ function DeliverableRow({
         </span>
       )}
       {deliverable.type && (
-        <span className="text-[10px] text-muted-foreground bg-emerald-500/10 text-emerald-600 px-1.5 py-0.5 rounded">
+        <span className="text-[10px] bg-emerald-500/10 text-emerald-600 px-1.5 py-0.5 rounded">
           {deliverable.type}
         </span>
       )}
@@ -535,7 +424,8 @@ function DeliverableRow({
         className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
         onClick={(e) => {
           e.stopPropagation();
-          onDelete();
+          deleteDeliverable(deliverableId);
+          clearIfSelected(deliverableId);
         }}
       >
         <Trash2 className="h-3 w-3" />
@@ -544,197 +434,95 @@ function DeliverableRow({
   );
 }
 
+// --- Detail Panel (subscribes to selection) ---
+
+function DetailPanel() {
+  const selectedDetail = useBacklogUI((s) => s.selectedDetail);
+  const clear = useBacklogUI((s) => s.clear);
+
+  if (!selectedDetail) return null;
+
+  return (
+    <div className="w-150 border-l p-4 overflow-y-auto">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="font-semibold text-sm">Détail</h3>
+        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={clear}>
+          <X className="h-4 w-4" />
+        </Button>
+      </div>
+      {selectedDetail.type === "task" && (
+        <TaskDetailPanel taskId={selectedDetail.id} />
+      )}
+      {selectedDetail.type === "question" && (
+        <QuestionDetailPanel questionId={selectedDetail.id} />
+      )}
+      {selectedDetail.type === "deliverable" && (
+        <DeliverableDetailPanel deliverableId={selectedDetail.id} />
+      )}
+    </div>
+  );
+}
+
+// --- Task Detail Panel ---
+
+function TaskDetailPanel({ taskId }: { taskId: string }) {
+  const task = useTask(taskId);
+  const { updateTask, deleteTask } = useTaskActions();
+  const clear = useBacklogUI((s) => s.clear);
+
+  if (!task) return null;
+
+  return (
+    <TaskDetailContent
+      task={task}
+      onUpdate={(data) => updateTask(task.id, data)}
+      onDelete={() => {
+        deleteTask(task.id);
+        clear();
+      }}
+    />
+  );
+}
+
 // --- Question Detail Panel ---
 
-function QuestionDetailPanel({
-  question,
-  onUpdate,
-  onDelete,
-}: {
-  question: Question;
-  onUpdate: (
-    data: Partial<
-      Pick<
-        Question,
-        "title" | "description" | "recipient" | "answer" | "status"
-      >
-    >,
-  ) => void;
-  onDelete: () => void;
-}) {
+function QuestionDetailPanel({ questionId }: { questionId: string }) {
+  const question = useQuestion(questionId);
+  const { updateQuestion, deleteQuestion } = useNoteActions();
+  const clear = useBacklogUI((s) => s.clear);
+
+  if (!question) return null;
+
   return (
-    <div className="space-y-4">
-      <div>
-        <Label className="text-xs text-muted-foreground">Titre</Label>
-        <Input
-          value={question.title}
-          onChange={(e) => onUpdate({ title: e.target.value })}
-          className="mt-1"
-        />
-      </div>
-
-      <div>
-        <Label className="text-xs text-muted-foreground">Description</Label>
-        <Textarea
-          value={question.description ?? ""}
-          onChange={(e) => onUpdate({ description: e.target.value })}
-          className="mt-1 min-h-16"
-          placeholder="Détail de la question..."
-        />
-      </div>
-
-      <div>
-        <Label className="text-xs text-muted-foreground">Destinataire</Label>
-        <Input
-          value={question.recipient ?? ""}
-          onChange={(e) => onUpdate({ recipient: e.target.value })}
-          className="mt-1"
-          placeholder="Nom ou email du destinataire..."
-        />
-      </div>
-
-      <div>
-        <Label className="text-xs text-muted-foreground">Réponse</Label>
-        <Textarea
-          value={question.answer ?? ""}
-          onChange={(e) => onUpdate({ answer: e.target.value })}
-          className="mt-1 min-h-24"
-          placeholder="Réponse à la question..."
-        />
-      </div>
-
-      <div>
-        <Label className="text-xs text-muted-foreground">Statut</Label>
-        <div className="flex gap-1 mt-1">
-          {QUESTION_STATUSES.map((s) => (
-            <button
-              key={s.value}
-              type="button"
-              onClick={() => onUpdate({ status: s.value })}
-              className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
-                question.status === s.value
-                  ? "ring-2 ring-offset-1"
-                  : "opacity-60 hover:opacity-100"
-              }`}
-              style={{ backgroundColor: `${s.color}20`, color: s.color }}
-            >
-              {s.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <RelationManager itemId={question.id} projectId={question.projectId} />
-
-      <div className="pt-2 border-t">
-        <ConfirmDialog
-          trigger={
-            <Button variant="destructive" size="sm" className="w-full">
-              <Trash2 className="h-3 w-3 mr-1" />
-              Supprimer
-            </Button>
-          }
-          title="Supprimer la question"
-          description="Cette action est irréversible. La question et toutes ses relations seront supprimées."
-          onConfirm={onDelete}
-        />
-      </div>
-    </div>
+    <QuestionDetailContent
+      question={question}
+      onUpdate={(data) => updateQuestion(question.id, data)}
+      onDelete={() => {
+        deleteQuestion(question.id);
+        clear();
+      }}
+    />
   );
 }
 
 // --- Deliverable Detail Panel ---
 
-function DeliverableDetailPanel({
-  deliverable,
-  onUpdate,
-  onDelete,
-}: {
-  deliverable: Deliverable;
-  onUpdate: (
-    data: Partial<
-      Pick<Deliverable, "title" | "type" | "description" | "version" | "done">
-    >,
-  ) => void;
-  onDelete: () => void;
-}) {
+function DeliverableDetailPanel({ deliverableId }: { deliverableId: string }) {
+  const deliverable = useDeliverable(deliverableId);
+  const { updateDeliverable, deleteDeliverable } = useNoteActions();
+  const clear = useBacklogUI((s) => s.clear);
+
+  if (!deliverable) return null;
+
   return (
-    <div className="space-y-4">
-      <div>
-        <Label className="text-xs text-muted-foreground">Titre</Label>
-        <Input
-          value={deliverable.title}
-          onChange={(e) => onUpdate({ title: e.target.value })}
-          className="mt-1"
-        />
-      </div>
-
-      <div>
-        <Label className="text-xs text-muted-foreground">Type</Label>
-        <Input
-          value={deliverable.type ?? ""}
-          onChange={(e) => onUpdate({ type: e.target.value })}
-          className="mt-1"
-          placeholder="Ex: Document, Code, API..."
-        />
-      </div>
-
-      <div>
-        <Label className="text-xs text-muted-foreground">Description</Label>
-        <Textarea
-          value={deliverable.description ?? ""}
-          onChange={(e) => onUpdate({ description: e.target.value })}
-          className="mt-1 min-h-24"
-          placeholder="Description du livrable..."
-        />
-      </div>
-
-      <div>
-        <Label className="text-xs text-muted-foreground">Version</Label>
-        <Input
-          value={deliverable.version ?? ""}
-          onChange={(e) => onUpdate({ version: e.target.value })}
-          className="mt-1"
-          placeholder="Ex: 1.0.0"
-        />
-      </div>
-
-      <div>
-        <Label className="text-xs text-muted-foreground">Statut</Label>
-        <div className="mt-1">
-          <button
-            type="button"
-            onClick={() => onUpdate({ done: !deliverable.done })}
-            className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
-              deliverable.done
-                ? "bg-green-500/10 text-green-600 hover:bg-green-500/20"
-                : "bg-muted text-muted-foreground hover:bg-muted/80"
-            }`}
-          >
-            {deliverable.done ? "✓ Livré" : "En cours"}
-          </button>
-        </div>
-      </div>
-
-      <RelationManager
-        itemId={deliverable.id}
-        projectId={deliverable.projectId}
-      />
-
-      <div className="pt-2 border-t">
-        <ConfirmDialog
-          trigger={
-            <Button variant="destructive" size="sm" className="w-full">
-              <Trash2 className="h-3 w-3 mr-1" />
-              Supprimer
-            </Button>
-          }
-          title="Supprimer le livrable"
-          description="Cette action est irréversible. Le livrable sera définitivement supprimé."
-          onConfirm={onDelete}
-        />
-      </div>
-    </div>
+    <DeliverableDetailContent
+      deliverable={deliverable}
+      onUpdate={(data) => updateDeliverable(deliverable.id, data)}
+      onDelete={() => {
+        deleteDeliverable(deliverable.id);
+        clear();
+      }}
+    />
   );
 }
 

@@ -4,19 +4,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Task } from "@/models/task";
-import { useAppStore } from "@/store";
-import { TaskDetailContent } from "./TaskDetailContent";
+import { useTask, useTaskActions } from "@/hooks/useTasks";
+import { TaskDetailContent } from "../shared/TaskDetailContent";
 
 interface CardDetailProps {
-  task: Task;
+  taskId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function CardDetail({ task, open, onOpenChange }: CardDetailProps) {
-  const updateTask = useAppStore((s) => s.updateTask);
-  const deleteTask = useAppStore((s) => s.deleteTask);
+export function CardDetail({ taskId, open, onOpenChange }: CardDetailProps) {
+  const task = useTask(taskId);
+  const { updateTask, deleteTask } = useTaskActions();
+
+  if (!task) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
