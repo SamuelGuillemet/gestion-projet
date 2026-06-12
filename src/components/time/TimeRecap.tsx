@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/button";
 import { useTimeActions } from "@/hooks/useTimeTracking";
+import { formatMinutes } from "@/lib/time";
 import { useTaskStore, useTimeStore } from "@/store";
 
 interface TimeRecapProps {
@@ -37,25 +38,19 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
     return map;
   }, [timeEntries]);
 
-  const formatTime = (mins: number) => {
-    const h = Math.floor(mins / 60);
-    const m = mins % 60;
-    return h > 0 ? `${h}h${m > 0 ? ` ${m}min` : ""}` : `${m}min`;
-  };
-
   return (
     <div>
-      <h3 className="font-medium text-sm mb-3">
-        Récapitulatif — Total : {formatTime(totalMinutes)}
+      <h3 className="mb-3 font-medium text-sm">
+        Récapitulatif - Total : {formatMinutes(totalMinutes)}
       </h3>
 
       {byTask.size > 0 && (
-        <div className="border rounded-md overflow-hidden mb-4">
+        <div className="mb-4 border rounded-md overflow-hidden">
           <table className="w-full text-sm">
             <thead className="bg-muted/50">
               <tr>
-                <th className="text-left p-2 font-medium">Tâche</th>
-                <th className="text-right p-2 font-medium">Temps</th>
+                <th className="p-2 font-medium text-left">Tâche</th>
+                <th className="p-2 font-medium text-right">Temps</th>
               </tr>
             </thead>
             <tbody>
@@ -64,7 +59,7 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
                   <td className="p-2">
                     {taskMap.get(tid) ?? "Tâche supprimée"}
                   </td>
-                  <td className="p-2 text-right">{formatTime(mins)}</td>
+                  <td className="p-2 text-right">{formatMinutes(mins)}</td>
                 </tr>
               ))}
             </tbody>
@@ -74,7 +69,7 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
 
       {timeEntries.length > 0 && (
         <div className="space-y-1">
-          <span className="text-xs text-muted-foreground">
+          <span className="text-muted-foreground text-xs">
             Entrées récentes
           </span>
           {timeEntries
@@ -84,20 +79,22 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
             .map((entry) => (
               <div
                 key={entry.id}
-                className="flex items-center gap-2 text-xs group"
+                className="group flex items-center gap-2 text-xs"
               >
-                <span className="text-muted-foreground w-20">{entry.date}</span>
+                <span className="w-20 text-muted-foreground">{entry.date}</span>
                 <span className="flex-1">
                   {taskMap.get(entry.taskId) ?? "?"}
                 </span>
-                <span className="font-medium">{formatTime(entry.minutes)}</span>
+                <span className="font-medium">
+                  {formatMinutes(entry.minutes)}
+                </span>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-5 w-5 opacity-0 group-hover:opacity-100"
+                  className="opacity-0 group-hover:opacity-100 w-5 h-5"
                   onClick={() => deleteTimeEntry(entry.id)}
                 >
-                  <Trash2 className="h-3 w-3" />
+                  <Trash2 className="w-3 h-3" />
                 </Button>
               </div>
             ))}

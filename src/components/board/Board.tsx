@@ -1,17 +1,18 @@
+import type { DragStartEvent } from "@dnd-kit/abstract";
+import { move } from "@dnd-kit/helpers";
 import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { BOARD_COLUMNS, DONE_COLUMN_ID } from "@/constants/board-columns";
 import { useProjects } from "@/hooks/useProjects";
-import { useTaskActions, useTaskIds } from "@/hooks/useTasks";
-import { useTaskStore } from "@/store";
+import { useTaskActions, useTaskColumnRecord } from "@/hooks/useTasks";
 import { Column } from "./Column";
 
 export function BoardPage() {
   const { activeProjectId } = useProjects();
-  const { addTask, moveTask, updateTask } = useTaskActions();
+  const tasks = useTaskColumnRecord(activeProjectId);
+  const { addTask, moveTask } = useTaskActions();
   const [newTaskTitle, setNewTaskTitle] = useState("");
 
   if (!activeProjectId) {
@@ -33,46 +34,7 @@ export function BoardPage() {
     setNewTaskTitle("");
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { operation, canceled } = event;
-    if (canceled) return;
-
-    const source = operation.source;
-    const target = operation.target;
-    if (!source || !target) return;
-
-    const taskId = source.id as string;
-    const overId = target.id as string;
-
-    // Dropped on a column
-    const targetColumn = BOARD_COLUMNS.find((c) => c.id === overId);
-    if (targetColumn) {
-      const columnTaskIds = useTaskStore
-        .getState()
-        .tasks.filter(
-          (t) =>
-            t.projectId === activeProjectId && t.columnId === targetColumn.id,
-        );
-      moveTask(taskId, targetColumn.id, columnTaskIds.length);
-      if (targetColumn.id === DONE_COLUMN_ID) {
-        updateTask(taskId, { done: true });
-      } else {
-        updateTask(taskId, { done: false });
-      }
-      return;
-    }
-
-    // Dropped on another task — move to same column
-    const overTask = useTaskStore.getState().tasks.find((t) => t.id === overId);
-    if (overTask) {
-      moveTask(taskId, overTask.columnId, overTask.order);
-      if (overTask.columnId === DONE_COLUMN_ID) {
-        updateTask(taskId, { done: true });
-      } else {
-        updateTask(taskId, { done: false });
-      }
-    }
-  };
+  const handleDragEnd = (event: DragEndEvent) => moveTask(move(tasks, event));
 
   return (
     <div className="flex flex-col gap-4 h-full">
@@ -90,28 +52,57 @@ export function BoardPage() {
         </Button>
       </div>
 
-      <DragDropProvider onDragEnd={handleDragEnd} onDragStart={() => {}}>
+      <DragDropWrapper onDragEnd={handleDragEnd}>
         <div className="flex flex-1 gap-4 p-2 overflow-x-auto">
-          {BOARD_COLUMNS.map((column) => (
-            <ColumnContainer
-              key={column.id}
-              column={column}
-              projectId={activeProjectId}
-            />
-          ))}
+          {Object.entries(tasks).map(([columnId, taskIds]) => {
+            return (
+              <Column key={columnId} columnId={columnId} taskIds={taskIds} />
+            );
+          })}
         </div>
-      </DragDropProvider>
+      </DragDropWrapper>
     </div>
   );
 }
 
-function ColumnContainer({
-  column,
-  projectId,
+/**
+ * Encapslate logic related to DnD state management and workarounds for DOM mutations.
+ */
+function DragDropWrapper({
+  children,
+  onDragEnd,
 }: {
-  column: (typeof BOARD_COLUMNS)[number];
-  projectId: string;
+  children: React.ReactNode;
+  onDragEnd: (event: DragEndEvent) => void;
 }) {
-  const taskIds = useTaskIds(projectId, column.id);
-  return <Column column={column} taskIds={taskIds} />;
+  const sourceParentRef = useRef<Element | null>(null);
+
+  const handleDragStart = (event: DragStartEvent) => {
+    sourceParentRef.current =
+      // @ts-expect-error Accessing internal property to get the source parent element
+      event.operation.source?.element?.parentElement || null;
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const sourceElement = event.operation.source?.element;
+    const prevParent = sourceParentRef.current;
+    sourceParentRef.current = null;
+    if (
+      sourceElement &&
+      prevParent &&
+      sourceElement.parentElement !== prevParent
+    ) {
+      prevParent.appendChild(sourceElement);
+    }
+
+    if (!event.canceled) {
+      onDragEnd(event);
+    }
+  };
+
+  return (
+    <DragDropProvider onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      {children}
+    </DragDropProvider>
+  );
 }

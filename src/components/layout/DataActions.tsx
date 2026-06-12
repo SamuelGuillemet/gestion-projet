@@ -80,7 +80,7 @@ export function DataActions() {
           );
         }
 
-        window.location.reload();
+        globalThis.location.reload();
       } catch {
         alert("Fichier invalide");
       }
@@ -97,7 +97,7 @@ export function DataActions() {
         onClick={handleExport}
         title="Exporter les données"
       >
-        <Download className="h-4 w-4" />
+        <Download className="w-4 h-4" />
       </Button>
       <Button
         variant="ghost"
@@ -105,7 +105,7 @@ export function DataActions() {
         onClick={() => fileInputRef.current?.click()}
         title="Importer des données"
       >
-        <Upload className="h-4 w-4" />
+        <Upload className="w-4 h-4" />
       </Button>
       <input
         ref={fileInputRef}

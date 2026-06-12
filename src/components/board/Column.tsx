@@ -1,14 +1,23 @@
+import { CollisionPriority } from "@dnd-kit/abstract";
 import { useDroppable } from "@dnd-kit/react";
-import type { BoardColumn } from "@/constants/board-columns";
+import { BOARD_COLUMNS, type BoardColumnId } from "@/constants/board-columns";
 import { SortableCard } from "./Card";
 
 interface ColumnProps {
-  column: BoardColumn;
+  columnId: BoardColumnId;
   taskIds: string[];
 }
 
-export function Column({ column, taskIds }: ColumnProps) {
-  const droppable = useDroppable({ id: column.id });
+export function Column({ columnId, taskIds }: ColumnProps) {
+  const droppable = useDroppable({
+    id: columnId,
+    type: "column",
+    accept: "item",
+    collisionPriority: CollisionPriority.Low,
+  });
+
+  const column = BOARD_COLUMNS.find((col) => col.id === columnId);
+  if (!column) return null;
 
   return (
     <div
@@ -37,7 +46,12 @@ export function Column({ column, taskIds }: ColumnProps) {
 
       <div className="flex-1 space-y-2.5 p-3 overflow-y-auto">
         {taskIds.map((id, index) => (
-          <SortableCard key={id} taskId={id} index={index} />
+          <SortableCard
+            key={id}
+            taskId={id}
+            index={index}
+            columnId={column.id}
+          />
         ))}
         {taskIds.length === 0 && (
           <div className="py-10 border border-border/30 border-dashed rounded-xl text-muted-foreground/40 text-xs text-center">

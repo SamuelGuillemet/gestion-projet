@@ -38,6 +38,12 @@ const RELATION_STYLES: Record<
   },
 };
 
+const TYPE_LABELS: Record<string, string> = {
+  task: "Tâche",
+  question: "Question",
+  deliverable: "Livrable",
+};
+
 interface RelationManagerProps {
   itemId: string;
   projectId: string;
@@ -107,15 +113,15 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <Label className="text-xs text-muted-foreground">Relations</Label>
+      <div className="flex justify-between items-center">
+        <Label className="text-muted-foreground text-xs">Relations</Label>
         <Button
           variant="ghost"
           size="icon"
-          className="h-5 w-5"
+          className="w-5 h-5"
           onClick={() => setAdding(!adding)}
         >
-          {adding ? <X className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
+          {adding ? <X className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
         </Button>
       </div>
 
@@ -138,25 +144,19 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
                 <span className={`font-medium shrink-0 ${style.color}`}>
                   {RELATION_LABELS[displayType]}
                 </span>
-                <span className="truncate flex-1 font-medium text-foreground">
+                <span className="flex-1 font-medium text-foreground truncate">
                   {other.label}
                 </span>
-                <span className="text-[10px] text-muted-foreground bg-white/80 px-1.5 py-0.5 rounded border">
-                  {other.type === "task"
-                    ? "Tâche"
-                    : other.type === "question"
-                      ? "Question"
-                      : other.type === "deliverable"
-                        ? "Livrable"
-                        : "Inconnu"}
+                <span className="bg-white/80 px-1.5 py-0.5 border rounded text-[10px] text-muted-foreground">
+                  {TYPE_LABELS[other.type] || "Inconnu"}
                 </span>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                  className="opacity-0 group-hover:opacity-100 w-5 h-5 transition-opacity shrink-0"
                   onClick={() => deleteRelation(rel.id)}
                 >
-                  <Trash2 className="h-3 w-3" />
+                  <Trash2 className="w-3 h-3" />
                 </Button>
               </div>
             );
@@ -166,7 +166,7 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
 
       {/* Add relation form */}
       {adding && (
-        <div className="mt-2 p-2 border rounded-md space-y-2 bg-card">
+        <div className="space-y-2 bg-card mt-2 p-2 border rounded-md">
           <div className="flex flex-wrap gap-1">
             {(Object.entries(RELATION_LABELS) as [RelationType, string][]).map(
               ([value, label]) => {
@@ -183,7 +183,7 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
                         : "bg-muted text-muted-foreground hover:bg-muted/80 border-transparent"
                     }`}
                   >
-                    <Icon className="h-3 w-3" />
+                    <Icon className="w-3 h-3" />
                     {label}
                   </button>
                 );
@@ -195,7 +195,7 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Rechercher..."
-              className="h-7 text-xs flex-1"
+              className="flex-1 h-7 text-xs"
               autoFocus
             />
             <select
@@ -203,7 +203,7 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
               onChange={(e) =>
                 setTypeFilter(e.target.value as typeof typeFilter)
               }
-              className="h-7 text-xs rounded-md border border-input bg-background px-2"
+              className="bg-background px-2 border border-input rounded-md h-7 text-xs"
             >
               <option value="all">Tous</option>
               <option value="task">Tâches</option>
@@ -211,26 +211,22 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
               <option value="deliverable">Livrables</option>
             </select>
           </div>
-          <div className="max-h-32 overflow-y-auto space-y-0.5">
+          <div className="space-y-0.5 max-h-32 overflow-y-auto">
             {filteredItems.map((item) => (
               <button
                 key={item.id}
                 type="button"
                 onClick={() => handleAdd(item.id)}
-                className="flex items-center gap-2 w-full text-left px-2 py-1 rounded text-xs hover:bg-muted/50 transition-colors"
+                className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded w-full text-xs text-left transition-colors"
               >
-                <span className="truncate flex-1">{item.label}</span>
-                <span className="text-[10px] text-muted-foreground bg-muted px-1 rounded shrink-0">
-                  {item.type === "task"
-                    ? "Tâche"
-                    : item.type === "question"
-                      ? "Question"
-                      : "Livrable"}
+                <span className="flex-1 truncate">{item.label}</span>
+                <span className="bg-muted px-1 rounded text-[10px] text-muted-foreground shrink-0">
+                  {TYPE_LABELS[item.type] || "Inconnu"}
                 </span>
               </button>
             ))}
             {filteredItems.length === 0 && (
-              <p className="text-[10px] text-muted-foreground text-center py-2">
+              <p className="py-2 text-[10px] text-muted-foreground text-center">
                 Aucun élément trouvé.
               </p>
             )}
@@ -239,7 +235,7 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
       )}
 
       {itemRelations.length === 0 && !adding && (
-        <p className="text-[10px] text-muted-foreground mt-1">
+        <p className="mt-1 text-[10px] text-muted-foreground">
           Aucune relation.
         </p>
       )}

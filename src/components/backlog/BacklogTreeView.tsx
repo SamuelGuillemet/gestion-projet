@@ -29,13 +29,14 @@ import {
 } from "@/hooks/useNotes";
 import { useProjects } from "@/hooks/useProjects";
 import { useTask, useTaskActions, useTaskIds } from "@/hooks/useTasks";
+import { cn } from "@/lib/utils";
 import { useTagStore } from "@/store";
 
 // --- Local UI store for backlog selection (avoids parent re-renders) ---
 type DetailSelection =
-  | { type: "task"; id: string }
-  | { type: "question"; id: string }
-  | { type: "deliverable"; id: string }
+  | { type: "tasks"; id: string }
+  | { type: "questions"; id: string }
+  | { type: "deliverables"; id: string }
   | null;
 
 interface BacklogUIState {
@@ -84,7 +85,7 @@ export function BacklogPage() {
 
   if (!activeProjectId) {
     return (
-      <div className="flex items-center justify-center h-full text-muted-foreground">
+      <div className="flex justify-center items-center h-full text-muted-foreground">
         Sélectionnez ou créez un projet pour commencer.
       </div>
     );
@@ -96,31 +97,31 @@ export function BacklogPage() {
   const handleAdd = (section: Section) => {
     const value = newItems[section].trim();
     if (!value) return;
-    let id: string | undefined;
-    if (section === "tasks") id = addTask(activeProjectId, value);
-    if (section === "questions") id = addQuestion(activeProjectId, value);
-    if (section === "deliverables") id = addDeliverable(activeProjectId, value);
+    const action: Record<
+      Section,
+      (projectId: string, value: string) => string
+    > = {
+      tasks: addTask,
+      questions: addQuestion,
+      deliverables: addDeliverable,
+    };
+    const id = action[section](activeProjectId, value);
     setNewItems((prev) => ({ ...prev, [section]: "" }));
     if (id)
       select({
-        type:
-          section === "tasks"
-            ? "task"
-            : section === "questions"
-              ? "question"
-              : "deliverable",
+        type: section,
         id,
       });
   };
 
   return (
-    <div className="h-[calc(100vh-100px)] flex gap-4">
+    <div className="flex gap-4 h-[calc(100vh-100px)]">
       {/* Left panel: list */}
-      <div className="flex-1 overflow-y-auto space-y-4 min-w-0">
+      <div className="flex-1 space-y-4 min-w-0 overflow-y-auto">
         {/* Tag filter */}
         {tags.length > 0 && (
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs text-muted-foreground font-medium">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-medium text-muted-foreground text-xs">
               Filtrer :
             </span>
             {tags.map((tag) => (
@@ -137,7 +138,7 @@ export function BacklogPage() {
                 }`}
               >
                 <span
-                  className="h-2 w-2 rounded-full"
+                  className="rounded-full w-2 h-2"
                   style={{ backgroundColor: tag.color }}
                 />
                 {tag.name}
@@ -147,9 +148,9 @@ export function BacklogPage() {
               <button
                 type="button"
                 onClick={() => setFilterTag(null)}
-                className="text-xs text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground text-xs"
               >
-                <X className="h-3 w-3" />
+                <X className="w-3 h-3" />
               </button>
             )}
           </div>
@@ -237,18 +238,18 @@ function TreeSection({
     <div className="border rounded-lg overflow-hidden">
       <button
         type="button"
-        className="flex items-center gap-2 w-full p-3 hover:bg-muted/50 transition-colors"
+        className="flex items-center gap-2 hover:bg-muted/50 p-3 w-full transition-colors"
         onClick={onToggle}
       >
         <span className={`h-2 w-2 rounded-full ${accentColor}`} />
         {expanded ? (
-          <ChevronDown className="h-4 w-4" />
+          <ChevronDown className="w-4 h-4" />
         ) : (
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="w-4 h-4" />
         )}
         <span className="font-medium text-sm">{title}</span>
       </button>
-      {expanded && <div className="p-3 space-y-0.5">{children}</div>}
+      {expanded && <div className="space-y-0.5 p-3">{children}</div>}
     </div>
   );
 }
@@ -263,7 +264,7 @@ function TaskRow({
   filterTag: string | null;
 }) {
   const task = useTask(taskId);
-  const { updateTask, deleteTask } = useTaskActions();
+  const { deleteTask } = useTaskActions();
   const tags = useTagStore(useShallow((s) => s.tags));
   const selected = useBacklogUI((s) => s.selectedDetail?.id === taskId);
   const select = useBacklogUI((s) => s.select);
@@ -275,32 +276,25 @@ function TaskRow({
 
   const taskTags = tags.filter((t) => task.tags.includes(t.id));
 
+  const onSelect = () => select({ type: "tasks", id: taskId });
+
   return (
     <div
       className={`flex items-center gap-2 pl-4 pr-2 py-2 group rounded-md cursor-pointer transition-colors ${
         selected ? "bg-primary/5 border border-primary/20" : "hover:bg-muted/30"
       }`}
-      onClick={() => select({ type: "task", id: taskId })}
-      onKeyDown={(e) =>
-        e.key === "Enter" && select({ type: "task", id: taskId })
-      }
+      onClick={onSelect}
+      onKeyDown={(e) => e.key === "Enter" && onSelect()}
       role="button"
       tabIndex={0}
     >
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation();
-          updateTask(task.id, { done: !task.done });
-        }}
-        className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
-      >
+      <span className="text-muted-foreground shrink-0">
         {task.done ? (
-          <CheckCircle2 className="h-4 w-4 text-green-500" />
+          <CheckCircle2 className="w-4 h-4 text-green-500" />
         ) : (
-          <Circle className="h-4 w-4" />
+          <Circle className="w-4 h-4" />
         )}
-      </button>
+      </span>
       <span
         className={`text-sm flex-1 truncate ${task.done ? "line-through text-muted-foreground" : ""}`}
       >
@@ -317,14 +311,14 @@ function TaskRow({
       <Button
         variant="ghost"
         size="icon"
-        className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+        className="opacity-0 group-hover:opacity-100 w-6 h-6 transition-opacity shrink-0"
         onClick={(e) => {
           e.stopPropagation();
           deleteTask(taskId);
           clearIfSelected(taskId);
         }}
       >
-        <Trash2 className="h-3 w-3" />
+        <Trash2 className="w-3 h-3" />
       </Button>
     </div>
   );
@@ -339,6 +333,8 @@ function QuestionRow({ questionId }: { questionId: string }) {
   const select = useBacklogUI((s) => s.select);
   const clearIfSelected = useBacklogUI((s) => s.clearIfSelected);
 
+  const onSelect = () => select({ type: "questions", id: questionId });
+
   if (!question) return null;
 
   return (
@@ -346,23 +342,30 @@ function QuestionRow({ questionId }: { questionId: string }) {
       className={`flex items-center gap-2 pl-4 pr-2 py-2 group rounded-md cursor-pointer transition-colors ${
         selected ? "bg-primary/5 border border-primary/20" : "hover:bg-muted/30"
       }`}
-      onClick={() => select({ type: "question", id: questionId })}
-      onKeyDown={(e) =>
-        e.key === "Enter" && select({ type: "question", id: questionId })
-      }
+      onClick={onSelect}
+      onKeyDown={(e) => e.key === "Enter" && onSelect()}
       role="button"
       tabIndex={0}
     >
       <HelpCircle
-        className={`h-4 w-4 shrink-0 ${question.status === "resolved" ? "text-green-500" : question.status === "pending" ? "text-amber-500" : "text-muted-foreground"}`}
+        className={cn(
+          "w-4 h-4 shrink-0",
+          question.status === "resolved" && "text-green-500",
+          question.status === "pending" && "text-amber-500",
+          question.status === "to-ask" && "text-muted-foreground",
+        )}
       />
       <span
-        className={`text-sm flex-1 truncate ${question.status === "resolved" ? "line-through text-muted-foreground" : ""}`}
+        className={cn(
+          "flex-1 text-sm truncate",
+          question.status === "resolved" &&
+            "line-through text-muted-foreground",
+        )}
       >
         {question.title}
       </span>
       {question.recipient && (
-        <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded truncate max-w-48">
+        <span className="bg-muted px-1.5 py-0.5 rounded max-w-48 text-[10px] text-muted-foreground truncate">
           → {question.recipient}
         </span>
       )}
@@ -370,14 +373,14 @@ function QuestionRow({ questionId }: { questionId: string }) {
       <Button
         variant="ghost"
         size="icon"
-        className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+        className="opacity-0 group-hover:opacity-100 w-6 h-6 transition-opacity shrink-0"
         onClick={(e) => {
           e.stopPropagation();
           deleteQuestion(questionId);
           clearIfSelected(questionId);
         }}
       >
-        <Trash2 className="h-3 w-3" />
+        <Trash2 className="w-3 h-3" />
       </Button>
     </div>
   );
@@ -394,41 +397,41 @@ function DeliverableRow({ deliverableId }: { deliverableId: string }) {
 
   if (!deliverable) return null;
 
+  const onSelect = () => select({ type: "deliverables", id: deliverableId });
+
   return (
     <div
       className={`flex items-center gap-2 pl-4 pr-2 py-2 group rounded-md cursor-pointer transition-colors ${
         selected ? "bg-primary/5 border border-primary/20" : "hover:bg-muted/30"
       }`}
-      onClick={() => select({ type: "deliverable", id: deliverableId })}
-      onKeyDown={(e) =>
-        e.key === "Enter" && select({ type: "deliverable", id: deliverableId })
-      }
+      onClick={onSelect}
+      onKeyDown={(e) => e.key === "Enter" && onSelect()}
       role="button"
       tabIndex={0}
     >
-      <Package className="h-4 w-4 text-emerald-500 shrink-0" />
-      <span className="text-sm flex-1 truncate">{deliverable.title}</span>
+      <Package className="w-4 h-4 text-emerald-500 shrink-0" />
+      <span className="flex-1 text-sm truncate">{deliverable.title}</span>
       {deliverable.version && (
-        <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+        <span className="bg-muted px-1.5 py-0.5 rounded text-[10px] text-muted-foreground">
           {deliverable.version}
         </span>
       )}
       {deliverable.type && (
-        <span className="text-[10px] bg-emerald-500/10 text-emerald-600 px-1.5 py-0.5 rounded">
+        <span className="bg-emerald-500/10 px-1.5 py-0.5 rounded text-[10px] text-emerald-600">
           {deliverable.type}
         </span>
       )}
       <Button
         variant="ghost"
         size="icon"
-        className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+        className="opacity-0 group-hover:opacity-100 w-6 h-6 transition-opacity shrink-0"
         onClick={(e) => {
           e.stopPropagation();
           deleteDeliverable(deliverableId);
           clearIfSelected(deliverableId);
         }}
       >
-        <Trash2 className="h-3 w-3" />
+        <Trash2 className="w-3 h-3" />
       </Button>
     </div>
   );
@@ -443,20 +446,20 @@ function DetailPanel() {
   if (!selectedDetail) return null;
 
   return (
-    <div className="w-150 border-l p-4 overflow-y-auto">
+    <div className="p-4 border-l w-150 overflow-y-auto">
       <div className="flex justify-between items-center mb-4">
         <h3 className="font-semibold text-sm">Détail</h3>
-        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={clear}>
-          <X className="h-4 w-4" />
+        <Button variant="ghost" size="icon" className="w-6 h-6" onClick={clear}>
+          <X className="w-4 h-4" />
         </Button>
       </div>
-      {selectedDetail.type === "task" && (
+      {selectedDetail.type === "tasks" && (
         <TaskDetailPanel taskId={selectedDetail.id} />
       )}
-      {selectedDetail.type === "question" && (
+      {selectedDetail.type === "questions" && (
         <QuestionDetailPanel questionId={selectedDetail.id} />
       )}
-      {selectedDetail.type === "deliverable" && (
+      {selectedDetail.type === "deliverables" && (
         <DeliverableDetailPanel deliverableId={selectedDetail.id} />
       )}
     </div>
@@ -540,7 +543,7 @@ function AddItemRow({
   placeholder: string;
 }) {
   return (
-    <div className="flex items-center gap-2 pl-4 pt-2">
+    <div className="flex items-center gap-2 pt-2 pl-4">
       <Input
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -551,10 +554,10 @@ function AddItemRow({
       <Button
         variant="ghost"
         size="icon"
-        className="h-8 w-8 shrink-0"
+        className="w-8 h-8 shrink-0"
         onClick={onAdd}
       >
-        <Plus className="h-4 w-4" />
+        <Plus className="w-4 h-4" />
       </Button>
     </div>
   );

@@ -1,5 +1,9 @@
 import type { StateCreator } from "zustand";
-import { BOARD_COLUMNS } from "@/constants/board-columns";
+import {
+  BOARD_COLUMNS,
+  type BoardColumnId,
+  DONE_COLUMN_ID,
+} from "@/constants/board-columns";
 import { generateId } from "@/lib/utils";
 import type { Task } from "@/models/task";
 
@@ -11,8 +15,7 @@ export interface TaskSlice {
     data: Partial<Omit<Task, "id" | "projectId">>,
   ) => void;
   deleteTask: (id: string) => void;
-  moveTask: (id: string, columnId: string, order: number) => void;
-  reorderTasks: (columnId: string, orderedIds: string[]) => void;
+  dndTasks: (newState: Record<BoardColumnId, string[]>) => void;
 }
 
 export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
@@ -55,19 +58,20 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
       tasks: state.tasks.filter((t) => t.id !== id),
     })),
 
-  moveTask: (id, columnId, order) =>
-    set((state) => ({
-      tasks: state.tasks.map((t) =>
-        t.id === id ? { ...t, columnId, order } : t,
-      ),
-    })),
-
-  reorderTasks: (columnId, orderedIds) =>
+  dndTasks: (newState) =>
     set((state) => ({
       tasks: state.tasks.map((t) => {
-        if (t.columnId !== columnId) return t;
-        const newOrder = orderedIds.indexOf(t.id);
-        return newOrder >= 0 ? { ...t, order: newOrder } : t;
+        const columnId = Object.keys(newState).find((colId) =>
+          newState[colId].includes(t.id),
+        );
+        if (!columnId) return t;
+        const newOrder = newState[columnId].indexOf(t.id);
+        return {
+          ...t,
+          columnId,
+          order: newOrder,
+          done: columnId === DONE_COLUMN_ID,
+        };
       }),
     })),
 });

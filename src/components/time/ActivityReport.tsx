@@ -9,47 +9,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { formatMinutes, reportByDateAndProject } from "@/lib/time";
 import { useProjectStore, useTimeStore } from "@/store";
-
-function formatMinutes(minutes: number): string {
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  if (h === 0) return `${m}min`;
-  if (m === 0) return `${h}h`;
-  return `${h}h${m.toString().padStart(2, "0")}`;
-}
 
 export function ActivityReport() {
   const [open, setOpen] = useState(false);
   const timeEntries = useTimeStore(useShallow((s) => s.timeEntries));
   const projects = useProjectStore(useShallow((s) => s.projects));
 
-  const report = useMemo(() => {
-    const byDate: Record<string, Record<string, number>> = {};
-
-    for (const entry of timeEntries) {
-      if (!byDate[entry.date]) byDate[entry.date] = {};
-      if (!byDate[entry.date][entry.projectId])
-        byDate[entry.date][entry.projectId] = 0;
-      byDate[entry.date][entry.projectId] += entry.minutes;
-    }
-
-    const dates = Object.keys(byDate).sort((a, b) => b.localeCompare(a));
-
-    return dates.map((date) => ({
-      date,
-      projects: Object.entries(byDate[date]).map(([projectId, minutes]) => {
-        const project = projects.find((p) => p.id === projectId);
-        return {
-          projectId,
-          projectName: project?.name ?? "Projet supprimé",
-          projectColor: project?.color ?? "#888",
-          minutes,
-        };
-      }),
-      total: Object.values(byDate[date]).reduce((sum, m) => sum + m, 0),
-    }));
-  }, [timeEntries, projects]);
+  const report = useMemo(
+    () => reportByDateAndProject(timeEntries, projects),
+    [timeEntries, projects],
+  );
 
   const grandTotal = useMemo(
     () => timeEntries.reduce((sum, e) => sum + e.minutes, 0),
@@ -58,9 +29,9 @@ export function ActivityReport() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<span className="w-full" />}>
+      <DialogTrigger render={<span className="w-full" />} nativeButton={false}>
         <Button variant="outline" size="sm" className="gap-1.5">
-          <BarChart3 className="h-4 w-4" />
+          <BarChart3 className="w-4 h-4" />
           Rapport
         </Button>
       </DialogTrigger>
@@ -70,18 +41,18 @@ export function ActivityReport() {
         </DialogHeader>
 
         {report.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-4">
+          <p className="py-4 text-muted-foreground text-sm">
             Aucune entrée de temps enregistrée.
           </p>
         ) : (
           <div className="space-y-4">
-            <div className="text-sm text-muted-foreground">
+            <div className="text-muted-foreground text-sm">
               Total général : <strong>{formatMinutes(grandTotal)}</strong>
             </div>
 
             <div className="space-y-3">
               {report.map(({ date, projects: dayProjects, total }) => (
-                <div key={date} className="border rounded-lg p-3">
+                <div key={date} className="p-3 border rounded-lg">
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-medium text-sm">
                       {new Date(date).toLocaleDateString("fr-FR", {
@@ -91,7 +62,7 @@ export function ActivityReport() {
                         day: "numeric",
                       })}
                     </span>
-                    <span className="text-xs font-semibold text-muted-foreground">
+                    <span className="font-semibold text-muted-foreground text-xs">
                       {formatMinutes(total)}
                     </span>
                   </div>
@@ -99,11 +70,11 @@ export function ActivityReport() {
                     {dayProjects.map((p) => (
                       <div
                         key={p.projectId}
-                        className="flex items-center justify-between text-sm"
+                        className="flex justify-between items-center text-sm"
                       >
                         <div className="flex items-center gap-2">
                           <span
-                            className="h-2.5 w-2.5 rounded-full"
+                            className="rounded-full w-2.5 h-2.5"
                             style={{ backgroundColor: p.projectColor }}
                           />
                           <span>{p.projectName}</span>

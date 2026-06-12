@@ -6,7 +6,7 @@ export interface ProjectSlice {
   projects: Project[];
   activeProjectId: string | null;
   setActiveProject: (id: string | null) => void;
-  addProject: (name: string, color: string) => void;
+  addProject: (name: string, color: string) => string;
   updateProject: (
     id: string,
     data: Partial<Pick<Project, "name" | "color">>,
@@ -25,19 +25,22 @@ export const createProjectSlice: StateCreator<
 
   setActiveProject: (id) => set({ activeProjectId: id }),
 
-  addProject: (name, color) =>
+  addProject: (name, color) => {
+    const id = generateId();
     set((state) => ({
       projects: [
         ...state.projects,
         {
-          id: generateId(),
+          id,
           name,
           color,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
       ],
-    })),
+    }));
+    return id;
+  },
 
   updateProject: (id, data) =>
     set((state) => ({

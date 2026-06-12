@@ -43,10 +43,11 @@ export function ProjectSelector() {
 
   const handleCreate = () => {
     if (!newName.trim()) return;
-    addProject(newName.trim(), newColor);
+    const id = addProject(newName.trim(), newColor);
     setNewName("");
     setNewColor(PROJECT_COLORS[0]);
     setOpen(false);
+    setActiveProject(id);
   };
 
   return (
@@ -54,11 +55,11 @@ export function ProjectSelector() {
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
-            <Button variant="outline" className="w-[200px] justify-between">
+            <Button variant="outline" className="justify-between w-50">
               {activeProject ? (
                 <span className="flex items-center gap-2 truncate">
                   <span
-                    className="h-2.5 w-2.5 rounded-full shrink-0"
+                    className="rounded-full w-2.5 h-2.5 shrink-0"
                     style={{ backgroundColor: activeProject.color }}
                   />
                   <span className="truncate">{activeProject.name}</span>
@@ -66,11 +67,11 @@ export function ProjectSelector() {
               ) : (
                 <span className="text-muted-foreground">Choisir un projet</span>
               )}
-              <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
+              <ChevronDown className="opacity-50 w-4 h-4 shrink-0" />
             </Button>
           }
         />
-        <DropdownMenuContent align="end" className="w-[200px]">
+        <DropdownMenuContent align="end" className="w-50">
           {projects.map((p) => (
             <DropdownMenuItem
               key={p.id}
@@ -78,7 +79,7 @@ export function ProjectSelector() {
               className={activeProjectId === p.id ? "bg-accent" : ""}
             >
               <span
-                className="h-2.5 w-2.5 rounded-full shrink-0"
+                className="rounded-full w-2.5 h-2.5 shrink-0"
                 style={{ backgroundColor: p.color }}
               />
               <span className="truncate">{p.name}</span>
@@ -94,7 +95,7 @@ export function ProjectSelector() {
         <DialogTrigger
           render={
             <Button size="icon" className="shrink-0">
-              <Plus className="h-4 w-4" />
+              <Plus className="w-4 h-4" />
             </Button>
           }
         />

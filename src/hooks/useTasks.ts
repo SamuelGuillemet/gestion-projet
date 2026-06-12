@@ -1,23 +1,37 @@
+import { useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
+import { getEmptyRecordOfColumns } from "@/constants/board-columns";
 import { useTaskStore } from "@/store";
 
 /**
- * Returns the list of task IDs for a project, optionally filtered by column.
+ * Returns the list of task IDs for a project
  * Only re-renders when IDs are added/removed/reordered — not when task content changes.
+ * Sort first by column order, then by task order within each column.
  */
-export function useTaskIds(projectId: string | null, columnId?: string) {
+export function useTaskIds(projectId: string | null) {
   return useTaskStore(
     useShallow((s) =>
-      s.tasks
-        .filter(
-          (t) =>
-            t.projectId === projectId &&
-            (columnId == null || t.columnId === columnId),
-        )
-        .sort((a, b) => a.order - b.order)
-        .map((t) => t.id),
+      s.tasks.filter((t) => t.projectId === projectId).map((t) => t.id),
     ),
   );
+}
+
+export function useTaskColumnRecord(projectId: string | null) {
+  const tasks = useTaskStore(
+    useShallow((s) =>
+      s.tasks
+        .filter((t) => t.projectId === projectId)
+        .sort((a, b) => a.order - b.order),
+    ),
+  );
+
+  return useMemo(() => {
+    const record = getEmptyRecordOfColumns();
+    for (const task of tasks) {
+      record[task.columnId].push(task.id);
+    }
+    return record;
+  }, [tasks]);
 }
 
 /**
@@ -35,7 +49,6 @@ export function useTaskActions() {
   const addTask = useTaskStore((s) => s.addTask);
   const updateTask = useTaskStore((s) => s.updateTask);
   const deleteTask = useTaskStore((s) => s.deleteTask);
-  const moveTask = useTaskStore((s) => s.moveTask);
-  const reorderTasks = useTaskStore((s) => s.reorderTasks);
-  return { addTask, updateTask, deleteTask, moveTask, reorderTasks };
+  const moveTask = useTaskStore((s) => s.dndTasks);
+  return { addTask, updateTask, deleteTask, moveTask };
 }

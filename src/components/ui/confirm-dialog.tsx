@@ -29,7 +29,7 @@ export function ConfirmDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<span className="w-full" />}>
+      <DialogTrigger render={<span className="w-full" />} nativeButton={false}>
         {trigger}
       </DialogTrigger>
       <DialogContent showCloseButton={false}>

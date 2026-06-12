@@ -1,3 +1,4 @@
+import { TaskDetailContent } from "@/components/shared/TaskDetailContent";
 import {
   Dialog,
   DialogContent,
@@ -5,7 +6,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useTask, useTaskActions } from "@/hooks/useTasks";
-import { TaskDetailContent } from "../shared/TaskDetailContent";
 
 interface CardDetailProps {
   taskId: string;

@@ -2,10 +2,10 @@ import { useSortable } from "@dnd-kit/react/sortable";
 import { CheckCircle2, Circle, GripVertical } from "lucide-react";
 import { useState } from "react";
 import { useShallow } from "zustand/react/shallow";
+import { TagBadge } from "@/components/shared/TagBadge";
 import { DONE_COLUMN_ID, TODO_COLUMN_ID } from "@/constants/board-columns";
 import { useTask, useTaskActions } from "@/hooks/useTasks";
 import { useTagStore } from "@/store";
-import { TagBadge } from "../shared/TagBadge";
 import { CardDetail } from "./CardDetail";
 
 interface CardProps {
@@ -16,7 +16,7 @@ interface CardProps {
 export function Card({ taskId, isDragging }: CardProps) {
   const task = useTask(taskId);
   const tags = useTagStore(useShallow((s) => s.tags));
-  const { updateTask, moveTask } = useTaskActions();
+  const { updateTask } = useTaskActions();
   const [detailOpen, setDetailOpen] = useState(false);
 
   if (!task) return null;
@@ -26,12 +26,10 @@ export function Card({ taskId, isDragging }: CardProps) {
   const handleToggleDone = (e: React.MouseEvent) => {
     e.stopPropagation();
     const newDone = !task.done;
-    updateTask(task.id, { done: newDone });
-    if (newDone && task.columnId !== DONE_COLUMN_ID) {
-      moveTask(task.id, DONE_COLUMN_ID, 0);
-    } else if (!newDone && task.columnId === DONE_COLUMN_ID) {
-      moveTask(task.id, TODO_COLUMN_ID, 0);
-    }
+    updateTask(task.id, {
+      done: newDone,
+      columnId: newDone ? DONE_COLUMN_ID : TODO_COLUMN_ID,
+    });
   };
 
   return (
@@ -91,11 +89,19 @@ export function Card({ taskId, isDragging }: CardProps) {
 export function SortableCard({
   taskId,
   index,
+  columnId,
 }: {
   taskId: string;
   index: number;
+  columnId: string;
 }) {
-  const sortable = useSortable({ id: taskId, index });
+  const sortable = useSortable({
+    id: taskId,
+    index,
+    type: "item",
+    accept: "item",
+    group: columnId,
+  });
 
   return (
     <div ref={sortable.ref}>
