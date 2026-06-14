@@ -1,11 +1,11 @@
 import { useSortable } from "@dnd-kit/react/sortable";
 import { CheckCircle2, Circle, GripVertical } from "lucide-react";
 import { useState } from "react";
-import { useShallow } from "zustand/react/shallow";
 import { TagBadge } from "@/components/shared/TagBadge";
 import { DONE_COLUMN_ID, TODO_COLUMN_ID } from "@/constants/board-columns";
+import { useTags } from "@/hooks/useTags";
 import { useTask, useTaskActions } from "@/hooks/useTasks";
-import { useTagStore } from "@/store";
+import { cn } from "@/lib/utils";
 import { CardDetail } from "./CardDetail";
 
 interface CardProps {
@@ -15,7 +15,7 @@ interface CardProps {
 
 export function Card({ taskId, isDragging }: CardProps) {
   const task = useTask(taskId);
-  const tags = useTagStore(useShallow((s) => s.tags));
+  const { tags } = useTags();
   const { updateTask } = useTaskActions();
   const [detailOpen, setDetailOpen] = useState(false);
 
@@ -37,9 +37,13 @@ export function Card({ taskId, isDragging }: CardProps) {
       <div
         role="button"
         tabIndex={0}
-        className={`group rounded-lg border bg-card p-3 shadow-sm cursor-pointer hover:shadow-md hover:border-primary/30 transition-all ${
-          isDragging ? "opacity-60 rotate-1 shadow-lg" : ""
-        } ${task.done ? "opacity-70" : ""}`}
+        className={cn(
+          "group bg-card shadow-sm hover:shadow-md p-3 border hover:border-primary/30 rounded-lg transition-all cursor-pointer",
+          {
+            "opacity-60 rotate-1 shadow-lg": isDragging,
+            "opacity-70": task.done,
+          },
+        )}
         onClick={() => setDetailOpen(true)}
         onKeyDown={(e) => e.key === "Enter" && setDetailOpen(true)}
       >

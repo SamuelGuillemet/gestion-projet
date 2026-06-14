@@ -44,7 +44,7 @@ export function Column({ columnId, taskIds }: ColumnProps) {
         </span>
       </div>
 
-      <div className="flex-1 space-y-2.5 p-3 overflow-y-auto">
+      <div className="flex-1 space-y-2.5 p-3 overflow-hidden">
         {taskIds.map((id, index) => (
           <SortableCard
             key={id}

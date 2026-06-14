@@ -1,6 +1,5 @@
 import { Check, Pencil, Plus, Tags, Trash2, X } from "lucide-react";
 import { useState } from "react";
-import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,16 +9,18 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useTagStore } from "@/store";
+import { useTags } from "@/hooks/useTags";
+
+const generateRandomHex = () =>
+  `#${Math.trunc((1 << 24) * Math.random())
+    .toString(16)
+    .padStart(6, "0")}`;
 
 export function TagManager() {
-  const tags = useTagStore(useShallow((s) => s.tags));
-  const addTag = useTagStore((s) => s.addTag);
-  const updateTag = useTagStore((s) => s.updateTag);
-  const deleteTag = useTagStore((s) => s.deleteTag);
+  const { tags, addTag, updateTag, deleteTag } = useTags();
 
   const [newName, setNewName] = useState("");
-  const [newColor, setNewColor] = useState("#6366f1");
+  const [newColor, setNewColor] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [editColor, setEditColor] = useState("");
@@ -28,7 +29,7 @@ export function TagManager() {
     if (!newName.trim()) return;
     addTag(newName.trim(), newColor);
     setNewName("");
-    setNewColor("#6366f1");
+    setNewColor(generateRandomHex());
   };
 
   const startEdit = (id: string, name: string, color: string) => {
@@ -44,11 +45,11 @@ export function TagManager() {
   };
 
   return (
-    <Dialog>
+    <Dialog onOpenChange={(open) => open && setNewColor(generateRandomHex())}>
       <DialogTrigger
         render={
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <Tags className="h-4 w-4" />
+          <Button variant="ghost" size="icon" className="w-8 h-8">
+            <Tags className="w-4 h-4" />
           </Button>
         }
       />
@@ -64,7 +65,7 @@ export function TagManager() {
               type="color"
               value={newColor}
               onChange={(e) => setNewColor(e.target.value)}
-              className="h-8 w-8 rounded-full border cursor-pointer shrink-0"
+              className="border rounded-full w-8 h-8 cursor-pointer shrink-0"
             />
             <Input
               value={newName}
@@ -76,16 +77,16 @@ export function TagManager() {
             <Button
               variant="outline"
               size="icon"
-              className="h-8 w-8 shrink-0"
+              className="w-8 h-8 shrink-0"
               onClick={handleAdd}
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="w-4 h-4" />
             </Button>
           </div>
 
           {/* Tag list */}
           {tags.length === 0 && (
-            <p className="text-xs text-muted-foreground text-center py-4">
+            <p className="py-4 text-muted-foreground text-xs text-center">
               Aucun tag créé.
             </p>
           )}
@@ -93,7 +94,7 @@ export function TagManager() {
             {tags.map((tag) => (
               <div
                 key={tag.id}
-                className="flex items-center gap-2 p-1.5 rounded-md hover:bg-muted/50 group"
+                className="group flex items-center gap-2 hover:bg-muted/50 p-1.5 rounded-md"
               >
                 {editingId === tag.id ? (
                   <>
@@ -101,7 +102,7 @@ export function TagManager() {
                       type="color"
                       value={editColor}
                       onChange={(e) => setEditColor(e.target.value)}
-                      className="h-6 w-6 rounded-full border cursor-pointer shrink-0"
+                      className="border rounded-full w-6 h-6 cursor-pointer shrink-0"
                     />
                     <Input
                       value={editName}
@@ -116,42 +117,42 @@ export function TagManager() {
                     <Button
                       variant="outline"
                       size="icon"
-                      className="h-7 w-7 shrink-0"
+                      className="w-7 h-7 shrink-0"
                       onClick={saveEdit}
                     >
-                      <Check className="h-3 w-3" />
+                      <Check className="w-3 h-3" />
                     </Button>
                     <Button
                       variant="outline"
                       size="icon"
-                      className="h-7 w-7 shrink-0"
+                      className="w-7 h-7 shrink-0"
                       onClick={() => setEditingId(null)}
                     >
-                      <X className="h-3 w-3" />
+                      <X className="w-3 h-3" />
                     </Button>
                   </>
                 ) : (
                   <>
                     <span
-                      className="h-3 w-3 rounded-full shrink-0"
+                      className="rounded-full w-3 h-3 shrink-0"
                       style={{ backgroundColor: tag.color }}
                     />
-                    <span className="text-sm flex-1 truncate">{tag.name}</span>
+                    <span className="flex-1 text-sm truncate">{tag.name}</span>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="opacity-0 group-hover:opacity-100 w-6 h-6 transition-opacity"
                       onClick={() => startEdit(tag.id, tag.name, tag.color)}
                     >
-                      <Pencil className="h-3 w-3" />
+                      <Pencil className="w-3 h-3" />
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-destructive"
+                      className="opacity-0 group-hover:opacity-100 w-6 h-6 text-destructive transition-opacity"
                       onClick={() => deleteTag(tag.id)}
                     >
-                      <Trash2 className="h-3 w-3" />
+                      <Trash2 className="w-3 h-3" />
                     </Button>
                   </>
                 )}

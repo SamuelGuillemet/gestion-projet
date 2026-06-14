@@ -106,17 +106,23 @@ Retrieved 2026-06-04, License - CC BY-SA 3.0
 */
 
 input[type="color"]::-webkit-color-swatch {
+  padding: 0;
   border: none;
   border-radius: 50%;
-  padding: 0;
 }
 
 input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
   border: none;
   border-radius: 50%;
-  padding: 0;
 }
 
 .markdown-alert p + p > br:first-child {
   display: none;
+}
+
+[data-nested-dialog-open] {
+  opacity: calc(1 - 0.2 * var(--nested-dialogs));
+  scale: calc(1 - 0.1 * var(--nested-dialogs));
+  translate: -50% calc(-50% + 1.25rem * var(--nested-dialogs));
 }

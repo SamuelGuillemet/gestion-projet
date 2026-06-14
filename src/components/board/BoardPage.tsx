@@ -52,7 +52,7 @@ export function BoardPage() {
         </Button>
       </div>
 
-      <DragDropWrapper onDragEnd={handleDragEnd}>
+      <DragAndDropWrapper onDragEnd={handleDragEnd}>
         <div className="flex flex-1 gap-4 p-2 overflow-x-auto">
           {Object.entries(tasks).map(([columnId, taskIds]) => {
             return (
@@ -60,7 +60,7 @@ export function BoardPage() {
             );
           })}
         </div>
-      </DragDropWrapper>
+      </DragAndDropWrapper>
     </div>
   );
 }
@@ -68,7 +68,7 @@ export function BoardPage() {
 /**
  * Encapslate logic related to DnD state management and workarounds for DOM mutations.
  */
-function DragDropWrapper({
+function DragAndDropWrapper({
   children,
   onDragEnd,
 }: {

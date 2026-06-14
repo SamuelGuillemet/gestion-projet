@@ -20,9 +20,9 @@ export function QuestionDetailContent({
   onDelete,
 }: QuestionDetailContentProps) {
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col gap-4 grow">
       <div>
-        <Label className="text-xs text-muted-foreground">Titre</Label>
+        <Label className="text-muted-foreground text-xs">Titre</Label>
         <Input
           value={question.title}
           onChange={(e) => onUpdate({ title: e.target.value })}
@@ -31,7 +31,7 @@ export function QuestionDetailContent({
       </div>
 
       <div>
-        <Label className="text-xs text-muted-foreground">Description</Label>
+        <Label className="text-muted-foreground text-xs">Description</Label>
         <Textarea
           value={question.description ?? ""}
           onChange={(e) => onUpdate({ description: e.target.value })}
@@ -41,7 +41,7 @@ export function QuestionDetailContent({
       </div>
 
       <div>
-        <Label className="text-xs text-muted-foreground">Destinataire</Label>
+        <Label className="text-muted-foreground text-xs">Destinataire</Label>
         <Input
           value={question.recipient ?? ""}
           onChange={(e) => onUpdate({ recipient: e.target.value })}
@@ -51,7 +51,7 @@ export function QuestionDetailContent({
       </div>
 
       <div>
-        <Label className="text-xs text-muted-foreground">Réponse</Label>
+        <Label className="text-muted-foreground text-xs">Réponse</Label>
         <Textarea
           value={question.answer ?? ""}
           onChange={(e) => onUpdate({ answer: e.target.value })}
@@ -61,7 +61,7 @@ export function QuestionDetailContent({
       </div>
 
       <div>
-        <Label className="text-xs text-muted-foreground">Statut</Label>
+        <Label className="text-muted-foreground text-xs">Statut</Label>
         <div className="flex gap-1 mt-1">
           {QUESTION_STATUSES.map((s) => (
             <button
@@ -83,11 +83,13 @@ export function QuestionDetailContent({
 
       <RelationManager itemId={question.id} projectId={question.projectId} />
 
+      <div className="grow" />
+
       <div className="pt-2 border-t">
         <ConfirmDialog
           trigger={
             <Button variant="destructive" size="sm" className="w-full">
-              <Trash2 className="h-3 w-3 mr-1" />
+              <Trash2 className="mr-1 w-3 h-3" />
               Supprimer
             </Button>
           }

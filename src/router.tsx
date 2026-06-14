@@ -1,8 +1,8 @@
 import { createHashRouter, Navigate } from "react-router-dom";
-import { BacklogPage } from "@/components/backlog/BacklogTreeView";
-import { BoardPage } from "@/components/board/Board";
+import { BacklogPage } from "@/components/backlog/BacklogPage";
+import { BoardPage } from "@/components/board/BoardPage";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { NotesPage } from "@/components/notes/NoteEditor";
+import { NotesPage } from "@/components/notes/NotesPage";
 import { TimePage } from "@/components/time/TimePage";
 
 const routes = [

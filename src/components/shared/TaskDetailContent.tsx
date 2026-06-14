@@ -1,15 +1,15 @@
 import { Clock, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { BOARD_COLUMNS } from "@/constants/board-columns";
+import { useTags } from "@/hooks/useTags";
 import { useTimeEntriesByTaskId } from "@/hooks/useTimeTracking";
 import type { Task } from "@/models/task";
-import { useTagStore, useTimeStore } from "@/store";
+import { useTimeStore } from "@/store";
 import { RelationManager } from "./RelationManager";
 
 interface TaskDetailContentProps {
@@ -23,7 +23,7 @@ export function TaskDetailContent({
   onUpdate,
   onDelete,
 }: TaskDetailContentProps) {
-  const tags = useTagStore(useShallow((s) => s.tags));
+  const { tags } = useTags();
   const taskTimeEntries = useTimeEntriesByTaskId(task.id);
   const addTimeEntry = useTimeStore((s) => s.addTimeEntry);
 
@@ -59,9 +59,9 @@ export function TaskDetailContent({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col gap-4 grow">
       <div>
-        <Label className="text-xs text-muted-foreground">Titre</Label>
+        <Label className="text-muted-foreground text-xs">Titre</Label>
         <Input
           value={task.title}
           onChange={(e) => onUpdate({ title: e.target.value })}
@@ -70,18 +70,18 @@ export function TaskDetailContent({
       </div>
 
       <div>
-        <Label className="text-xs text-muted-foreground">Description</Label>
+        <Label className="text-muted-foreground text-xs">Description</Label>
         <Textarea
           value={task.description}
           onChange={(e) => onUpdate({ description: e.target.value })}
-          className="mt-1 min-h-24"
+          className="mt-1 min-h-24 field-sizing-content"
           placeholder="Ajouter une description..."
         />
       </div>
 
       <div>
-        <Label className="text-xs text-muted-foreground">Statut</Label>
-        <div className="flex gap-1 mt-1 flex-wrap">
+        <Label className="text-muted-foreground text-xs">Statut</Label>
+        <div className="flex flex-wrap gap-1 mt-1">
           {BOARD_COLUMNS.map((col) => (
             <button
               key={col.id}
@@ -106,7 +106,7 @@ export function TaskDetailContent({
       </div>
 
       <div>
-        <Label className="text-xs text-muted-foreground">
+        <Label className="text-muted-foreground text-xs">
           Tags ({task.tags.length})
         </Label>
         <div className="flex flex-wrap gap-1 mt-1">
@@ -122,7 +122,7 @@ export function TaskDetailContent({
               }`}
             >
               <span
-                className="h-2 w-2 rounded-full"
+                className="rounded-full w-2 h-2"
                 style={{ backgroundColor: tag.color }}
               />
               {tag.name}
@@ -134,18 +134,20 @@ export function TaskDetailContent({
       <RelationManager itemId={task.id} projectId={task.projectId} />
 
       <div>
-        <div className="flex items-center justify-between">
-          <Label className="text-xs text-muted-foreground flex items-center gap-1">
+        <div className="flex justify-between items-center">
+          <Label className="flex items-center gap-1 text-muted-foreground text-xs">
             Temps passé
           </Label>
-          <span className="flex items-center gap-2 text-sm">
-            <Clock className="h-3 w-3" />
-            {totalMinutes > 0 ? formatMinutes(totalMinutes) : "—"}
-          </span>
+          {totalMinutes > 0 && (
+            <span className="flex items-center gap-2 text-sm">
+              <Clock className="w-3 h-3" />
+              {formatMinutes(totalMinutes)}
+            </span>
+          )}
         </div>
         <div className="flex items-end gap-2">
           <div>
-            <Label className="text-xs mb-1 block">Date</Label>
+            <Label className="block mb-1 text-xs">Date</Label>
             <Input
               type="date"
               value={entryDate}
@@ -154,7 +156,7 @@ export function TaskDetailContent({
             />
           </div>
           <div className="w-20">
-            <Label className="text-xs mb-1 block">Minutes</Label>
+            <Label className="block mb-1 text-xs">Minutes</Label>
             <Input
               type="number"
               min={0}
@@ -171,11 +173,13 @@ export function TaskDetailContent({
         </div>
       </div>
 
-      <div className="pt-2 border-t">
+      <div className="grow" />
+
+      <div className="mt-auto pt-2 border-t">
         <ConfirmDialog
           trigger={
             <Button variant="destructive" size="sm" className="w-full">
-              <Trash2 className="h-3 w-3 mr-1" />
+              <Trash2 className="mr-1 w-3 h-3" />
               Supprimer
             </Button>
           }

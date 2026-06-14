@@ -19,7 +19,7 @@ export function DeliverableDetailContent({
   onDelete,
 }: DeliverableDetailContentProps) {
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col gap-4 grow">
       <div>
         <Label className="text-muted-foreground text-xs">Titre</Label>
         <Input
@@ -80,6 +80,8 @@ export function DeliverableDetailContent({
         itemId={deliverable.id}
         projectId={deliverable.projectId}
       />
+
+      <div className="grow" />
 
       <div className="pt-2 border-t">
         <ConfirmDialog
