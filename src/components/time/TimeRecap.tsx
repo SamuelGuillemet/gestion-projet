@@ -1,23 +1,25 @@
-import { Trash2 } from "lucide-react";
-import { useMemo } from "react";
-import { useShallow } from "zustand/react/shallow";
+import { Check, Pencil, Trash2, X } from "lucide-react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useTimeActions } from "@/hooks/useTimeTracking";
+import { Input } from "@/components/ui/input";
+import { useTasksByProjectId } from "@/hooks/useTasks";
+import {
+  useTimeActions,
+  useTimeEntriesByProjectId,
+} from "@/hooks/useTimeTracking";
 import { formatMinutes } from "@/lib/time";
-import { useTaskStore, useTimeStore } from "@/store";
 
 interface TimeRecapProps {
   projectId: string;
 }
 
 export function TimeRecap({ projectId }: TimeRecapProps) {
-  const timeEntries = useTimeStore(
-    useShallow((s) => s.timeEntries.filter((e) => e.projectId === projectId)),
-  );
-  const { deleteTimeEntry } = useTimeActions();
-  const tasks = useTaskStore(
-    useShallow((s) => s.tasks.filter((t) => t.projectId === projectId)),
-  );
+  const timeEntries = useTimeEntriesByProjectId(projectId);
+  const { updateTimeEntry, deleteTimeEntry } = useTimeActions();
+  const tasks = useTasksByProjectId(projectId);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editDate, setEditDate] = useState("");
+  const [editMinutes, setEditMinutes] = useState("");
 
   const totalMinutes = useMemo(
     () => timeEntries.reduce((sum, e) => sum + e.minutes, 0),
@@ -37,6 +39,22 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
     }
     return map;
   }, [timeEntries]);
+
+  const startEdit = (id: string, date: string, minutes: number) => {
+    setEditingId(id);
+    setEditDate(date);
+    setEditMinutes(String(minutes));
+  };
+
+  const saveEdit = () => {
+    if (!editingId || !editDate || !editMinutes) return;
+
+    const minutes = Number(editMinutes);
+    if (!Number.isFinite(minutes) || minutes < 0) return;
+
+    updateTimeEntry(editingId, { date: editDate, minutes });
+    setEditingId(null);
+  };
 
   return (
     <div>
@@ -72,32 +90,127 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
           <span className="text-muted-foreground text-xs">
             Entrées récentes
           </span>
-          {timeEntries
-            .slice()
-            .reverse()
-            .slice(0, 10)
-            .map((entry) => (
-              <div
-                key={entry.id}
-                className="group flex items-center gap-2 text-xs"
-              >
-                <span className="w-20 text-muted-foreground">{entry.date}</span>
-                <span className="flex-1">
-                  {taskMap.get(entry.taskId) ?? "?"}
-                </span>
-                <span className="font-medium">
-                  {formatMinutes(entry.minutes)}
-                </span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="opacity-0 group-hover:opacity-100 w-5 h-5"
-                  onClick={() => deleteTimeEntry(entry.id)}
-                >
-                  <Trash2 className="w-3 h-3" />
-                </Button>
-              </div>
-            ))}
+          <div className="overflow-hidden">
+            <table className="w-full table-fixed text-xs">
+              <colgroup>
+                <col className="w-36" />
+                <col />
+                <col className="w-24" />
+                <col className="w-18" />
+              </colgroup>
+              <tbody>
+                {timeEntries
+                  .slice()
+                  .reverse()
+                  .map((entry) => (
+                    <tr
+                      key={entry.id}
+                      className="group border-b hover:bg-muted/50"
+                    >
+                      {editingId === entry.id ? (
+                        <>
+                          <td className="p-1.5 align-middle">
+                            <Input
+                              type="date"
+                              value={editDate}
+                              onChange={(event) =>
+                                setEditDate(event.target.value)
+                              }
+                              onKeyDown={(event) => {
+                                if (event.key === "Enter") saveEdit();
+                                if (event.key === "Escape") setEditingId(null);
+                              }}
+                              className="h-7 w-full text-xs"
+                            />
+                          </td>
+                          <td className="p-1.5 align-middle">
+                            <span className="block truncate">
+                              {taskMap.get(entry.taskId) ?? "?"}
+                            </span>
+                          </td>
+                          <td className="p-1.5 align-middle">
+                            <Input
+                              type="number"
+                              min={0}
+                              value={editMinutes}
+                              onChange={(event) =>
+                                setEditMinutes(event.target.value)
+                              }
+                              onKeyDown={(event) => {
+                                if (event.key === "Enter") saveEdit();
+                                if (event.key === "Escape") setEditingId(null);
+                              }}
+                              className="h-7 w-full text-xs"
+                              autoFocus
+                            />
+                          </td>
+                          <td className="p-1.5 align-middle">
+                            <div className="flex justify-end gap-1">
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                className="w-7 h-7 shrink-0"
+                                onClick={saveEdit}
+                              >
+                                <Check className="w-3 h-3" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                className="w-7 h-7 shrink-0"
+                                onClick={() => setEditingId(null)}
+                              >
+                                <X className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          </td>
+                        </>
+                      ) : (
+                        <>
+                          <td className="p-1.5 align-middle text-muted-foreground">
+                            {entry.date}
+                          </td>
+                          <td className="p-1.5 align-middle">
+                            <span className="block truncate">
+                              {taskMap.get(entry.taskId) ?? "?"}
+                            </span>
+                          </td>
+                          <td className="p-1.5 align-middle font-medium text-right">
+                            {formatMinutes(entry.minutes)}
+                          </td>
+                          <td className="p-1.5 align-middle">
+                            <div className="flex justify-end gap-1">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="opacity-0 group-hover:opacity-100 w-6 h-6 transition-opacity"
+                                onClick={() =>
+                                  startEdit(
+                                    entry.id,
+                                    entry.date,
+                                    entry.minutes,
+                                  )
+                                }
+                              >
+                                <Pencil className="w-3 h-3" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="opacity-0 group-hover:opacity-100 w-6 h-6 text-destructive transition-opacity"
+                                onClick={() => deleteTimeEntry(entry.id)}
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          </td>
+                        </>
+                      )}
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

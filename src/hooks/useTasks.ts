@@ -7,6 +7,12 @@ export function useTasks() {
   return useTaskStore(useShallow((s) => s.tasks));
 }
 
+export function useTasksByProjectId(projectId: string | null) {
+  return useTaskStore(
+    useShallow((s) => s.tasks.filter((t) => t.projectId === projectId)),
+  );
+}
+
 export function useTaskIds(projectId: string | null) {
   return useTaskStore(
     useShallow((s) =>

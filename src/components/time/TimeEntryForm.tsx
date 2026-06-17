@@ -1,6 +1,5 @@
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,8 +9,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useTasksByProjectId } from "@/hooks/useTasks";
 import { useTimeActions } from "@/hooks/useTimeTracking";
-import { useTaskStore } from "@/store";
 
 interface TimeEntryFormProps {
   projectId: string;
@@ -19,9 +18,7 @@ interface TimeEntryFormProps {
 
 export function TimeEntryForm({ projectId }: TimeEntryFormProps) {
   const { addTimeEntry } = useTimeActions();
-  const tasks = useTaskStore(
-    useShallow((s) => s.tasks.filter((t) => t.projectId === projectId)),
-  );
+  const tasks = useTasksByProjectId(projectId);
   const [taskId, setTaskId] = useState("");
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [minutes, setMinutes] = useState("");

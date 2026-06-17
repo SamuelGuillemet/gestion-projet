@@ -7,6 +7,7 @@ import remarkGithubAlerts from "remark-github-alerts";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useNoteActions } from "@/hooks/useNotes";
+import { cn } from "@/lib/utils";
 
 type Props = {
   activeNoteId: string | null;
@@ -38,7 +39,7 @@ export function NoteEditorPanel({ activeNoteId, activeNote }: Props) {
   };
 
   return (
-    <div className="flex flex-col gap-4 px-4 grow">
+    <div className="flex flex-col gap-1 px-4 grow">
       <div
         role="radiogroup"
         aria-label="Mode d'édition"
@@ -79,7 +80,12 @@ export function NoteEditorPanel({ activeNoteId, activeNote }: Props) {
       </div>
 
       <div className="overflow-y-auto grow">
-        <div className="flex gap-4 min-w-0 h-min min-h-full">
+        <div
+          className={cn("grid gap-4 min-w-0 h-min min-h-full p-1 pt-0", {
+            "grid-cols-2": mode === "both",
+            "grid-cols-1": mode !== "both",
+          })}
+        >
           {(mode === "both" || mode === "edit") && (
             <div className="flex flex-col min-h-0 grow">
               <span className="mb-2 font-semibold text-muted-foreground text-xs uppercase tracking-wide">

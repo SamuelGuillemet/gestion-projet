@@ -7,9 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { BOARD_COLUMNS } from "@/constants/board-columns";
 import { useTags } from "@/hooks/useTags";
-import { useTimeEntriesByTaskId } from "@/hooks/useTimeTracking";
+import {
+  useTimeActions,
+  useTimeEntriesByTaskId,
+} from "@/hooks/useTimeTracking";
 import type { Task } from "@/models/task";
-import { useTimeStore } from "@/store";
 import { RelationManager } from "./RelationManager";
 
 interface TaskDetailContentProps {
@@ -25,7 +27,7 @@ export function TaskDetailContent({
 }: TaskDetailContentProps) {
   const { tags } = useTags();
   const taskTimeEntries = useTimeEntriesByTaskId(task.id);
-  const addTimeEntry = useTimeStore((s) => s.addTimeEntry);
+  const { addTimeEntry } = useTimeActions();
 
   const [entryDate, setEntryDate] = useState(
     new Date().toISOString().slice(0, 10),
