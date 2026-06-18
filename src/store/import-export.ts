@@ -36,9 +36,12 @@ export async function exportData() {
 }
 
 export async function importData(data: Record<string, unknown>) {
-  const version = data.version;
-  if (!version || typeof version !== "number") {
+  const importedVersion = data.version;
+  if (!importedVersion || typeof importedVersion !== "number") {
     throw new Error("Invalid data: missing or invalid version");
+  }
+  if (importedVersion > STORE_VERSION) {
+    throw new Error(`Unsupported data version: ${importedVersion}`);
   }
 
   let state = data.state as Record<string, unknown>;
@@ -46,13 +49,14 @@ export async function importData(data: Record<string, unknown>) {
     throw new Error("Invalid data: missing or invalid state");
   }
 
-  const sorted = TRANSFORMATIONS.slice().sort((a, b) => a.version - b.version);
+  const migrationsToApply = TRANSFORMATIONS.toSorted(
+    (a, b) => a.version - b.version,
+  ).filter(
+    ({ version }) => version > importedVersion && version <= STORE_VERSION,
+  );
 
-  for (const t of sorted) {
-    if (t.version > STORE_VERSION) {
-      break;
-    }
-    state = t.transform(state);
+  for (const migration of migrationsToApply) {
+    state = migration.transform(state);
   }
 
   const entries = Object.entries(state) as [IdbStoresName, unknown][];
