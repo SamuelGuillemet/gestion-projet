@@ -44,6 +44,9 @@ importers:
       idb-keyval:
         specifier: ^6.2.5
         version: 6.2.5
+      lowlight:
+        specifier: ^3.3.0
+        version: 3.3.0
       lucide-react:
         specifier: ^1.18.0
         version: 1.18.0(react@19.2.7)

@@ -1,3 +1,5 @@
+import powershell from "highlight.js/lib/languages/powershell";
+import { common } from "lowlight";
 import { Columns, Edit, Eye } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Markdown from "react-markdown";
@@ -114,7 +116,12 @@ export function NoteEditorPanel({ activeNoteId, activeNote }: Props) {
                       remarkBreaks,
                       remarkGithubAlerts,
                     ]}
-                    rehypePlugins={[rehypeHighlight]}
+                    rehypePlugins={[
+                      () =>
+                        rehypeHighlight({
+                          languages: { ...common, powershell },
+                        }),
+                    ]}
                   >
                     {content || "*Aucun contenu...*"}
                   </Markdown>
