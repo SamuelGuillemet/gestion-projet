@@ -1,6 +1,7 @@
 import { Columns, Edit, Eye } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Markdown from "react-markdown";
+import rehypeHighlight from "rehype-highlight";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import remarkGithubAlerts from "remark-github-alerts";
@@ -113,6 +114,7 @@ export function NoteEditorPanel({ activeNoteId, activeNote }: Props) {
                       remarkBreaks,
                       remarkGithubAlerts,
                     ]}
+                    rehypePlugins={[rehypeHighlight]}
                   >
                     {content || "*Aucun contenu...*"}
                   </Markdown>
