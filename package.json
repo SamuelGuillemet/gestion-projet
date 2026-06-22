@@ -33,6 +33,7 @@
     "react-router-dom": "^7.17.0",
     "react-scan": "^0.5.7",
     "rehype-highlight": "^7.0.2",
+    "rehype-mermaid": "^3.0.0",
     "remark-breaks": "^4.0.0",
     "remark-gfm": "^4.0.1",
     "remark-github-alerts": "^0.1.1",

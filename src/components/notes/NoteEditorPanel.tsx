@@ -2,8 +2,9 @@ import powershell from "highlight.js/lib/languages/powershell";
 import { common } from "lowlight";
 import { Columns, Edit, Eye } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import Markdown from "react-markdown";
+import { MarkdownHooks } from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
+import rehypeMermaid from "rehype-mermaid";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import remarkGithubAlerts from "remark-github-alerts";
@@ -110,7 +111,7 @@ export function NoteEditorPanel({ activeNoteId, activeNote }: Props) {
               </span>
               <div className="flex-1 bg-card p-5 border rounded-lg min-h-0">
                 <article className="prose-code:bg-muted prose-pre:bg-muted prose-code:px-1 prose-code:py-0.5 prose-pre:border prose-code:rounded max-w-none prose-headings:font-bold prose-a:text-primary prose-code:text-primary/80 prose prose-sm prose-slate">
-                  <Markdown
+                  <MarkdownHooks
                     remarkPlugins={[
                       remarkGfm,
                       remarkBreaks,
@@ -121,10 +122,11 @@ export function NoteEditorPanel({ activeNoteId, activeNote }: Props) {
                         rehypeHighlight({
                           languages: { ...common, powershell },
                         }),
+                      rehypeMermaid,
                     ]}
                   >
                     {content || "*Aucun contenu...*"}
-                  </Markdown>
+                  </MarkdownHooks>
                 </article>
               </div>
             </div>
