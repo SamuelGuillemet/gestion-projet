@@ -142,3 +142,8 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 .prose pre {
   padding: 0.25rem;
 }
+
+
+body>div[id^="dmarkdown-mermaid-"] {
+  display: none;
+}

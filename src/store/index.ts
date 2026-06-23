@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { STORE_VERSION } from "./constants";
 import { createIdbStorage } from "./idb-storage";
+import { cleanupMarkdownImages } from "./markdown-image.store";
 import {
   createDeliverableSlice,
   type DeliverableSlice,
@@ -55,6 +56,10 @@ export const useNoteStore = create<NoteSlice>()(
     name: "gp-notes",
     version: STORE_VERSION,
     storage: createIdbStorage(),
+    onRehydrateStorage: () => (state) => {
+      if (!state) return;
+      void cleanupMarkdownImages(state.notes.map((note) => note.content));
+    },
     partialize: (s) => ({
       notes: s.notes,
     }),
