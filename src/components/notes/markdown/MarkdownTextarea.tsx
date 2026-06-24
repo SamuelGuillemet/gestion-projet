@@ -123,8 +123,7 @@ export function MarkdownTextarea({
       const selectionStart = textarea.selectionStart;
       const selectionEnd = textarea.selectionEnd;
 
-      const nextValue =
-        value.slice(0, selectionStart) + "\t" + value.slice(selectionEnd);
+      const nextValue = `${value.slice(0, selectionStart)}\t${value.slice(selectionEnd)}`;
 
       onChange(nextValue);
 

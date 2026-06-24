@@ -25,8 +25,6 @@ export function BacklogPage() {
     (s) => s.setPendingBacklogIntent,
   );
 
-  console.log(panelSize);
-
   useEffect(() => {
     if (
       !pendingBacklogIntent ||
