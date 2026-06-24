@@ -29,8 +29,19 @@ export function DeliverableRow({ deliverableId }: { deliverableId: string }) {
       role="button"
       tabIndex={0}
     >
-      <Package className="w-4 h-4 text-emerald-500 shrink-0" />
-      <span className="flex-1 text-sm truncate">{deliverable.title}</span>
+      <Package
+        className={cn("w-4 h-4 shrink-0", {
+          "text-emerald-500": deliverable.done,
+          "text-muted-foreground": !deliverable.done,
+        })}
+      />
+      <span
+        className={cn("flex-1 text-sm truncate", {
+          "line-through text-muted-foreground": deliverable.done,
+        })}
+      >
+        {deliverable.title}
+      </span>
       {deliverable.version && (
         <span className="bg-muted px-1.5 py-0.5 rounded text-[10px] text-muted-foreground">
           {deliverable.version}

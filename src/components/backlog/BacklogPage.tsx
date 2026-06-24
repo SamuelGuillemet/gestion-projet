@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useGlobalSearchState } from "@/components/layout/global-search-state";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -13,12 +15,36 @@ export function BacklogPage() {
   const { activeProjectId } = useProjects();
   const hasSelection = useBacklogUI((s) => s.selectedDetail !== null);
   const clear = useBacklogUI((s) => s.clear);
+  const select = useBacklogUI((s) => s.select);
   const panelSize = useBacklogUI((s) => s.panelSize);
   const setPanelSize = useBacklogUI((s) => s.setPanelSize);
+  const pendingBacklogIntent = useGlobalSearchState(
+    (s) => s.pendingBacklogIntent,
+  );
+  const setPendingBacklogIntent = useGlobalSearchState(
+    (s) => s.setPendingBacklogIntent,
+  );
 
   console.log(panelSize);
 
-  useChangeValueEffect(() => clear(), activeProjectId);
+  useEffect(() => {
+    if (
+      !pendingBacklogIntent ||
+      pendingBacklogIntent.projectId !== activeProjectId
+    ) {
+      return;
+    }
+
+    select({ type: pendingBacklogIntent.type, id: pendingBacklogIntent.id });
+    setPendingBacklogIntent(null);
+  }, [activeProjectId, pendingBacklogIntent, select, setPendingBacklogIntent]);
+
+  useChangeValueEffect(() => {
+    if (pendingBacklogIntent?.projectId === activeProjectId) {
+      return;
+    }
+    clear();
+  }, activeProjectId);
 
   if (!activeProjectId) {
     return (

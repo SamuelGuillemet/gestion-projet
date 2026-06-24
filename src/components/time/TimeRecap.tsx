@@ -185,11 +185,7 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
                                 size="icon"
                                 className="opacity-0 group-hover:opacity-100 w-6 h-6 transition-opacity"
                                 onClick={() =>
-                                  startEdit(
-                                    entry.id,
-                                    entry.date,
-                                    entry.minutes,
-                                  )
+                                  startEdit(entry.id, entry.date, entry.minutes)
                                 }
                               >
                                 <Pencil className="w-3 h-3" />

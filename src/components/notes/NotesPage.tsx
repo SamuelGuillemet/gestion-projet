@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useGlobalSearchState } from "@/components/layout/global-search-state";
 import { useNote, useNoteIds } from "@/hooks/useNotes";
 import { useProjects } from "@/hooks/useProjects";
 import { getLastNoteId, setLastNoteId } from "@/lib/notes";
@@ -7,6 +8,10 @@ import { NoteList } from "./NoteList";
 
 export function NotesPage() {
   const { activeProjectId } = useProjects();
+  const pendingNoteIntent = useGlobalSearchState((s) => s.pendingNoteIntent);
+  const setPendingNoteIntent = useGlobalSearchState(
+    (s) => s.setPendingNoteIntent,
+  );
   const noteIds = useNoteIds(activeProjectId);
   const [activeNoteId, setActiveNoteId] = useState<string | null>(() =>
     getLastNoteId(activeProjectId),
@@ -16,12 +21,26 @@ export function NotesPage() {
 
   // Auto-select last opened note or first note when project changes
   useEffect(() => {
+    if (pendingNoteIntent && pendingNoteIntent.projectId === activeProjectId) {
+      if (noteIds.includes(pendingNoteIntent.noteId)) {
+        setActiveNoteId(pendingNoteIntent.noteId);
+      }
+      setPendingNoteIntent(null);
+      return;
+    }
+
     if (noteIds.length > 0 && !noteIds.includes(activeNoteId ?? "")) {
       const lastId = getLastNoteId(activeProjectId);
       const restored = lastId && noteIds.includes(lastId);
       setActiveNoteId(restored ? lastId : noteIds[0]);
     }
-  }, [noteIds, activeNoteId, activeProjectId]);
+  }, [
+    noteIds,
+    activeNoteId,
+    activeProjectId,
+    pendingNoteIntent,
+    setPendingNoteIntent,
+  ]);
 
   // Persist active note selection
   useEffect(() => {

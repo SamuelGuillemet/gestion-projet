@@ -143,7 +143,6 @@ input[type="color"]::-webkit-color-swatch-wrapper {
   padding: 0.25rem;
 }
 
-
-body>div[id^="dmarkdown-mermaid-"] {
+body > div[id^="dmarkdown-mermaid-"] {
   display: none;
 }
