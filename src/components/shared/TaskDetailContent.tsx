@@ -12,6 +12,7 @@ import {
   useTimeEntriesByTaskId,
 } from "@/hooks/useTimeTracking";
 import type { Task } from "@/models/task";
+import { LinkifiedText } from "./LinkifiedText";
 import { RelationManager } from "./RelationManager";
 
 interface TaskDetailContentProps {
@@ -78,6 +79,10 @@ export function TaskDetailContent({
           onChange={(e) => onUpdate({ description: e.target.value })}
           className="mt-1 min-h-24 field-sizing-content"
           placeholder="Ajouter une description..."
+        />
+        <LinkifiedText
+          text={task.description}
+          className="mt-2 text-muted-foreground text-xs leading-relaxed whitespace-pre-wrap"
         />
       </div>
 

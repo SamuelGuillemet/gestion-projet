@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { Deliverable } from "@/models/deliverable";
+import { LinkifiedText } from "./LinkifiedText";
 import { RelationManager } from "./RelationManager";
 
 interface DeliverableDetailContentProps {
@@ -46,6 +47,10 @@ export function DeliverableDetailContent({
           onChange={(e) => onUpdate({ description: e.target.value })}
           className="mt-1 min-h-24"
           placeholder="Description du livrable@/components."
+        />
+        <LinkifiedText
+          text={deliverable.description}
+          className="mt-2 text-muted-foreground text-xs leading-relaxed whitespace-pre-wrap"
         />
       </div>
 

@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { QUESTION_STATUSES } from "@/constants/question-status";
 import type { Question } from "@/models/question";
+import { LinkifiedText } from "./LinkifiedText";
 import { RelationManager } from "./RelationManager";
 
 interface QuestionDetailContentProps {
@@ -37,6 +38,10 @@ export function QuestionDetailContent({
           onChange={(e) => onUpdate({ description: e.target.value })}
           className="mt-1 min-h-16"
           placeholder="Détail de la question..."
+        />
+        <LinkifiedText
+          text={question.description}
+          className="mt-2 text-muted-foreground text-xs leading-relaxed whitespace-pre-wrap"
         />
       </div>
 
