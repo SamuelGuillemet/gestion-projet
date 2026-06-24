@@ -5,6 +5,11 @@ import {
   STORE_VERSION,
 } from "./constants";
 import {
+  type ExportedMarkdownImageAsset,
+  exportMarkdownImageAssets,
+  importMarkdownImageAssets,
+} from "./markdown-image.store";
+import {
   transform as v1Transform,
   version as v1Version,
 } from "./migrations/001_v1_to_v2";
@@ -23,15 +28,45 @@ const TRANSFORMATIONS: Transformations[] = [
   { version: v2Version, transform: v2Transform },
 ];
 
+function parseImportedMarkdownImageAssets(data: Record<string, unknown>) {
+  const assetsRaw = data.assets;
+  if (!assetsRaw || typeof assetsRaw !== "object") return [];
+
+  const markdownImagesRaw =
+    (assetsRaw as { markdownImages?: unknown }).markdownImages ?? [];
+  if (!Array.isArray(markdownImagesRaw)) return [];
+
+  return markdownImagesRaw.flatMap((asset): ExportedMarkdownImageAsset[] => {
+    if (!asset || typeof asset !== "object") return [];
+
+    const { id, mimeType, base64 } = asset;
+
+    if (
+      typeof id !== "string" ||
+      typeof mimeType !== "string" ||
+      typeof base64 !== "string"
+    ) {
+      return [];
+    }
+
+    return [{ id, mimeType, base64 }];
+  });
+}
+
 export async function exportData() {
   const entries = await Promise.all(
     IDB_STORES_NAMES.map(
       async (storeName) => [storeName, (await get(storeName)).state] as const,
     ),
   );
+  const markdownImageAssets = await exportMarkdownImageAssets();
+
   return {
     version: STORE_VERSION,
     state: Object.fromEntries(entries),
+    assets: {
+      markdownImages: markdownImageAssets,
+    },
   } as const;
 }
 
@@ -72,4 +107,9 @@ export async function importData(data: Record<string, unknown>) {
       });
     }),
   );
+
+  const markdownImageAssets = parseImportedMarkdownImageAssets(data);
+  if (markdownImageAssets.length > 0) {
+    await importMarkdownImageAssets(markdownImageAssets);
+  }
 }
