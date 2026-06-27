@@ -1,17 +1,7 @@
 import type { StateCreator } from "zustand";
 import { generateId } from "@/lib/utils";
 import type { Note } from "@/models/note";
-
-function getNextNoteNumber(notes: Note[], projectId: string) {
-  return (
-    Math.max(
-      0,
-      ...notes
-        .filter((note) => note.projectId === projectId)
-        .map((note) => note.number ?? 0),
-    ) + 1
-  );
-}
+import { getNextProjectScopedNumber } from "./utils";
 
 export interface NoteSlice {
   notes: Note[];
@@ -35,7 +25,7 @@ export const createNoteSlice: StateCreator<NoteSlice, [], [], NoteSlice> = (
         {
           id: generateId(),
           projectId,
-          number: getNextNoteNumber(state.notes, projectId),
+          number: getNextProjectScopedNumber(state.notes, projectId),
           title,
           content: "",
         },

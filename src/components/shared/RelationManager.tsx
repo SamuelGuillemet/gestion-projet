@@ -1,13 +1,4 @@
-import {
-  ArrowRightLeft,
-  Ban,
-  Copy,
-  type Link2,
-  Plus,
-  ShieldAlert,
-  Trash2,
-  X,
-} from "lucide-react";
+import { Plus, Trash2, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -19,44 +10,22 @@ import { useQuestions } from "@/hooks/useQuestions";
 import { useRelations } from "@/hooks/useRelations";
 import { useTasks } from "@/hooks/useTasks";
 import {
-  type EntityReferenceType,
+  BACKLOG_ENTITY_REFERENCE_TYPES,
+  type BacklogEntityReferenceType,
+  type EntityReferenceRecord,
   getEntityReferenceLabel,
+  getEntityReferenceTypeLabel,
+  getEntityReferenceTypePluralLabel,
 } from "@/lib/entity-references";
+import { getInverseType, RELATION_STYLES } from "@/lib/relations";
 import { cn } from "@/lib/utils";
 import { RELATION_LABELS, type RelationType } from "@/models/relation";
 
-const RELATION_STYLES: Record<
-  RelationType,
-  { color: string; bg: string; icon: typeof Link2 }
-> = {
-  blocks: { color: "text-red-600", bg: "bg-red-50 border-red-200", icon: Ban },
-  "blocked-by": {
-    color: "text-orange-600",
-    bg: "bg-orange-50 border-orange-200",
-    icon: ShieldAlert,
-  },
-  relates: {
-    color: "text-blue-600",
-    bg: "bg-blue-50 border-blue-200",
-    icon: ArrowRightLeft,
-  },
-  duplicates: {
-    color: "text-purple-600",
-    bg: "bg-purple-50 border-purple-200",
-    icon: Copy,
-  },
-};
-
-const TYPE_LABELS: Record<string, string> = {
-  task: "Tâche",
-  question: "Question",
-  deliverable: "Livrable",
-};
-
-const REFERENCE_TYPE_BY_ITEM_TYPE: Record<string, EntityReferenceType> = {
-  task: "tasks",
-  question: "questions",
-  deliverable: "deliverables",
+type RelationItem = {
+  id: string;
+  label: string;
+  number: number;
+  type: BacklogEntityReferenceType | null;
 };
 
 interface RelationManagerProps {
@@ -75,7 +44,7 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
   const [relType, setRelType] = useState<RelationType>("relates");
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<
-    "all" | "task" | "question" | "deliverable"
+    "all" | BacklogEntityReferenceType
   >("all");
 
   const itemRelations = useMemo(
@@ -84,18 +53,32 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
     [relations, itemId],
   );
 
+  const allBacklogItems = useMemo(() => {
+    const itemsByType: Record<
+      BacklogEntityReferenceType,
+      EntityReferenceRecord[]
+    > = {
+      tasks,
+      questions,
+      deliverables,
+    };
+
+    return BACKLOG_ENTITY_REFERENCE_TYPES.flatMap((type) =>
+      itemsByType[type].map((item) => ({
+        id: item.id,
+        projectId: item.projectId,
+        label: item.title,
+        number: item.number,
+        type,
+      })),
+    );
+  }, [tasks, questions, deliverables]);
+
   const projectItems = useMemo(() => {
-    const taskItems = tasks
-      .filter((t) => t.projectId === projectId && t.id !== itemId)
-      .map((t) => ({ id: t.id, label: t.title, type: "task" as const }));
-    const questionItems = questions
-      .filter((q) => q.projectId === projectId && q.id !== itemId)
-      .map((q) => ({ id: q.id, label: q.title, type: "question" as const }));
-    const deliverableItems = deliverables
-      .filter((d) => d.projectId === projectId && d.id !== itemId)
-      .map((d) => ({ id: d.id, label: d.title, type: "deliverable" as const }));
-    return [...taskItems, ...questionItems, ...deliverableItems];
-  }, [tasks, questions, deliverables, projectId, itemId]);
+    return allBacklogItems.filter(
+      (item) => item.projectId === projectId && item.id !== itemId,
+    );
+  }, [allBacklogItems, projectId, itemId]);
 
   const filteredItems = useMemo(() => {
     let items = projectItems;
@@ -109,34 +92,21 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
     return items;
   }, [projectItems, search, typeFilter]);
 
-  const getItemLabel = (id: string) => {
-    const task = tasks.find((t) => t.id === id);
-    if (task) return { label: task.title, number: task.number, type: "task" };
-    const question = questions.find((q) => q.id === id);
-    if (question)
-      return {
-        label: question.title,
-        number: question.number,
-        type: "question",
-      };
-    const deliverable = deliverables.find((d) => d.id === id);
-    if (deliverable)
-      return {
-        label: deliverable.title,
-        number: deliverable.number,
-        type: "deliverable",
-      };
-    return { label: "Inconnu", number: 0, type: "unknown" };
-  };
+  const itemById = useMemo(
+    () => new Map(allBacklogItems.map((item) => [item.id, item])),
+    [allBacklogItems],
+  );
 
-  const openRelatedItem = (item: ReturnType<typeof getItemLabel>) => {
-    const referenceType = REFERENCE_TYPE_BY_ITEM_TYPE[item.type];
-    if (!referenceType) return;
+  const getItemLabel = (id: string): RelationItem =>
+    itemById.get(id) ?? { label: "Inconnu", number: 0, type: null, id };
+
+  const openRelatedItem = (item: RelationItem) => {
+    if (!item.type) return;
 
     openReference({
-      type: referenceType,
+      type: item.type,
       number: item.number,
-      label: getEntityReferenceLabel(referenceType, item.number),
+      label: getEntityReferenceLabel(item.type, item.number),
     });
   };
 
@@ -173,34 +143,27 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
             return (
               <div
                 key={rel.id}
-                role="button"
-                tabIndex={0}
                 className={cn(
-                  "flex items-center gap-2 text-xs p-2 rounded-md border group cursor-pointer transition-colors hover:bg-accent/40",
+                  "group flex items-center gap-2 hover:bg-accent/40 p-2 border rounded-md text-xs transition-colors",
                   style.bg,
                 )}
-                onClick={() => openRelatedItem(other)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") openRelatedItem(other);
-                }}
               >
-                <Icon className={cn("h-3.5 w-3.5 shrink-0", style.color)} />
+                <Icon className={cn("w-3.5 h-3.5 shrink-0", style.color)} />
                 <span className={cn("font-medium shrink-0", style.color)}>
                   {RELATION_LABELS[displayType]}
                 </span>
-                {other.number > 0 ? (
-                  <span className="font-data text-[10px] text-muted-foreground shrink-0">
-                    {getEntityReferenceLabel(
-                      REFERENCE_TYPE_BY_ITEM_TYPE[other.type],
-                      other.number,
-                    )}
-                  </span>
-                ) : null}
-                <span className="flex-1 font-medium text-foreground truncate">
+                <button
+                  type="button"
+                  className="text-muted-foreground hover:underline"
+                  onClick={() => openRelatedItem(other)}
+                >
                   {other.label}
-                </span>
+                </button>
+                <div className="grow"></div>
                 <span className="bg-white/80 px-1.5 py-0.5 border rounded text-[10px] text-muted-foreground">
-                  {TYPE_LABELS[other.type] || "Inconnu"}
+                  {other.type
+                    ? getEntityReferenceTypeLabel(other.type)
+                    : "Inconnu"}
                 </span>
                 <ConfirmDialog
                   triggerClassName="inline-flex"
@@ -238,7 +201,7 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
                     type="button"
                     onClick={() => setRelType(value)}
                     className={cn(
-                      "inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium transition-colors border",
+                      "inline-flex items-center gap-1 px-2 py-0.5 border rounded font-medium text-[10px] transition-colors",
                       relType === value
                         ? [style.bg, style.color]
                         : "bg-muted text-muted-foreground hover:bg-muted/80 border-transparent",
@@ -267,9 +230,11 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
               className="bg-background px-2 border border-input rounded-md h-7 text-xs"
             >
               <option value="all">Tous</option>
-              <option value="task">Tâches</option>
-              <option value="question">Questions</option>
-              <option value="deliverable">Livrables</option>
+              {BACKLOG_ENTITY_REFERENCE_TYPES.map((type) => (
+                <option key={type} value={type}>
+                  {getEntityReferenceTypePluralLabel(type)}
+                </option>
+              ))}
             </select>
           </div>
           <div className="space-y-0.5 max-h-32 overflow-y-auto">
@@ -282,7 +247,7 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
               >
                 <span className="flex-1 truncate">{item.label}</span>
                 <span className="bg-muted px-1 rounded text-[10px] text-muted-foreground shrink-0">
-                  {TYPE_LABELS[item.type] || "Inconnu"}
+                  {getEntityReferenceTypeLabel(item.type)}
                 </span>
               </button>
             ))}
@@ -302,15 +267,4 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
       )}
     </div>
   );
-}
-
-function getInverseType(type: RelationType): RelationType {
-  switch (type) {
-    case "blocks":
-      return "blocked-by";
-    case "blocked-by":
-      return "blocks";
-    default:
-      return type;
-  }
 }

@@ -1,12 +1,5 @@
-import {
-  FileText,
-  HelpCircle,
-  Package,
-  Search,
-  SquareCheckBig,
-} from "lucide-react";
+import { Search } from "lucide-react";
 import { type KeyboardEvent, useEffect, useMemo, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -15,30 +8,21 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { useEntityNavigation } from "@/hooks/useEntityReferenceNavigation";
+import {
+  getEntityReferenceIcon,
+  getEntityReferenceTypeLabel,
+} from "@/lib/entity-references";
 import { cn } from "@/lib/utils";
 import {
   buildGlobalSearchResults,
-  type SearchEntityType,
+  type GlobalSearchResult,
   useGlobalSearchState,
 } from "./global-search-state";
 
-function typeLabel(type: SearchEntityType) {
-  if (type === "notes") return "Note";
-  if (type === "tasks") return "Tache";
-  if (type === "questions") return "Question";
-  return "Livrable";
-}
-
-function typeIcon(type: SearchEntityType) {
-  if (type === "notes") return FileText;
-  if (type === "tasks") return SquareCheckBig;
-  if (type === "questions") return HelpCircle;
-  return Package;
-}
-
 export function GlobalSearchDialog() {
-  const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
+  const openEntity = useEntityNavigation();
 
   const open = useGlobalSearchState((s) => s.open);
   const query = useGlobalSearchState((s) => s.query);
@@ -48,9 +32,14 @@ export function GlobalSearchDialog() {
   const setHighlightedIndex = useGlobalSearchState(
     (s) => s.setHighlightedIndex,
   );
-  const openResult = useGlobalSearchState((s) => s.openResult);
 
   const results = useMemo(() => buildGlobalSearchResults(query), [query]);
+
+  const openResult = (result: GlobalSearchResult) => {
+    if (openEntity({ type: result.type, id: result.id })) {
+      setOpen(false);
+    }
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -79,14 +68,14 @@ export function GlobalSearchDialog() {
       const item = results[highlightedIndex];
       if (!item) return;
       event.preventDefault();
-      openResult(item, navigate);
+      openResult(item);
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
-        className="w-full sm:max-w-3xl p-0"
+        className="p-0 w-full sm:max-w-3xl"
         showCloseButton={false}
       >
         <DialogHeader className="px-4 pt-4 pb-0">
@@ -117,15 +106,15 @@ export function GlobalSearchDialog() {
           ) : (
             <ul className="pb-3">
               {results.slice(0, 50).map((result, index) => {
-                const Icon = typeIcon(result.type);
+                const Icon = getEntityReferenceIcon(result.type);
                 const isActive = index === highlightedIndex;
                 return (
                   <li key={`${result.type}-${result.id}`}>
                     <button
                       type="button"
-                      onClick={() => openResult(result, navigate)}
+                      onClick={() => openResult(result)}
                       className={cn(
-                        "grid grid-cols-[auto_1fr_auto] items-start gap-3 px-4 py-3 w-full text-left transition-colors",
+                        "items-start gap-3 grid grid-cols-[auto_1fr_auto] px-4 py-3 w-full text-left transition-colors",
                         isActive ? "bg-muted" : "hover:bg-muted/60",
                       )}
                     >
@@ -140,7 +129,7 @@ export function GlobalSearchDialog() {
                       </div>
                       <div className="flex flex-col items-end gap-1">
                         <Badge variant="outline">
-                          {typeLabel(result.type)}
+                          {getEntityReferenceTypeLabel(result.type)}
                         </Badge>
                         <span className="inline-flex items-center gap-1.5 max-w-44 text-muted-foreground text-xs truncate">
                           <span

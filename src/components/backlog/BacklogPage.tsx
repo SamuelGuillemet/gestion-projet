@@ -1,11 +1,8 @@
-import { useEffect } from "react";
-import { useGlobalSearchState } from "@/components/layout/global-search-state";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { useChangeValueEffect } from "@/hooks/useChangeValueEffect";
 import { useProjects } from "@/hooks/useProjects";
 import { BacklogDetailPanel } from "./BacklogDetailPanel";
 import { BacklogList } from "./BacklogList";
@@ -13,33 +10,10 @@ import { useBacklogUI } from "./backlog-state";
 
 export function BacklogPage() {
   const { activeProjectId } = useProjects();
-  const hasSelection = useBacklogUI((s) => s.selectedDetail !== null);
-  const clear = useBacklogUI((s) => s.clear);
-  const select = useBacklogUI((s) => s.select);
+  const selectedDetail = useBacklogUI((s) => s.selectedDetail);
+  const hasSelection = selectedDetail !== null;
   const panelSize = useBacklogUI((s) => s.panelSize);
   const setPanelSize = useBacklogUI((s) => s.setPanelSize);
-  const pendingBacklogIntent = useGlobalSearchState(
-    (s) => s.pendingBacklogIntent,
-  );
-  const setPendingBacklogIntent = useGlobalSearchState(
-    (s) => s.setPendingBacklogIntent,
-  );
-
-  useEffect(() => {
-    if (pendingBacklogIntent?.projectId !== activeProjectId) {
-      return;
-    }
-
-    select({ type: pendingBacklogIntent.type, id: pendingBacklogIntent.id });
-    setPendingBacklogIntent(null);
-  }, [activeProjectId, pendingBacklogIntent, select, setPendingBacklogIntent]);
-
-  useChangeValueEffect(() => {
-    if (pendingBacklogIntent?.projectId === activeProjectId) {
-      return;
-    }
-    clear();
-  }, activeProjectId);
 
   if (!activeProjectId) {
     return (

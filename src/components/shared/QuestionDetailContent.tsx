@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { QUESTION_STATUSES } from "@/constants/question-status";
 import { cn } from "@/lib/utils";
 import type { Question } from "@/models/question";
-import { LinkifiedText } from "./LinkifiedText";
+import { HighlightLinks } from "./HighlightLinks";
 import { RelationManager } from "./RelationManager";
 
 interface QuestionDetailContentProps {
@@ -40,7 +40,7 @@ export function QuestionDetailContent({
           className="mt-1 min-h-16"
           placeholder="Détail de la question..."
         />
-        <LinkifiedText
+        <HighlightLinks
           text={question.description}
           className="mt-2 text-muted-foreground text-xs leading-relaxed whitespace-pre-wrap"
         />
@@ -75,7 +75,7 @@ export function QuestionDetailContent({
               type="button"
               onClick={() => onUpdate({ status: s.value })}
               className={cn(
-                "px-2 py-1 rounded text-xs font-medium transition-colors",
+                "px-2 py-1 rounded font-medium text-xs transition-colors",
                 question.status === s.value
                   ? "ring-2 ring-offset-1"
                   : "opacity-60 hover:opacity-100",

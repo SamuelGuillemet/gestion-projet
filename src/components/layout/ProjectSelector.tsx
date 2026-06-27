@@ -11,17 +11,9 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useProjects } from "@/hooks/useProjects";
 import { cn } from "@/lib/utils";
+import { useBacklogUI } from "../backlog/backlog-state";
 
-const PROJECT_COLORS = [
-  "#6366f1",
-  "#8b5cf6",
-  "#ec4899",
-  "#ef4444",
-  "#f97316",
-  "#f59e0b",
-  "#10b981",
-  "#3b82f6",
-];
+const DEFAULT_PROJECT_COLOR = "#6366f1";
 
 export function ProjectSelector() {
   const {
@@ -33,31 +25,49 @@ export function ProjectSelector() {
     updateProject,
   } = useProjects();
   const [open, setOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const { clear } = useBacklogUI();
+
   const [draftName, setDraftName] = useState("");
-  const [draftColor, setDraftColor] = useState(PROJECT_COLORS[0]);
+  const [draftColor, setDraftColor] = useState(DEFAULT_PROJECT_COLOR);
   const [draftDescription, setDraftDescription] = useState("");
-  const [newName, setNewName] = useState("");
-  const [newColor, setNewColor] = useState(PROJECT_COLORS[0]);
-  const [newDescription, setNewDescription] = useState("");
 
   useEffect(() => {
+    if (isCreating) {
+      setDraftName("");
+      setDraftColor(DEFAULT_PROJECT_COLOR);
+      setDraftDescription("");
+      return;
+    }
+
     setDraftName(activeProject?.name ?? "");
-    setDraftColor(activeProject?.color ?? PROJECT_COLORS[0]);
+    setDraftColor(activeProject?.color ?? DEFAULT_PROJECT_COLOR);
     setDraftDescription(activeProject?.description ?? "");
-  }, [activeProject]);
+  }, [activeProject, isCreating]);
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (nextOpen) setIsCreating(!activeProject);
+  };
+
+  const handleSelectProject = (id: string) => {
+    setIsCreating(false);
+    setActiveProject(id);
+    if (activeProjectId === id) return;
+    clear();
+    setOpen(false);
+  };
 
   const handleCreate = () => {
-    if (!newName.trim()) return;
+    if (!draftName.trim()) return;
 
     const id = addProject(
-      newName.trim(),
-      newColor,
-      newDescription.trim() || undefined,
+      draftName.trim(),
+      draftColor,
+      draftDescription.trim() || undefined,
     );
-    setNewName("");
-    setNewColor(PROJECT_COLORS[0]);
-    setNewDescription("");
     setActiveProject(id);
+    setIsCreating(false);
   };
 
   const handleSave = () => {
@@ -76,14 +86,23 @@ export function ProjectSelector() {
       draftColor !== activeProject.color ||
       draftDescription !== (activeProject.description ?? ""));
 
+  const handleSubmit = () => {
+    if (isCreating) {
+      handleCreate();
+      return;
+    }
+
+    handleSave();
+  };
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <div className="group/project relative min-w-0">
         <PopoverTrigger
           render={
             <Button
               variant="ghost"
-              className="justify-start gap-2 px-2 max-w-72 h-9 min-w-0"
+              className="justify-start gap-2 px-2 min-w-0 max-w-72 h-9"
             >
               <span
                 className="rounded-full ring-2 ring-background size-2.5 shrink-0"
@@ -99,7 +118,7 @@ export function ProjectSelector() {
           }
         />
         {activeProject?.description && !open ? (
-          <div className="top-full left-0 z-40 absolute opacity-0 group-hover/project:opacity-100 mt-1 w-72 pointer-events-none transition-opacity">
+          <div className="top-full left-0 z-40 absolute opacity-0 group-hover/project:opacity-100 mt-1 w-72 transition-opacity pointer-events-none">
             <div className="bg-popover shadow-md p-2 border rounded-md text-popover-foreground text-xs leading-relaxed">
               {activeProject.description}
             </div>
@@ -110,22 +129,37 @@ export function ProjectSelector() {
       <PopoverContent
         align="start"
         side="bottom"
-        className="w-180 max-w-[calc(100vw-2rem)] p-3"
+        className="p-3 w-180 max-w-[calc(100vw-2rem)]"
       >
         <div className="gap-3 grid sm:grid-cols-[minmax(0,15rem)_minmax(0,1fr)]">
           <div className="min-w-0">
             <div className="mb-2 text-muted-foreground atelier-section-title">
               Projets
             </div>
-            <div className="space-y-1 max-h-64 overflow-y-auto pr-1">
+            <div className="space-y-1 pr-1 max-h-64 overflow-y-auto">
+              <button
+                type="button"
+                onClick={() => setIsCreating(true)}
+                className={cn(
+                  "flex items-center gap-2 px-2 py-1.5 border border-dashed rounded-md w-full text-left transition-colors",
+                  isCreating
+                    ? "border-primary/35 bg-primary/8"
+                    : "border-muted-foreground/30 hover:bg-accent/55",
+                )}
+              >
+                <Plus className="size-4 text-muted-foreground shrink-0" />
+                <span className="font-medium text-sm truncate">
+                  Nouveau projet
+                </span>
+              </button>
               {projects.map((project) => (
                 <button
                   key={project.id}
                   type="button"
-                  onClick={() => setActiveProject(project.id)}
+                  onClick={() => handleSelectProject(project.id)}
                   className={cn(
-                    "flex w-full items-start gap-2 rounded-md border px-2 py-1.5 text-left transition-colors",
-                    activeProjectId === project.id
+                    "flex items-start gap-2 px-2 py-1.5 border rounded-md w-full text-left transition-colors",
+                    !isCreating && activeProjectId === project.id
                       ? "border-primary/25 bg-primary/8"
                       : "border-transparent hover:bg-accent/55",
                   )}
@@ -134,7 +168,7 @@ export function ProjectSelector() {
                     className="mt-1 rounded-full size-2.5 shrink-0"
                     style={{ backgroundColor: project.color }}
                   />
-                  <span className="min-w-0 flex-1">
+                  <span className="flex-1 min-w-0">
                     <span className="block font-medium text-sm truncate">
                       {project.name}
                     </span>
@@ -152,39 +186,13 @@ export function ProjectSelector() {
                 </p>
               ) : null}
             </div>
-
-            <div className="space-y-2 mt-3 pt-3 border-t">
-              <Input
-                value={newName}
-                onChange={(event) => setNewName(event.target.value)}
-                onKeyDown={(event) => event.key === "Enter" && handleCreate()}
-                placeholder="Nouveau projet"
-                className="h-8 text-sm"
-              />
-              <Textarea
-                value={newDescription}
-                onChange={(event) => setNewDescription(event.target.value)}
-                placeholder="Description"
-                className="min-h-16 text-xs resize-none"
-              />
-              <ProjectColorPicker value={newColor} onChange={setNewColor} />
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full gap-1.5"
-                onClick={handleCreate}
-              >
-                <Plus className="size-4" />
-                Créer
-              </Button>
-            </div>
           </div>
 
-          <div className="space-y-3 min-w-0 border-t sm:border-t-0 sm:border-l pt-3 sm:pt-0 sm:pl-3">
+          <div className="space-y-3 pt-3 sm:pt-0 sm:pl-3 border-t sm:border-t-0 sm:border-l min-w-0">
             <div className="text-muted-foreground atelier-section-title">
-              Détails
+              {isCreating ? "Nouveau projet" : "Détails"}
             </div>
-            {activeProject ? (
+            {activeProject || isCreating ? (
               <>
                 <div>
                   <Label htmlFor="project-name" className="text-xs">
@@ -194,7 +202,9 @@ export function ProjectSelector() {
                     id="project-name"
                     value={draftName}
                     onChange={(event) => setDraftName(event.target.value)}
-                    onKeyDown={(event) => event.key === "Enter" && handleSave()}
+                    onKeyDown={(event) =>
+                      event.key === "Enter" && handleSubmit()
+                    }
                     className="mt-1 h-8"
                   />
                 </div>
@@ -208,26 +218,33 @@ export function ProjectSelector() {
                     onChange={(event) =>
                       setDraftDescription(event.target.value)
                     }
-                    className="mt-1 min-h-24 resize-none"
+                    className="mt-1 h-24 resize-none"
                     placeholder="Description du projet"
                   />
                 </div>
                 <div>
                   <Label className="text-xs">Couleur</Label>
-                  <ProjectColorPicker
+                  <input
+                    type="color"
                     value={draftColor}
-                    onChange={setDraftColor}
-                    className="mt-2"
+                    onChange={(event) => setDraftColor(event.target.value)}
+                    className={cn(
+                      "block bg-background mt-2 border rounded-full size-7 cursor-pointer",
+                    )}
                   />
                 </div>
                 <Button
                   size="sm"
-                  className="w-full gap-1.5"
-                  disabled={!hasChanges || !draftName.trim()}
-                  onClick={handleSave}
+                  className="gap-1.5 w-full"
+                  disabled={!draftName.trim() || (!isCreating && !hasChanges)}
+                  onClick={handleSubmit}
                 >
-                  <Check className="size-4" />
-                  Enregistrer
+                  {isCreating ? (
+                    <Plus className="size-4" />
+                  ) : (
+                    <Check className="size-4" />
+                  )}
+                  {isCreating ? "Créer" : "Enregistrer"}
                 </Button>
               </>
             ) : (
@@ -239,41 +256,5 @@ export function ProjectSelector() {
         </div>
       </PopoverContent>
     </Popover>
-  );
-}
-
-function ProjectColorPicker({
-  className,
-  onChange,
-  value,
-}: {
-  className?: string;
-  onChange: (value: string) => void;
-  value: string;
-}) {
-  return (
-    <div className={cn("flex flex-wrap items-center gap-2", className)}>
-      {PROJECT_COLORS.map((color) => (
-        <button
-          key={color}
-          type="button"
-          aria-label={color}
-          className={cn(
-            "size-6 rounded-full border-2 transition-transform hover:scale-110",
-            value === color
-              ? "border-foreground scale-110"
-              : "border-transparent",
-          )}
-          style={{ backgroundColor: color }}
-          onClick={() => onChange(color)}
-        />
-      ))}
-      <input
-        type="color"
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="border rounded-full size-6 cursor-pointer shrink-0"
-      />
-    </div>
   );
 }

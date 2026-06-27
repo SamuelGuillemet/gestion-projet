@@ -1,18 +1,18 @@
 import { Columns, Edit, Eye } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useNoteActions } from "@/hooks/useNotes";
+import { useNote, useNoteActions } from "@/hooks/useNotes";
 import { cn } from "@/lib/utils";
 import { MarkdownPreview } from "./markdown/MarkdownPreview";
 import { MarkdownTextarea } from "./markdown/MarkdownTextarea";
 
 type Props = {
-  activeNoteId: string | null;
-  activeNote: { content?: string } | null | undefined;
+  activeNoteId: string;
 };
 
-export function NoteEditorPanel({ activeNoteId, activeNote }: Props) {
+export function NoteEditorPanel({ activeNoteId }: Props) {
   const { updateNote } = useNoteActions();
+  const activeNote = useNote(activeNoteId);
   const [content, setContent] = useState("");
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [mode, setMode] = useState<"both" | "edit" | "preview">("both");
@@ -49,7 +49,7 @@ export function NoteEditorPanel({ activeNoteId, activeNote }: Props) {
           title="Both (édition + prévisualisation)"
           onClick={() => setMode("both")}
           className={cn(
-            "h-8 w-8 rounded-md p-0",
+            "p-0 rounded-md w-8 h-8",
             mode === "both"
               ? "bg-primary/10 text-primary"
               : "hover:bg-accent/70",
@@ -65,7 +65,7 @@ export function NoteEditorPanel({ activeNoteId, activeNote }: Props) {
           title="Edit (édition seule)"
           onClick={() => setMode("edit")}
           className={cn(
-            "h-8 w-8 rounded-md p-0",
+            "p-0 rounded-md w-8 h-8",
             mode === "edit"
               ? "bg-primary/10 text-primary"
               : "hover:bg-accent/70",
@@ -81,7 +81,7 @@ export function NoteEditorPanel({ activeNoteId, activeNote }: Props) {
           title="Preview (prévisualisation seule)"
           onClick={() => setMode("preview")}
           className={cn(
-            "h-8 w-8 rounded-md p-0",
+            "p-0 rounded-md w-8 h-8",
             mode === "preview"
               ? "bg-primary/10 text-primary"
               : "hover:bg-accent/70",

@@ -23,3 +23,11 @@ export const useNotesUI = create<NotesUIState>()(
     },
   ),
 );
+
+export function useActiveNoteId(projectId: string) {
+  const activeNoteIdByProjectId = useNotesUI(
+    (state) => state.activeNoteIdByProjectId,
+  );
+
+  return activeNoteIdByProjectId[projectId] ?? null;
+}

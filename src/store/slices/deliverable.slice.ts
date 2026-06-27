@@ -1,20 +1,7 @@
 import type { StateCreator } from "zustand";
 import { generateId } from "@/lib/utils";
 import type { Deliverable } from "@/models/deliverable";
-
-function getNextDeliverableNumber(
-  deliverables: Deliverable[],
-  projectId: string,
-) {
-  return (
-    Math.max(
-      0,
-      ...deliverables
-        .filter((deliverable) => deliverable.projectId === projectId)
-        .map((deliverable) => deliverable.number ?? 0),
-    ) + 1
-  );
-}
+import { getNextProjectScopedNumber } from "./utils";
 
 export interface DeliverableSlice {
   deliverables: Deliverable[];
@@ -44,7 +31,7 @@ export const createDeliverableSlice: StateCreator<
         {
           id,
           projectId,
-          number: getNextDeliverableNumber(state.deliverables, projectId),
+          number: getNextProjectScopedNumber(state.deliverables, projectId),
           title,
           done: false,
         },

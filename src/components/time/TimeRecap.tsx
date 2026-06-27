@@ -62,7 +62,6 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
     if (!editingId || !editDate || !editMinutes) return;
 
     const minutes = Number(editMinutes);
-    if (!Number.isFinite(minutes) || minutes < 0) return;
 
     updateTimeEntry(editingId, { date: editDate, minutes });
     setEditingId(null);

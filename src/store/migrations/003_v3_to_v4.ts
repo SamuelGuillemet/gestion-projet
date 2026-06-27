@@ -1,9 +1,9 @@
 import { get, set } from "idb-keyval";
+import { migrateVersion } from "./utils";
 
 export const version = 4;
 
 type StoreState = Record<string, unknown>;
-type StoreValue = { state?: StoreState; version?: number };
 
 const ENTITY_STORES = [
   ["gp-tasks", "tasks"],
@@ -42,7 +42,7 @@ function addNumbers(items: unknown[]) {
 }
 
 async function migrateStore(storeName: string, collectionKey: string) {
-  const store = (await get(storeName)) as StoreValue | undefined;
+  const store = await get(storeName);
   const state = store?.state;
   const collection = state?.[collectionKey];
 
@@ -64,11 +64,15 @@ async function migrateStore(storeName: string, collectionKey: string) {
 
 export async function run(): Promise<boolean> {
   try {
-    const writes = await Promise.all(
-      ENTITY_STORES.map(([storeName, collectionKey]) =>
+    const writes = await Promise.all([
+      ...ENTITY_STORES.map(([storeName, collectionKey]) =>
         migrateStore(storeName, collectionKey),
       ),
-    );
+      migrateVersion("gp-projects", version),
+      migrateVersion("gp-relations", version),
+      migrateVersion("gp-tags", version),
+      migrateVersion("gp-time", version),
+    ]);
     return writes.some(Boolean);
   } catch (e) {
     console.error("[migration v3->v4] Failed:", e);

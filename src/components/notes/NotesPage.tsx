@@ -1,55 +1,12 @@
-import { useEffect } from "react";
-import { useGlobalSearchState } from "@/components/layout/global-search-state";
-import { useNote, useNoteIds } from "@/hooks/useNotes";
 import { useProjects } from "@/hooks/useProjects";
 import { NoteEditorPanel } from "./NoteEditorPanel";
 import { NoteList } from "./NoteList";
-import { useNotesUI } from "./notes-state";
+import { useActiveNoteId, useNotesUI } from "./notes-state";
 
 export function NotesPage() {
   const { activeProjectId } = useProjects();
-  const pendingNoteIntent = useGlobalSearchState((s) => s.pendingNoteIntent);
-  const setPendingNoteIntent = useGlobalSearchState(
-    (s) => s.setPendingNoteIntent,
-  );
-  const noteIds = useNoteIds(activeProjectId);
-  const activeNoteId = useNotesUI((s) =>
-    activeProjectId
-      ? (s.activeNoteIdByProjectId[activeProjectId] ?? null)
-      : null,
-  );
+  const activeNoteId = useActiveNoteId(activeProjectId ?? "");
   const setStoredActiveNoteId = useNotesUI((s) => s.setActiveNoteId);
-
-  const setActiveNoteId = (noteId: string | null) => {
-    if (!activeProjectId) return;
-    setStoredActiveNoteId(activeProjectId, noteId);
-  };
-
-  const activeNote = useNote(activeNoteId ?? "");
-
-  // Auto-select last opened note or first note when project changes
-  useEffect(() => {
-    if (!activeProjectId) return;
-
-    if (pendingNoteIntent?.projectId === activeProjectId) {
-      if (noteIds.includes(pendingNoteIntent.noteId)) {
-        setStoredActiveNoteId(activeProjectId, pendingNoteIntent.noteId);
-      }
-      setPendingNoteIntent(null);
-      return;
-    }
-
-    if (noteIds.length > 0 && !noteIds.includes(activeNoteId ?? "")) {
-      setStoredActiveNoteId(activeProjectId, noteIds[0]);
-    }
-  }, [
-    noteIds,
-    activeNoteId,
-    activeProjectId,
-    pendingNoteIntent,
-    setPendingNoteIntent,
-    setStoredActiveNoteId,
-  ]);
 
   if (!activeProjectId) {
     return (
@@ -59,12 +16,16 @@ export function NotesPage() {
     );
   }
 
+  const setActiveNoteId = (noteId: string | null) => {
+    setStoredActiveNoteId(activeProjectId, noteId);
+  };
+
   return (
     <div className="flex bg-card border rounded-md h-full overflow-hidden">
       <NoteList activeNoteId={activeNoteId} setActiveNoteId={setActiveNoteId} />
 
-      {activeNote ? (
-        <NoteEditorPanel activeNoteId={activeNoteId} activeNote={activeNote} />
+      {activeNoteId ? (
+        <NoteEditorPanel activeNoteId={activeNoteId} />
       ) : (
         <div className="flex flex-1 justify-center items-center text-muted-foreground">
           <div className="space-y-2 text-center">

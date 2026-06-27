@@ -1,17 +1,7 @@
 import type { StateCreator } from "zustand";
 import { generateId } from "@/lib/utils";
 import type { Question } from "@/models/question";
-
-function getNextQuestionNumber(questions: Question[], projectId: string) {
-  return (
-    Math.max(
-      0,
-      ...questions
-        .filter((question) => question.projectId === projectId)
-        .map((question) => question.number ?? 0),
-    ) + 1
-  );
-}
+import { getNextProjectScopedNumber } from "./utils";
 
 export interface QuestionSlice {
   questions: Question[];
@@ -44,7 +34,7 @@ export const createQuestionSlice: StateCreator<
         {
           id,
           projectId,
-          number: getNextQuestionNumber(state.questions, projectId),
+          number: getNextProjectScopedNumber(state.questions, projectId),
           title,
           status: "to-ask",
         },

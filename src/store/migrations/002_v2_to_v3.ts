@@ -1,4 +1,5 @@
 import { get, set } from "idb-keyval";
+import { migrateVersion } from "./utils";
 
 export const version = 3;
 
@@ -10,9 +11,6 @@ type GPNotesStore = {
   };
   version: number;
 };
-
-const migrateVersion = async (storeName: string) =>
-  await set(storeName, { ...(await get(storeName)), version: version });
 
 /**
  * Split `questions` and `deliverables` out of `gp-notes` into their own keys.
@@ -36,11 +34,11 @@ export async function run(): Promise<boolean> {
         version: ver,
       }),
       set("gp-notes", { state: { notes: notes }, version: ver }),
-      migrateVersion("gp-projects"),
-      migrateVersion("gp-relations"),
-      migrateVersion("gp-tags"),
-      migrateVersion("gp-tasks"),
-      migrateVersion("gp-time"),
+      migrateVersion("gp-projects", version),
+      migrateVersion("gp-relations", version),
+      migrateVersion("gp-tags", version),
+      migrateVersion("gp-tasks", version),
+      migrateVersion("gp-time", version),
     ]);
 
     return true;

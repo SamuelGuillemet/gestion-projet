@@ -24,7 +24,7 @@ export function Column({ columnId, taskIds }: ColumnProps) {
     <div
       ref={droppable.ref}
       className={cn(
-        "atelier-card flex w-full min-w-80 flex-col rounded-md transition-all duration-200",
+        "flex flex-col rounded-md w-full min-w-80 transition-all duration-200 atelier-card",
         droppable.isDropTarget &&
           "scale-[1.01] border-primary/40 bg-primary/5 ring-2 ring-primary/30",
       )}

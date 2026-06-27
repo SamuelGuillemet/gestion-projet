@@ -6,17 +6,7 @@ import {
 } from "@/constants/board-columns";
 import { generateId } from "@/lib/utils";
 import type { Task } from "@/models/task";
-
-function getNextTaskNumber(tasks: Task[], projectId: string) {
-  return (
-    Math.max(
-      0,
-      ...tasks
-        .filter((task) => task.projectId === projectId)
-        .map((task) => task.number ?? 0),
-    ) + 1
-  );
-}
+import { getNextProjectScopedNumber } from "./utils";
 
 export interface TaskSlice {
   tasks: Task[];
@@ -46,7 +36,7 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
           {
             id,
             projectId,
-            number: getNextTaskNumber(state.tasks, projectId),
+            number: getNextProjectScopedNumber(state.tasks, projectId),
             title,
             description: "",
             columnId: BOARD_COLUMNS[0].id,

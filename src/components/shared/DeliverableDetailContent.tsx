@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import type { Deliverable } from "@/models/deliverable";
-import { LinkifiedText } from "./LinkifiedText";
+import { HighlightLinks } from "./HighlightLinks";
 import { RelationManager } from "./RelationManager";
 
 interface DeliverableDetailContentProps {
@@ -49,7 +49,7 @@ export function DeliverableDetailContent({
           className="mt-1 min-h-24"
           placeholder="Description du livrable@/components."
         />
-        <LinkifiedText
+        <HighlightLinks
           text={deliverable.description}
           className="mt-2 text-muted-foreground text-xs leading-relaxed whitespace-pre-wrap"
         />
@@ -72,7 +72,7 @@ export function DeliverableDetailContent({
             type="button"
             onClick={() => onUpdate({ done: !deliverable.done })}
             className={cn(
-              "px-3 py-1.5 rounded text-xs font-medium transition-colors",
+              "px-3 py-1.5 rounded font-medium text-xs transition-colors",
               deliverable.done
                 ? "bg-green-500/10 text-green-600 hover:bg-green-500/20"
                 : "bg-muted text-muted-foreground hover:bg-muted/80",

@@ -42,20 +42,22 @@ export function DataActions() {
   return (
     <div className="flex items-center gap-1">
       <Button
-        variant="ghost"
-        size="icon"
+        variant="outline"
+        size="sm"
         onClick={handleExport}
         title="Exporter les données"
       >
         <Download className="w-4 h-4" />
+        Exporter
       </Button>
       <Button
-        variant="ghost"
-        size="icon"
+        variant="outline"
+        size="sm"
         onClick={() => fileInputRef.current?.click()}
         title="Importer des données"
       >
         <Upload className="w-4 h-4" />
+        Importer
       </Button>
       <input
         ref={fileInputRef}
