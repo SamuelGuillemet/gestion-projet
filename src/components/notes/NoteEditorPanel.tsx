@@ -36,11 +36,11 @@ export function NoteEditorPanel({ activeNoteId, activeNote }: Props) {
   };
 
   return (
-    <div className="flex flex-col gap-1 px-4 grow">
+    <div className="flex flex-col gap-3 p-3 grow">
       <div
         role="radiogroup"
         aria-label="Mode d'édition"
-        className="flex items-center self-end gap-2 p-1 border rounded-md"
+        className="flex items-center self-end gap-1 bg-background/75 p-1 border rounded-md"
       >
         <Button
           size="icon"
@@ -48,7 +48,7 @@ export function NoteEditorPanel({ activeNoteId, activeNote }: Props) {
           aria-pressed={mode === "both"}
           title="Both (édition + prévisualisation)"
           onClick={() => setMode("both")}
-          className={`${mode === "both" ? "bg-primary/10 text-primary" : "hover:bg-muted/50"} w-8 h-8 p-0 rounded-md`}
+          className={`${mode === "both" ? "bg-primary/10 text-primary" : "hover:bg-accent/70"} h-8 w-8 rounded-md p-0`}
         >
           <Columns className="w-4 h-4" />
         </Button>
@@ -59,7 +59,7 @@ export function NoteEditorPanel({ activeNoteId, activeNote }: Props) {
           aria-pressed={mode === "edit"}
           title="Edit (édition seule)"
           onClick={() => setMode("edit")}
-          className={`${mode === "edit" ? "bg-primary/10 text-primary" : "hover:bg-muted/50"} w-8 h-8 p-0 rounded-md`}
+          className={`${mode === "edit" ? "bg-primary/10 text-primary" : "hover:bg-accent/70"} h-8 w-8 rounded-md p-0`}
         >
           <Edit className="w-4 h-4" />
         </Button>
@@ -70,7 +70,7 @@ export function NoteEditorPanel({ activeNoteId, activeNote }: Props) {
           aria-pressed={mode === "preview"}
           title="Preview (prévisualisation seule)"
           onClick={() => setMode("preview")}
-          className={`${mode === "preview" ? "bg-primary/10 text-primary" : "hover:bg-muted/50"} w-8 h-8 p-0 rounded-md`}
+          className={`${mode === "preview" ? "bg-primary/10 text-primary" : "hover:bg-accent/70"} h-8 w-8 rounded-md p-0`}
         >
           <Eye className="w-4 h-4" />
         </Button>
@@ -78,14 +78,14 @@ export function NoteEditorPanel({ activeNoteId, activeNote }: Props) {
 
       <div className="overflow-y-auto grow">
         <div
-          className={cn("grid gap-4 min-w-0 h-min min-h-full p-1 pt-0", {
+          className={cn("gap-3 grid p-1 pt-0 min-w-0 h-min min-h-full", {
             "grid-cols-2": mode === "both",
             "grid-cols-1": mode !== "both",
           })}
         >
           {(mode === "both" || mode === "edit") && (
             <div className="flex flex-col min-h-0 grow">
-              <span className="mb-2 font-semibold text-muted-foreground text-xs uppercase tracking-wide">
+              <span className="mb-2 text-muted-foreground atelier-section-title">
                 Édition
               </span>
               <MarkdownTextarea
@@ -99,10 +99,10 @@ export function NoteEditorPanel({ activeNoteId, activeNote }: Props) {
 
           {(mode === "both" || mode === "preview") && (
             <div className="flex flex-col min-h-0 grow">
-              <span className="mb-2 font-semibold text-muted-foreground text-xs uppercase tracking-wide">
+              <span className="mb-2 text-muted-foreground atelier-section-title">
                 Prévisualisation
               </span>
-              <div className="flex-1 bg-card p-5 border rounded-lg min-h-0">
+              <div className="flex-1 bg-background/80 p-5 border rounded-md min-h-0">
                 <MarkdownPreview content={content} />
               </div>
             </div>

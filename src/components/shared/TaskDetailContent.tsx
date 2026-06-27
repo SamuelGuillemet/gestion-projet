@@ -125,7 +125,7 @@ export function TaskDetailContent({
               className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-colors ${
                 task.tags.includes(tag.id)
                   ? "border-primary bg-primary/10"
-                  : "border-border hover:border-primary/50"
+                  : "hover:border-primary/50"
               }`}
             >
               <span

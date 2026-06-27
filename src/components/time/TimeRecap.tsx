@@ -57,18 +57,25 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
   };
 
   return (
-    <div>
-      <h3 className="mb-3 font-medium text-sm">
-        Récapitulatif - Total : {formatMinutes(totalMinutes)}
-      </h3>
+    <div className="p-4 rounded-md overflow-y-auto atelier-card no-scrollbar">
+      <div className="flex flex-wrap justify-between items-end gap-2 mb-3">
+        <h3 className="text-foreground atelier-section-title">Récapitulatif</h3>
+        <div className="bg-background/75 px-2 py-1 border rounded font-data font-semibold text-sm">
+          {formatMinutes(totalMinutes)}
+        </div>
+      </div>
 
       {byTask.size > 0 && (
-        <div className="mb-4 border rounded-md overflow-hidden">
+        <div className="bg-background/70 mb-4 border rounded-md overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-muted/50">
+            <thead className="bg-muted/70">
               <tr>
-                <th className="p-2 font-medium text-left">Tâche</th>
-                <th className="p-2 font-medium text-right">Temps</th>
+                <th className="p-2 font-data font-semibold text-[0.68rem] text-muted-foreground text-left uppercase tracking-widest">
+                  Tâche
+                </th>
+                <th className="p-2 font-data font-semibold text-[0.68rem] text-muted-foreground text-right uppercase tracking-widest">
+                  Temps
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -77,7 +84,9 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
                   <td className="p-2">
                     {taskMap.get(tid) ?? "Tâche supprimée"}
                   </td>
-                  <td className="p-2 text-right">{formatMinutes(mins)}</td>
+                  <td className="p-2 font-data text-right">
+                    {formatMinutes(mins)}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -86,12 +95,12 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
       )}
 
       {timeEntries.length > 0 && (
-        <div className="space-y-1">
-          <span className="text-muted-foreground text-xs">
+        <div className="space-y-2">
+          <span className="text-muted-foreground atelier-section-title">
             Entrées récentes
           </span>
-          <div className="overflow-hidden">
-            <table className="w-full table-fixed text-xs">
+          <div className="bg-background/65 border rounded-md">
+            <table className="w-full text-xs table-fixed">
               <colgroup>
                 <col className="w-36" />
                 <col />
@@ -105,7 +114,7 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
                   .map((entry) => (
                     <tr
                       key={entry.id}
-                      className="group border-b hover:bg-muted/50"
+                      className="group hover:bg-accent/45 border-b"
                     >
                       {editingId === entry.id ? (
                         <>
@@ -120,7 +129,7 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
                                 if (event.key === "Enter") saveEdit();
                                 if (event.key === "Escape") setEditingId(null);
                               }}
-                              className="h-7 w-full text-xs"
+                              className="w-full h-7 text-xs"
                             />
                           </td>
                           <td className="p-1.5 align-middle">
@@ -140,7 +149,7 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
                                 if (event.key === "Enter") saveEdit();
                                 if (event.key === "Escape") setEditingId(null);
                               }}
-                              className="h-7 w-full text-xs"
+                              className="w-full h-7 text-xs"
                               autoFocus
                             />
                           </td>
@@ -167,7 +176,7 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
                         </>
                       ) : (
                         <>
-                          <td className="p-1.5 align-middle text-muted-foreground">
+                          <td className="p-1.5 font-data text-muted-foreground align-middle">
                             {entry.date}
                           </td>
                           <td className="p-1.5 align-middle">
@@ -175,7 +184,7 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
                               {taskMap.get(entry.taskId) ?? "?"}
                             </span>
                           </td>
-                          <td className="p-1.5 align-middle font-medium text-right">
+                          <td className="p-1.5 font-data font-semibold text-right align-middle">
                             {formatMinutes(entry.minutes)}
                           </td>
                           <td className="p-1.5 align-middle">

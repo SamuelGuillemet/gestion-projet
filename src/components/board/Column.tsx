@@ -22,29 +22,28 @@ export function Column({ columnId, taskIds }: ColumnProps) {
   return (
     <div
       ref={droppable.ref}
-      className={`flex flex-col w-full min-w-80 rounded-2xl border border-border/50 bg-card/40 backdrop-blur-sm transition-all duration-200 ${
+      className={`atelier-card flex w-full min-w-80 flex-col rounded-md transition-all duration-200 ${
         droppable.isDropTarget
-          ? "ring-2 ring-primary/50 border-primary/30 bg-primary/5 scale-[1.01]"
+          ? "scale-[1.01] border-primary/40 bg-primary/5 ring-2 ring-primary/30"
           : ""
       }`}
     >
-      <div className="flex items-center gap-3 p-4 border-border/30 border-b">
+      <div className="flex items-center gap-3 px-4 py-3 border-border/70 border-b">
         <span
-          className="rounded-full ring-2 ring-offset-2 ring-offset-card w-3 h-3"
+          className="rounded-full ring-2 ring-card size-3"
           style={{
             backgroundColor: column.color,
-            boxShadow: `0 0 8px ${column.color}40`,
           }}
         />
-        <span className="font-semibold text-sm tracking-wide">
+        <span className="text-foreground atelier-section-title">
           {column.label}
         </span>
-        <span className="bg-secondary/80 ml-auto px-2 py-0.5 rounded-full font-mono text-muted-foreground text-xs">
+        <span className="bg-background/70 ml-auto px-2 py-0.5 border rounded font-data text-muted-foreground text-xs">
           {taskIds.length}
         </span>
       </div>
 
-      <div className="flex-1 space-y-2.5 p-3 overflow-hidden">
+      <div className="flex-1 space-y-2.5 p-3 overflow-y-auto no-scrollbar">
         {taskIds.map((id, index) => (
           <SortableCard
             key={id}
@@ -54,7 +53,7 @@ export function Column({ columnId, taskIds }: ColumnProps) {
           />
         ))}
         {taskIds.length === 0 && (
-          <div className="py-10 border border-border/30 border-dashed rounded-xl text-muted-foreground/40 text-xs text-center">
+          <div className="py-10 border border-border/70 border-dashed rounded-md font-data text-muted-foreground/60 text-xs text-center">
             Glissez des tâches ici
           </div>
         )}

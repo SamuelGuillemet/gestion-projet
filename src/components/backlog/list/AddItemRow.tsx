@@ -22,7 +22,7 @@ export function AddItemRow({
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && onAdd()}
         placeholder={placeholder}
-        className="h-8 text-sm"
+        className="bg-background/70 h-8 text-sm"
       />
       <Button
         variant="ghost"

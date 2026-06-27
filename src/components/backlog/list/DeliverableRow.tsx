@@ -18,10 +18,10 @@ export function DeliverableRow({ deliverableId }: { deliverableId: string }) {
   return (
     <div
       className={cn(
-        "group flex items-center gap-2 py-2 pr-2 pl-4 rounded-md transition-colors cursor-pointer",
+        "group flex items-center gap-2 py-2 pr-2 pl-3 border border-l-2 border-l-(--entity-deliverable)! rounded-md transition-colors cursor-pointer",
         {
-          "bg-primary/5 border border-primary/20": selected,
-          "hover:bg-muted/30": !selected,
+          "border-primary/25 bg-primary/7": selected,
+          "border-transparent hover:hover:bg-accent/45": !selected,
         },
       )}
       onClick={onSelect}
@@ -43,12 +43,12 @@ export function DeliverableRow({ deliverableId }: { deliverableId: string }) {
         {deliverable.title}
       </span>
       {deliverable.version && (
-        <span className="bg-muted px-1.5 py-0.5 rounded text-[10px] text-muted-foreground">
+        <span className="bg-background/70 px-1.5 py-0.5 border rounded-sm font-data text-[10px] text-muted-foreground">
           {deliverable.version}
         </span>
       )}
       {deliverable.type && (
-        <span className="bg-emerald-500/10 px-1.5 py-0.5 rounded text-[10px] text-emerald-600">
+        <span className="bg-(--entity-deliverable)/10 px-1.5 py-0.5 rounded-sm text-[10px] text-(--entity-deliverable) border border-(--entity-deliverable)/25">
           {deliverable.type}
         </span>
       )}

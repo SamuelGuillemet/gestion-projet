@@ -38,22 +38,22 @@ export function BoardPage() {
 
   return (
     <div className="flex flex-col gap-4 h-full">
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2 p-3 rounded-md atelier-card">
         <Input
           placeholder="Ajouter une tâche..."
           value={newTaskTitle}
           onChange={(e) => setNewTaskTitle(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
-          className="max-w-sm"
+          className="bg-background/80 max-w-md h-9"
         />
-        <Button onClick={handleAddTask} size="sm" className="gap-1.5">
+        <Button onClick={handleAddTask} size="sm" className="gap-1.5 h-9">
           <Plus className="w-4 h-4" />
           Ajouter
         </Button>
       </div>
 
       <DragAndDropWrapper onDragEnd={handleDragEnd}>
-        <div className="flex flex-1 gap-4 p-2 overflow-x-auto">
+        <div className="flex flex-1 gap-3 pb-2 overflow-x-hidden">
           {Object.entries(tasks).map(([columnId, taskIds]) => {
             return (
               <Column key={columnId} columnId={columnId} taskIds={taskIds} />

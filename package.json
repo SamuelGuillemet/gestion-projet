@@ -16,8 +16,9 @@
     "@dnd-kit/abstract": "^0.5.0",
     "@dnd-kit/helpers": "^0.5.0",
     "@dnd-kit/react": "^0.5.0",
-    "@fontsource-variable/geist": "^5.2.9",
+    "@fontsource-variable/fraunces": "^5.2.9",
     "@fontsource-variable/outfit": "^5.2.8",
+    "@fontsource/geist-mono": "^5.2.8",
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.3.1",
     "class-variance-authority": "^0.7.1",
@@ -33,7 +34,6 @@
     "react-markdown": "^10.1.0",
     "react-resizable-panels": "^4.11.2",
     "react-router-dom": "^7.17.0",
-    "react-scan": "^0.5.7",
     "rehype-highlight": "^7.0.2",
     "remark-breaks": "^4.0.0",
     "remark-gfm": "^4.0.1",
@@ -53,6 +53,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
     "babel-plugin-react-compiler": "^1.0.0",
+    "react-scan": "^0.5.7",
     "typescript": "^6.0.3",
     "vite": "^8.0.16"
   }

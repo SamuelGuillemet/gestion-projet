@@ -1,7 +1,8 @@
 import { Clock, FileText, KanbanSquare, List } from "lucide-react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ActivityReport } from "@/components/time/report/ActivityReport";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useProjects } from "@/hooks/useProjects";
+import { cn } from "@/lib/utils";
 import { DataActions } from "./DataActions";
 import { GlobalSearchBox } from "./GlobalSearchBox";
 import { GlobalSearchDialog } from "./GlobalSearchDialog";
@@ -18,49 +19,74 @@ const TABS = [
 export function AppLayout() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { activeProject } = useProjects();
 
   const currentTab =
     TABS.find((t) => location.pathname.startsWith(t.value))?.value ?? "/board";
 
   return (
-    <div className="flex flex-col bg-background h-screen">
-      <Tabs
-        value={currentTab}
-        onValueChange={(v) => navigate(v)}
-        className="flex flex-col flex-1"
-      >
-        <header className="top-0 z-10 sticky flex justify-between items-center bg-card/80 backdrop-blur-sm px-6 lg:px-10 py-2 border-border/60 border-b">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3 mr-4">
-              <div className="flex justify-center items-center bg-primary rounded-lg w-7 h-7">
-                <KanbanSquare className="w-4 h-4 text-primary-foreground" />
-              </div>
-              <h1 className="font-bold text-lg tracking-tight">
-                Gestion de Projet
+    <div className="flex md:flex-row flex-col bg-background h-screen overflow-hidden text-foreground atelier-shell">
+      <div className="flex flex-col flex-1 min-w-0">
+        <header className="z-10 flex lg:flex-row flex-col lg:items-center gap-2 bg-card px-4 py-1.5 border-border/70 border-b h-12 shrink-0">
+          <section className="flex flex-1 items-center gap-3 min-w-0">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <span
+                className="rounded-full ring-2 ring-background size-2.5 shrink-0"
+                style={{
+                  backgroundColor: activeProject?.color ?? "var(--rule-strong)",
+                }}
+              />
+              <h1 className="font-heading font-semibold text-lg truncate leading-none tracking-normal">
+                {activeProject?.name ?? "Aucun projet"}
               </h1>
             </div>
-            <TabsList className="w-fit">
-              {TABS.map(({ value, label, icon: Icon }) => (
-                <TabsTrigger key={value} value={value} className="gap-1.5">
-                  <Icon className="w-4 h-4" />
-                  {label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </div>
-          <div className="flex items-center gap-3">
+            <nav className="flex gap-1 px-2 md:px-3 pb-2 md:pb-0 md:overflow-visible overflow-x-auto">
+              {TABS.map(({ value, label, icon: Icon }) => {
+                const active = currentTab === value;
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    aria-current={active ? "page" : undefined}
+                    data-active={active}
+                    onClick={() => navigate(value)}
+                    className={cn(
+                      "group flex items-center gap-2.5 px-3 py-2 border rounded-md min-w-28 md:min-w-0 text-sm text-left transition-all",
+                      active
+                        ? "border-primary/30 bg-card text-foreground shadow-sm"
+                        : "border-transparent text-muted-foreground hover:hover:bg-card/65 hover:text-foreground",
+                    )}
+                  >
+                    <Icon
+                      className={cn(
+                        "size-4 shrink-0",
+                        active ? "text-primary" : "text-muted-foreground",
+                      )}
+                    />
+                    <span className="font-medium">{label}</span>
+                  </button>
+                );
+              })}
+            </nav>
+          </section>
+
+          <div className="flex flex-wrap lg:justify-end items-center gap-2 min-w-0">
             <GlobalSearchBox />
-            <ActivityReport />
-            <TagManager />
-            <DataActions />
-            <ProjectSelector />
+            <div className="flex items-center gap-1 bg-muted/55 p-0.5 rounded-md">
+              <ActivityReport />
+              <TagManager />
+              <DataActions />
+              <ProjectSelector />
+            </div>
           </div>
         </header>
 
-        <main className="flex-1 p-5 overflow-hidden">
-          <Outlet />
+        <main className="flex-1 p-2 lg:p-4 min-h-0 overflow-hidden">
+          <div className="h-full min-h-0 atelier-page-enter">
+            <Outlet />
+          </div>
         </main>
-      </Tabs>
+      </div>
       <GlobalSearchDialog />
     </div>
   );

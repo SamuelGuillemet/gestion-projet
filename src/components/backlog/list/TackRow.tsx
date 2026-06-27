@@ -4,6 +4,7 @@ import { StatusBadge } from "@/components/shared/TaskStatusBadge";
 import { Button } from "@/components/ui/button";
 import { useTags } from "@/hooks/useTags";
 import { useTask, useTaskActions } from "@/hooks/useTasks";
+import { cn } from "@/lib/utils";
 import { useBacklogUI } from "../backlog-state";
 
 export function TaskRow({
@@ -30,8 +31,10 @@ export function TaskRow({
 
   return (
     <div
-      className={`flex items-center gap-2 pl-4 pr-2 py-2 group rounded-md cursor-pointer transition-colors ${
-        selected ? "bg-primary/5 border border-primary/20" : "hover:bg-muted/30"
+      className={`group flex cursor-pointer items-center gap-2 rounded-md border border-l-2 border-l-(--entity-task)! py-2 pr-2 pl-3 transition-colors ${
+        selected
+          ? "border-primary/25 bg-primary/7"
+          : "border-transparent hover:hover:bg-accent/45"
       }`}
       onClick={onSelect}
       onKeyDown={(e) => e.key === "Enter" && onSelect()}
@@ -46,13 +49,15 @@ export function TaskRow({
         )}
       </span>
       <span
-        className={`text-sm flex-1 truncate ${task.done ? "line-through text-muted-foreground" : ""}`}
+        className={cn("flex-1 text-sm truncate", {
+          "line-through text-muted-foreground": task.done,
+        })}
       >
         {task.title}
       </span>
       {taskTags.length > 0 && (
         <div className="flex gap-1 shrink-0">
-          {taskTags.slice(0, 2).map((tag) => (
+          {taskTags.map((tag) => (
             <TagBadge key={tag.id} tag={tag} />
           ))}
         </div>

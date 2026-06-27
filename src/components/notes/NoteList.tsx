@@ -31,23 +31,23 @@ export function NoteList({ activeNoteId, setActiveNoteId }: Props) {
   };
 
   return (
-    <div className="flex flex-col border-r w-52 shrink-0">
-      <div className="flex justify-between items-center p-2 border-b">
-        <span className="font-semibold text-muted-foreground text-xs uppercase tracking-wide">
+    <div className="flex flex-col bg-background/60 border-r w-60 shrink-0">
+      <div className="flex justify-between items-center p-3 border-b">
+        <span className="text-muted-foreground atelier-section-title">
           Notes
         </span>
         <Button
           variant="ghost"
           size="icon"
-          className="w-6 h-6"
+          className="w-7 h-7"
           onClick={handleAddNote}
         >
           +
         </Button>
       </div>
-      <div className="flex-1 py-1 overflow-y-auto">
+      <div className="flex-1 p-2 overflow-y-auto">
         {noteIds.length === 0 && (
-          <p className="p-3 text-muted-foreground text-xs text-center">
+          <p className="p-3 border border-dashed rounded-md text-muted-foreground text-xs text-center">
             Aucune note. Cliquez + pour en créer une.
           </p>
         )}

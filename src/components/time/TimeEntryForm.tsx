@@ -32,22 +32,24 @@ export function TimeEntryForm({ projectId }: TimeEntryFormProps) {
   };
 
   return (
-    <div>
-      <h3 className="font-semibold text-base mb-3">Saisir du temps</h3>
-      <div className="flex items-end gap-3">
+    <div className="p-4 rounded-md atelier-card">
+      <h3 className="mb-3 text-foreground atelier-section-title">
+        Saisir du temps
+      </h3>
+      <div className="flex flex-wrap items-end gap-3">
         <div className="flex-1">
-          <Label className="text-xs mb-1 block">Tâche</Label>
+          <Label className="block mb-1 text-xs">Tâche</Label>
           <DropdownMenu>
             <DropdownMenuTrigger
               render={
                 <Button
                   variant="outline"
-                  className="w-full justify-between font-normal"
+                  className="justify-between bg-background/80 w-full font-normal"
                 >
                   <span className="truncate">
                     {selectedTask?.title ?? "Sélectionner une tâche"}
                   </span>
-                  <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
+                  <ChevronDown className="opacity-50 w-4 h-4 shrink-0" />
                 </Button>
               }
             />
@@ -64,7 +66,7 @@ export function TimeEntryForm({ projectId }: TimeEntryFormProps) {
           </DropdownMenu>
         </div>
         <div>
-          <Label className="text-xs mb-1 block">Date</Label>
+          <Label className="block mb-1 text-xs">Date</Label>
           <Input
             type="date"
             value={date}
@@ -72,7 +74,7 @@ export function TimeEntryForm({ projectId }: TimeEntryFormProps) {
           />
         </div>
         <div className="w-24">
-          <Label className="text-xs mb-1 block">Minutes</Label>
+          <Label className="block mb-1 text-xs">Minutes</Label>
           <Input
             type="number"
             min={0}

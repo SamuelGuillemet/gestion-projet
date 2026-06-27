@@ -51,7 +51,7 @@ export function MarkdownPreview({ content }: Props) {
   );
 
   return (
-    <article className="prose-code:bg-muted prose-pre:bg-muted prose-code:px-1 prose-code:py-0.5 prose-pre:border prose-code:rounded max-w-none prose-headings:font-bold prose-a:text-primary prose-code:text-primary/80 prose prose-sm prose-slate">
+    <article className="prose-code:bg-muted prose-pre:bg-muted prose-code:px-1 prose-code:py-0.5 prose-pre:border prose-code:rounded-sm max-w-none prose-headings:font-heading prose-headings:font-semibold prose-a:text-primary prose-code:text-primary/80 prose-p:leading-relaxed prose prose-sm prose-slate">
       <Markdown
         urlTransform={urlTransform}
         remarkPlugins={remarkPlugins}

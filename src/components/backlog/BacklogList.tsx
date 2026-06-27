@@ -63,14 +63,14 @@ export function BacklogList({ activeProjectId }: BacklogListProps) {
   };
 
   return (
-    <div className="flex-1 space-y-4 min-w-0">
+    <div className="flex-1 space-y-3 min-w-0">
       <TagFilter selectedTag={filterTag} onSelectTag={setFilterTag} />
 
       <TreeSection
         title={`Tâches (${taskIds.length})`}
         expanded={expanded.tasks}
         onToggle={() => toggle("tasks")}
-        accentColor="bg-blue-500"
+        accentColor="var(--entity-task)"
       >
         {taskIds.map((id) => (
           <TaskRow key={id} taskId={id} filterTag={filterTag} />
@@ -88,7 +88,7 @@ export function BacklogList({ activeProjectId }: BacklogListProps) {
         title={`Questions (${questionIds.length})`}
         expanded={expanded.questions}
         onToggle={() => toggle("questions")}
-        accentColor="bg-amber-500"
+        accentColor="var(--entity-question)"
       >
         {questionIds.map((id) => (
           <QuestionRow key={id} questionId={id} />
@@ -106,7 +106,7 @@ export function BacklogList({ activeProjectId }: BacklogListProps) {
         title={`Livrables (${deliverableIds.length})`}
         expanded={expanded.deliverables}
         onToggle={() => toggle("deliverables")}
-        accentColor="bg-emerald-500"
+        accentColor="var(--entity-deliverable)"
       >
         {deliverableIds.map((id) => (
           <DeliverableRow key={id} deliverableId={id} />

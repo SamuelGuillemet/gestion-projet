@@ -144,7 +144,8 @@ export function buildGlobalSearchResults(query: string): GlobalSearchResult[] {
       id: question.id,
       type: "questions",
       projectId: question.projectId,
-      projectName: projectById.get(question.projectId)?.name ?? "Projet inconnu",
+      projectName:
+        projectById.get(question.projectId)?.name ?? "Projet inconnu",
       projectColor: projectById.get(question.projectId)?.color ?? "#6b7280",
       title: question.title || "Sans titre",
       snippet: createSnippet(content, normalizedQuery),
@@ -160,7 +161,8 @@ export function buildGlobalSearchResults(query: string): GlobalSearchResult[] {
       id: deliverable.id,
       type: "deliverables",
       projectId: deliverable.projectId,
-      projectName: projectById.get(deliverable.projectId)?.name ?? "Projet inconnu",
+      projectName:
+        projectById.get(deliverable.projectId)?.name ?? "Projet inconnu",
       projectColor: projectById.get(deliverable.projectId)?.color ?? "#6b7280",
       title: deliverable.title || "Sans titre",
       snippet: createSnippet(content, normalizedQuery),
@@ -184,7 +186,8 @@ export const useGlobalSearchState = create<GlobalSearchState>()((set) => ({
   setHighlightedIndex: (highlightedIndex) => set({ highlightedIndex }),
   clear: () => set({ query: "", highlightedIndex: 0 }),
   setPendingNoteIntent: (pendingNoteIntent) => set({ pendingNoteIntent }),
-  setPendingBacklogIntent: (pendingBacklogIntent) => set({ pendingBacklogIntent }),
+  setPendingBacklogIntent: (pendingBacklogIntent) =>
+    set({ pendingBacklogIntent }),
   openResult: (result, navigate) => {
     useProjectStore.getState().setActiveProject(result.projectId);
 

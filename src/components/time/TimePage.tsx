@@ -1,4 +1,3 @@
-import { Separator } from "@/components/ui/separator";
 import { useProjects } from "@/hooks/useProjects";
 import { MilestoneTimeline } from "./MilestoneTimeline";
 import { TimeEntryForm } from "./TimeEntryForm";
@@ -9,19 +8,21 @@ export function TimePage() {
 
   if (!activeProjectId) {
     return (
-      <div className="flex items-center justify-center h-full text-muted-foreground">
+      <div className="flex justify-center items-center h-full text-muted-foreground">
         Sélectionnez ou créez un projet pour commencer.
       </div>
     );
   }
 
   return (
-    <div className="h-full overflow-y-auto space-y-8">
-      <TimeEntryForm projectId={activeProjectId} />
-      <Separator />
-      <TimeRecap projectId={activeProjectId} />
-      <Separator />
-      <MilestoneTimeline projectId={activeProjectId} />
+    <div className="gap-4 grid xl:grid-cols-[minmax(0,1fr)_32rem] h-full overflow-hidden">
+      <div className="gap-4 grid grid-rows-[auto_1fr] overflow-hidden">
+        <TimeEntryForm projectId={activeProjectId} />
+        <TimeRecap projectId={activeProjectId} />
+      </div>
+      <div className="p-4 rounded-md atelier-card">
+        <MilestoneTimeline projectId={activeProjectId} />
+      </div>
     </div>
   );
 }

@@ -136,7 +136,7 @@ export function MarkdownTextarea({
   };
 
   return (
-    <div className="relative flex flex-1 min-h-0 flex-col gap-2">
+    <div className="relative flex flex-col flex-1 gap-2 min-h-0">
       <Textarea
         {...props}
         ref={textareaRef}
@@ -148,16 +148,16 @@ export function MarkdownTextarea({
         onDragLeave={handleDragLeave}
         onKeyDown={handleKeyDown}
         className={cn(
-          "flex-1 min-h-0 font-mono text-sm resize-none transition-colors",
+          "flex-1 bg-background/80 min-h-0 font-data text-sm leading-relaxed transition-colors resize-none",
           isDragging && "border-primary bg-primary/5",
           className,
         )}
       />
 
       {isDragging ? (
-        <div className="absolute inset-0 flex items-center justify-center rounded-lg border border-dashed border-primary bg-background/85 text-primary backdrop-blur-[1px] pointer-events-none">
-          <div className="flex items-center gap-2 text-sm font-medium">
-            <ImagePlus className="h-4 w-4" />
+        <div className="absolute inset-0 flex justify-center items-center bg-background/85 backdrop-blur-[1px] border border-primary border-dashed rounded-md text-primary pointer-events-none">
+          <div className="flex items-center gap-2 font-medium text-sm">
+            <ImagePlus className="w-4 h-4" />
             Déposez l'image pour l'ajouter à la note
           </div>
         </div>

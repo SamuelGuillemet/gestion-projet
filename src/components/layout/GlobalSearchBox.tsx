@@ -14,15 +14,15 @@ export function GlobalSearchBox() {
       }
     };
 
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    globalThis.addEventListener("keydown", onKeyDown);
+    return () => globalThis.removeEventListener("keydown", onKeyDown);
   }, [setOpen]);
 
   return (
     <Button
       type="button"
       variant="outline"
-      className="justify-start gap-2 w-72 text-muted-foreground"
+      className="justify-start gap-2 bg-card/75 hover:bg-accent/80 shadow-none border-foreground/15 w-full sm:w-64 xl:w-80 h-9 font-normal text-muted-foreground"
       onClick={() => {
         setOpen(true);
       }}
@@ -30,7 +30,7 @@ export function GlobalSearchBox() {
     >
       <Search className="w-4 h-4" />
       <span className="flex-1 text-left">Rechercher partout...</span>
-      <span className="opacity-70 text-[10px]">Ctrl + K</span>
+      <span className="opacity-70 font-data text-[10px]">Ctrl K</span>
     </Button>
   );
 }

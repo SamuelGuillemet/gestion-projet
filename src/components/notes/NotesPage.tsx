@@ -21,7 +21,7 @@ export function NotesPage() {
 
   // Auto-select last opened note or first note when project changes
   useEffect(() => {
-    if (pendingNoteIntent && pendingNoteIntent.projectId === activeProjectId) {
+    if (pendingNoteIntent?.projectId === activeProjectId) {
       if (noteIds.includes(pendingNoteIntent.noteId)) {
         setActiveNoteId(pendingNoteIntent.noteId);
       }
@@ -56,7 +56,7 @@ export function NotesPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-100px)] overflow-hidden">
+    <div className="flex bg-card border rounded-md h-full overflow-hidden">
       <NoteList activeNoteId={activeNoteId} setActiveNoteId={setActiveNoteId} />
 
       {activeNote ? (

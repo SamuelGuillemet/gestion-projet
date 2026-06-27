@@ -14,9 +14,9 @@ export function BacklogDetailPanel() {
   if (!selectedDetail) return null;
 
   return (
-    <div className="flex flex-col p-4 pl-1 w-full h-full">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="font-semibold text-sm">Détail</h3>
+    <div className="flex flex-col p-4 w-full h-full">
+      <div className="flex justify-between items-center mb-4 pb-3 border-b">
+        <h3 className="text-foreground atelier-section-title">Détail</h3>
         <Button variant="ghost" size="icon" className="w-6 h-6" onClick={clear}>
           <X className="w-4 h-4" />
         </Button>

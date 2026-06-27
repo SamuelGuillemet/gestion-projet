@@ -80,7 +80,7 @@ export const IdbImage = memo(function IdbImage({
 
   if (!resolvedSrc) {
     return (
-      <span className="inline-flex rounded-md border border-dashed border-border px-3 py-2 text-muted-foreground text-sm w-full justify-center">
+      <span className="inline-flex justify-center px-3 py-2 border border-dashed rounded-md w-full text-muted-foreground text-sm">
         Image indisponible {src}
       </span>
     );
@@ -91,7 +91,7 @@ export const IdbImage = memo(function IdbImage({
       {...props}
       src={resolvedSrc}
       alt={alt}
-      className={cn("my-2 rounded-xl border object-contain", className)}
+      className={cn("my-2 border rounded-xl object-contain", className)}
     />
   );
 });

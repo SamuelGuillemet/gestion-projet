@@ -29,9 +29,9 @@ export function MilestoneTimeline({ projectId }: MilestoneTimelineProps) {
 
   return (
     <div>
-      <h3 className="font-medium text-sm mb-3">Jalons</h3>
+      <h3 className="mb-3 text-foreground atelier-section-title">Jalons</h3>
 
-      <div className="flex items-end gap-3 mb-4">
+      <div className="flex flex-wrap items-end gap-3 mb-4">
         <div className="flex-1">
           <Label className="text-xs">Nom</Label>
           <Input
@@ -50,36 +50,36 @@ export function MilestoneTimeline({ projectId }: MilestoneTimelineProps) {
           />
         </div>
         <Button onClick={handleAdd} size="icon" variant="outline">
-          <Plus className="h-4 w-4" />
+          <Plus className="w-4 h-4" />
         </Button>
       </div>
 
       <div className="px-2">
         {sorted.length > 0 && (
-          <div className="relative ml-1 pl-4 border-l-2 border-muted space-y-4">
+          <div className="relative space-y-4 ml-1 pl-4 border-muted border-l-2">
             {sorted.map((m) => {
               const isPast = new Date(m.date) < new Date();
               return (
-                <div key={m.id} className="relative group">
+                <div key={m.id} className="group relative">
                   <div
                     className={`absolute -left-6.25 top-1 h-4 w-4 rounded-full border-2 ${
                       isPast
-                        ? "bg-green-500 border-green-500"
-                        : "bg-background border-primary"
+                        ? "border-(--entity-deliverable) bg-(--entity-deliverable)"
+                        : "border-primary bg-background"
                     }`}
                   />
                   <div className="flex items-center gap-2 ml-4">
-                    <span className="text-xs text-muted-foreground w-24">
+                    <span className="w-24 font-data text-muted-foreground text-xs">
                       {m.date}
                     </span>
-                    <span className="text-sm font-medium">{m.name}</span>
+                    <span className="font-medium text-sm">{m.name}</span>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-5 w-5 opacity-0 group-hover:opacity-100"
+                      className="opacity-0 group-hover:opacity-100 w-5 h-5"
                       onClick={() => deleteMilestone(m.id)}
                     >
-                      <Trash2 className="h-3 w-3" />
+                      <Trash2 className="w-3 h-3" />
                     </Button>
                   </div>
                 </div>

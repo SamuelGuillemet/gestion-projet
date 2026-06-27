@@ -1,7 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
+@import "@fontsource-variable/outfit";
+@import "@fontsource/geist-mono";
 @import "remark-github-alerts/styles/github-colors-light.css";
 @import "remark-github-alerts/styles/github-base.css";
 @import "highlight.js/styles/atom-one-light.css";
@@ -11,8 +12,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: "Geist Variable", sans-serif;
+  --font-heading: "Fraunces Variable", serif;
+  --font-sans: "Outfit Variable", sans-serif;
+  --font-mono: "Geist Mono", monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -54,38 +56,56 @@
 }
 
 :root {
-  --background: oklch(0.98 0.005 260);
-  --foreground: oklch(0.18 0.02 260);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.02 260);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.02 260);
-  --primary: oklch(0.55 0.2 260);
-  --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.95 0.02 260);
-  --secondary-foreground: oklch(0.25 0.03 260);
-  --muted: oklch(0.95 0.01 260);
-  --muted-foreground: oklch(0.5 0.02 260);
-  --accent: oklch(0.92 0.04 260);
-  --accent-foreground: oklch(0.25 0.03 260);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.9 0.02 260);
-  --input: oklch(0.9 0.02 260);
-  --ring: oklch(0.55 0.2 260);
-  --chart-1: oklch(0.6 0.2 260);
-  --chart-2: oklch(0.65 0.18 200);
-  --chart-3: oklch(0.7 0.15 150);
-  --chart-4: oklch(0.6 0.2 30);
-  --chart-5: oklch(0.55 0.22 320);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.97 0.01 260);
-  --sidebar-foreground: oklch(0.18 0.02 260);
-  --sidebar-primary: oklch(0.55 0.2 260);
-  --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.92 0.04 260);
-  --sidebar-accent-foreground: oklch(0.25 0.03 260);
-  --sidebar-border: oklch(0.9 0.02 260);
-  --sidebar-ring: oklch(0.55 0.2 260);
+  --paper: #f8f5f5;
+  --paper-strong: #fafeff;
+  --ink: #18211d;
+  --ink-soft: #536056;
+  --rule: #e9f0e5;
+  --rule-strong: #aeb9ac;
+  --blueprint: #4175c9;
+  --signal: #e2361c;
+  --moss: #2faa4c;
+  --amber: #e49918;
+  --plum: #8d54a3;
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--paper-strong);
+  --card-foreground: var(--ink);
+  --popover: var(--paper-strong);
+  --popover-foreground: var(--ink);
+  --primary: var(--blueprint);
+  --primary-foreground: #fffefa;
+  --secondary: #e8eee2;
+  --secondary-foreground: var(--ink);
+  --muted: #f7f9f6;
+  --muted-foreground: var(--ink-soft);
+  --accent: #edf3e8;
+  --accent-foreground: var(--ink);
+  --destructive: var(--signal);
+  --border: var(--rule);
+  --input: var(--rule);
+  --ring: var(--blueprint);
+  --chart-1: var(--blueprint);
+  --chart-2: var(--moss);
+  --chart-3: var(--amber);
+  --chart-4: var(--signal);
+  --chart-5: var(--plum);
+  --radius: 0.55rem;
+  --sidebar: #e8eee2;
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--blueprint);
+  --sidebar-primary-foreground: #fffefa;
+  --sidebar-accent: #dfe8db;
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--rule-strong);
+  --sidebar-ring: var(--blueprint);
+
+  --entity-task: var(--blueprint);
+  --entity-question: var(--amber);
+  --entity-deliverable: var(--moss);
+  --entity-time: var(--signal);
+
+  --workspace-shadow: 0 18px 50px rgb(24 33 29 / 0.08);
 }
 
 @layer base {
@@ -97,6 +117,90 @@
   }
   html {
     @apply font-sans;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  body::before {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    content: "";
+    background:
+      linear-gradient(rgba(24, 32, 33, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(24, 33, 33, 0.045) 1px, transparent 1px),
+      radial-gradient(
+        circle at 20% 12%,
+        rgb(23 105 170 / 0.08),
+        transparent 28rem
+      ),
+      radial-gradient(
+        circle at 92% 18%,
+        rgba(115, 125, 79, 0.09),
+        transparent 24rem
+      ),
+      var(--paper);
+    background-size:
+      34px 34px,
+      34px 34px,
+      auto,
+      auto,
+      auto;
+  }
+
+  ::selection {
+    color: var(--primary-foreground);
+    background: var(--primary);
+  }
+}
+
+@layer utilities {
+  .font-data {
+    font-family: var(--font-mono);
+  }
+
+  .atelier-shell {
+    background:
+      linear-gradient(90deg, rgba(24, 32, 33, 0.04), transparent 19rem),
+      transparent;
+  }
+
+  .atelier-card {
+    background: color-mix(in srgb, var(--card), transparent 5%);
+    border: 1px solid color-mix(in srgb, var(--rule), transparent 10%);
+    box-shadow: 0 8px 24px rgb(24 33 29 / 0.055);
+  }
+
+  .atelier-section-title {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 650;
+    letter-spacing: 0.08em;
+  }
+
+  .atelier-page-enter {
+    animation: atelier-page-enter 2000ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .atelier-page-enter {
+      animation: none;
+    }
+  }
+}
+
+@keyframes atelier-page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

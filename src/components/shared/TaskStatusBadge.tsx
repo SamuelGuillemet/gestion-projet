@@ -5,11 +5,15 @@ export function StatusBadge({ columnId }: { columnId: string }) {
   if (!col) return null;
   return (
     <span
-      className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium shrink-0"
-      style={{ backgroundColor: `${col.color}20`, color: col.color }}
+      className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded font-medium text-[10px] shrink-0"
+      style={{
+        backgroundColor: `${col.color}10`,
+        color: col.color,
+        border: `1px solid ${col.color}40`,
+      }}
     >
       <span
-        className="h-1.5 w-1.5 rounded-full"
+        className="rounded-full w-1.5 h-1.5"
         style={{ backgroundColor: col.color }}
       />
       {col.label}

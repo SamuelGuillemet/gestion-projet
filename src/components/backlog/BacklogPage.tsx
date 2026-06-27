@@ -26,10 +26,7 @@ export function BacklogPage() {
   );
 
   useEffect(() => {
-    if (
-      !pendingBacklogIntent ||
-      pendingBacklogIntent.projectId !== activeProjectId
-    ) {
+    if (pendingBacklogIntent?.projectId !== activeProjectId) {
       return;
     }
 
@@ -54,18 +51,22 @@ export function BacklogPage() {
 
   return (
     <ResizablePanelGroup
-      className="gap-4 h-[calc(100vh-100px)]!"
+      className="gap-3 h-full!"
       onLayoutChanged={(e) => setPanelSize(e["detail-panel"])}
     >
-      <ResizablePanel className="overflow-y-auto" id="tree-view-panel">
+      <ResizablePanel className="pr-1 overflow-y-auto" id="tree-view-panel">
         <BacklogList activeProjectId={activeProjectId} />
       </ResizablePanel>
 
       {hasSelection && (
         <>
-          <ResizableHandle withHandle />
+          <ResizableHandle
+            withHandle
+            handleClassName="bg-muted-foreground/15 w-1"
+            className="bg-muted-foreground/10 w-0.5"
+          />
           <ResizablePanel
-            className="overflow-y-auto"
+            className="bg-card border rounded-md overflow-y-auto"
             id="detail-panel"
             defaultSize={panelSize}
           >
