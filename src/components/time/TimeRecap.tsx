@@ -40,6 +40,17 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
     return map;
   }, [timeEntries]);
 
+  const taskTotals = useMemo(
+    () =>
+      [...byTask.entries()].sort((a, b) => {
+        if (b[1] !== a[1]) return b[1] - a[1];
+        return (taskMap.get(a[0]) ?? "Tâche supprimée").localeCompare(
+          taskMap.get(b[0]) ?? "Tâche supprimée",
+        );
+      }),
+    [byTask, taskMap],
+  );
+
   const startEdit = (id: string, date: string, minutes: number) => {
     setEditingId(id);
     setEditDate(date);
@@ -79,7 +90,7 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
               </tr>
             </thead>
             <tbody>
-              {[...byTask.entries()].map(([tid, mins]) => (
+              {taskTotals.map(([tid, mins]) => (
                 <tr key={tid} className="border-t">
                   <td className="p-2">
                     {taskMap.get(tid) ?? "Tâche supprimée"}
