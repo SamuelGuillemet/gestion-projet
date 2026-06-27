@@ -6,6 +6,11 @@ import rehypeHighlightRaw from "rehype-highlight";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import remarkGithubAlerts from "remark-github-alerts";
+import { useEntityReferenceNavigation } from "@/hooks/useEntityReferenceNavigation";
+import {
+  ENTITY_REFERENCE_REGEX,
+  parseEntityReference,
+} from "@/lib/entity-references";
 import { isMarkdownImageUri } from "@/lib/markdown-images";
 import { cn } from "@/lib/utils";
 import { IdbImage } from "./plugins/IdbImage";
@@ -16,8 +21,14 @@ import { rehypeMermaid } from "./plugins/rehype-mermaid";
 const rehypeHighlight = () =>
   rehypeHighlightRaw({ languages: { ...common, powershell } });
 
-const remarkPlugins = [remarkGfm, remarkBreaks, remarkGithubAlerts];
+const remarkPlugins = [
+  remarkGfm,
+  remarkBreaks,
+  remarkGithubAlerts,
+  remarkEntityReferences,
+];
 const rehypePlugins = [rehypeIdbImages, rehypeMermaid, rehypeHighlight];
+const ENTITY_REFERENCE_SCHEME = "entity-ref:";
 
 const urlTransform = (value: string) => {
   const colon = value.indexOf(":");
@@ -30,7 +41,7 @@ const urlTransform = (value: string) => {
     (slash !== -1 && colon > slash) ||
     (questionMark !== -1 && colon > questionMark) ||
     (numberSign !== -1 && colon > numberSign) ||
-    /^(https?|idb)$/i.test(value.slice(0, colon))
+    /^(https?|idb|entity-ref)$/i.test(value.slice(0, colon))
   ) {
     return value;
   }
@@ -45,6 +56,7 @@ type Props = {
 export function MarkdownPreview({ content }: Props) {
   const components = useMemo(
     () => ({
+      a: MarkdownLink,
       img: MarkdownImage,
       pre: MarkdownPre,
       table: MarkdownTable,
@@ -63,6 +75,108 @@ export function MarkdownPreview({ content }: Props) {
         {content || "*Aucun contenu...*"}
       </Markdown>
     </article>
+  );
+}
+
+type MarkdownNode = {
+  type?: string;
+  value?: string;
+  url?: string;
+  title?: string | null;
+  children?: MarkdownNode[];
+};
+
+const SKIPPED_REFERENCE_NODE_TYPES = new Set([
+  "code",
+  "inlineCode",
+  "link",
+  "linkReference",
+]);
+
+function remarkEntityReferences() {
+  return (tree: MarkdownNode) => {
+    linkEntityReferenceText(tree);
+  };
+}
+
+function linkEntityReferenceText(node: MarkdownNode) {
+  if (!node.children || SKIPPED_REFERENCE_NODE_TYPES.has(node.type ?? "")) {
+    return;
+  }
+
+  node.children = node.children.flatMap((child) => {
+    if (child.type === "text" && typeof child.value === "string") {
+      return createEntityReferenceNodes(child.value);
+    }
+
+    linkEntityReferenceText(child);
+    return [child];
+  });
+}
+
+function createEntityReferenceNodes(value: string): MarkdownNode[] {
+  const regex = new RegExp(ENTITY_REFERENCE_REGEX.source, "g");
+  const nodes: MarkdownNode[] = [];
+  let lastIndex = 0;
+
+  for (const match of value.matchAll(regex)) {
+    const index = match.index ?? 0;
+    const label = match[0];
+
+    if (index > lastIndex) {
+      nodes.push({ type: "text", value: value.slice(lastIndex, index) });
+    }
+
+    nodes.push({
+      type: "link",
+      url: `${ENTITY_REFERENCE_SCHEME}${label}`,
+      title: null,
+      children: [{ type: "text", value: label }],
+    });
+
+    lastIndex = index + label.length;
+  }
+
+  if (lastIndex < value.length) {
+    nodes.push({ type: "text", value: value.slice(lastIndex) });
+  }
+
+  return nodes.length > 0 ? nodes : [{ type: "text", value }];
+}
+
+function MarkdownLink({
+  children,
+  className,
+  href,
+  ...props
+}: ComponentPropsWithoutRef<"a">) {
+  const openReference = useEntityReferenceNavigation();
+
+  if (typeof href === "string" && href.startsWith(ENTITY_REFERENCE_SCHEME)) {
+    const reference = parseEntityReference(
+      href.slice(ENTITY_REFERENCE_SCHEME.length),
+    );
+
+    if (reference) {
+      return (
+        <button
+          type="button"
+          className={cn(
+            "font-data text-primary underline underline-offset-2 hover:opacity-80",
+            className,
+          )}
+          onClick={() => openReference(reference)}
+        >
+          {children}
+        </button>
+      );
+    }
+  }
+
+  return (
+    <a href={href} className={className} {...props}>
+      {children}
+    </a>
   );
 }
 
