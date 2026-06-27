@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useGlobalSearchState } from "@/components/layout/global-search-state";
 import { useNote, useNoteIds } from "@/hooks/useNotes";
 import { useProjects } from "@/hooks/useProjects";
-import { getLastNoteId, setLastNoteId } from "@/lib/notes";
 import { NoteEditorPanel } from "./NoteEditorPanel";
 import { NoteList } from "./NoteList";
+import { useNotesUI } from "./notes-state";
 
 export function NotesPage() {
   const { activeProjectId } = useProjects();
@@ -13,26 +13,34 @@ export function NotesPage() {
     (s) => s.setPendingNoteIntent,
   );
   const noteIds = useNoteIds(activeProjectId);
-  const [activeNoteId, setActiveNoteId] = useState<string | null>(() =>
-    getLastNoteId(activeProjectId),
+  const activeNoteId = useNotesUI((s) =>
+    activeProjectId
+      ? (s.activeNoteIdByProjectId[activeProjectId] ?? null)
+      : null,
   );
+  const setStoredActiveNoteId = useNotesUI((s) => s.setActiveNoteId);
+
+  const setActiveNoteId = (noteId: string | null) => {
+    if (!activeProjectId) return;
+    setStoredActiveNoteId(activeProjectId, noteId);
+  };
 
   const activeNote = useNote(activeNoteId ?? "");
 
   // Auto-select last opened note or first note when project changes
   useEffect(() => {
+    if (!activeProjectId) return;
+
     if (pendingNoteIntent?.projectId === activeProjectId) {
       if (noteIds.includes(pendingNoteIntent.noteId)) {
-        setActiveNoteId(pendingNoteIntent.noteId);
+        setStoredActiveNoteId(activeProjectId, pendingNoteIntent.noteId);
       }
       setPendingNoteIntent(null);
       return;
     }
 
     if (noteIds.length > 0 && !noteIds.includes(activeNoteId ?? "")) {
-      const lastId = getLastNoteId(activeProjectId);
-      const restored = lastId && noteIds.includes(lastId);
-      setActiveNoteId(restored ? lastId : noteIds[0]);
+      setStoredActiveNoteId(activeProjectId, noteIds[0]);
     }
   }, [
     noteIds,
@@ -40,12 +48,8 @@ export function NotesPage() {
     activeProjectId,
     pendingNoteIntent,
     setPendingNoteIntent,
+    setStoredActiveNoteId,
   ]);
-
-  // Persist active note selection
-  useEffect(() => {
-    setLastNoteId(activeProjectId, activeNoteId);
-  }, [activeProjectId, activeNoteId]);
 
   if (!activeProjectId) {
     return (
