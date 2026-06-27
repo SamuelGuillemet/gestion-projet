@@ -40,7 +40,9 @@ export function Card({ taskId, isDragging }: CardProps) {
           <GripVertical className="opacity-0 group-hover:opacity-100 mt-0.5 w-4 h-4 text-muted-foreground/40 transition-opacity shrink-0" />
           <div className="flex-1 min-w-0">
             <span
-              className={`block text-sm font-medium leading-snug ${task.done ? "line-through text-muted-foreground" : ""}`}
+              className={cn("block text-sm font-medium leading-snug", {
+                "line-through text-muted-foreground": task.done,
+              })}
             >
               {task.title}
             </span>

@@ -11,6 +11,7 @@ import {
   useTimeActions,
   useTimeEntriesByTaskId,
 } from "@/hooks/useTimeTracking";
+import { cn } from "@/lib/utils";
 import type { Task } from "@/models/task";
 import { LinkifiedText } from "./LinkifiedText";
 import { RelationManager } from "./RelationManager";
@@ -96,11 +97,12 @@ export function TaskDetailContent({
               onClick={() =>
                 onUpdate({ columnId: col.id, done: col.id === "done" })
               }
-              className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+              className={cn(
+                "px-2 py-1 rounded text-xs font-medium transition-colors",
                 task.columnId === col.id
                   ? "ring-2 ring-offset-1"
-                  : "opacity-60 hover:opacity-100"
-              }`}
+                  : "opacity-60 hover:opacity-100",
+              )}
               style={{
                 backgroundColor: `${col.color}20`,
                 color: col.color,
@@ -122,11 +124,12 @@ export function TaskDetailContent({
               key={tag.id}
               type="button"
               onClick={() => toggleTag(tag.id)}
-              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-colors ${
+              className={cn(
+                "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-colors",
                 task.tags.includes(tag.id)
                   ? "border-primary bg-primary/10"
-                  : "hover:border-primary/50"
-              }`}
+                  : "hover:border-primary/50",
+              )}
             >
               <span
                 className="rounded-full w-2 h-2"

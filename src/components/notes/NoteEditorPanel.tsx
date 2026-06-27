@@ -48,7 +48,12 @@ export function NoteEditorPanel({ activeNoteId, activeNote }: Props) {
           aria-pressed={mode === "both"}
           title="Both (édition + prévisualisation)"
           onClick={() => setMode("both")}
-          className={`${mode === "both" ? "bg-primary/10 text-primary" : "hover:bg-accent/70"} h-8 w-8 rounded-md p-0`}
+          className={cn(
+            "h-8 w-8 rounded-md p-0",
+            mode === "both"
+              ? "bg-primary/10 text-primary"
+              : "hover:bg-accent/70",
+          )}
         >
           <Columns className="w-4 h-4" />
         </Button>
@@ -59,7 +64,12 @@ export function NoteEditorPanel({ activeNoteId, activeNote }: Props) {
           aria-pressed={mode === "edit"}
           title="Edit (édition seule)"
           onClick={() => setMode("edit")}
-          className={`${mode === "edit" ? "bg-primary/10 text-primary" : "hover:bg-accent/70"} h-8 w-8 rounded-md p-0`}
+          className={cn(
+            "h-8 w-8 rounded-md p-0",
+            mode === "edit"
+              ? "bg-primary/10 text-primary"
+              : "hover:bg-accent/70",
+          )}
         >
           <Edit className="w-4 h-4" />
         </Button>
@@ -70,7 +80,12 @@ export function NoteEditorPanel({ activeNoteId, activeNote }: Props) {
           aria-pressed={mode === "preview"}
           title="Preview (prévisualisation seule)"
           onClick={() => setMode("preview")}
-          className={`${mode === "preview" ? "bg-primary/10 text-primary" : "hover:bg-accent/70"} h-8 w-8 rounded-md p-0`}
+          className={cn(
+            "h-8 w-8 rounded-md p-0",
+            mode === "preview"
+              ? "bg-primary/10 text-primary"
+              : "hover:bg-accent/70",
+          )}
         >
           <Eye className="w-4 h-4" />
         </Button>

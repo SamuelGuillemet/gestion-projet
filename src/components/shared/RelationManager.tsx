@@ -16,6 +16,7 @@ import { useDeliverables } from "@/hooks/useDeliverables";
 import { useQuestions } from "@/hooks/useQuestions";
 import { useRelations } from "@/hooks/useRelations";
 import { useTasks } from "@/hooks/useTasks";
+import { cn } from "@/lib/utils";
 import { RELATION_LABELS, type RelationType } from "@/models/relation";
 
 const RELATION_STYLES: Record<
@@ -138,10 +139,13 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
             return (
               <div
                 key={rel.id}
-                className={`flex items-center gap-2 text-xs p-2 rounded-md border group ${style.bg}`}
+                className={cn(
+                  "flex items-center gap-2 text-xs p-2 rounded-md border group",
+                  style.bg,
+                )}
               >
-                <Icon className={`h-3.5 w-3.5 shrink-0 ${style.color}`} />
-                <span className={`font-medium shrink-0 ${style.color}`}>
+                <Icon className={cn("h-3.5 w-3.5 shrink-0", style.color)} />
+                <span className={cn("font-medium shrink-0", style.color)}>
                   {RELATION_LABELS[displayType]}
                 </span>
                 <span className="flex-1 font-medium text-foreground truncate">
@@ -177,11 +181,12 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
                     key={value}
                     type="button"
                     onClick={() => setRelType(value)}
-                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium transition-colors border ${
+                    className={cn(
+                      "inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium transition-colors border",
                       relType === value
-                        ? `${style.bg} ${style.color}`
-                        : "bg-muted text-muted-foreground hover:bg-muted/80 border-transparent"
-                    }`}
+                        ? [style.bg, style.color]
+                        : "bg-muted text-muted-foreground hover:bg-muted/80 border-transparent",
+                    )}
                   >
                     <Icon className="w-3 h-3" />
                     {label}

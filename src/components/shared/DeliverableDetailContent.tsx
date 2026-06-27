@@ -4,6 +4,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import type { Deliverable } from "@/models/deliverable";
 import { LinkifiedText } from "./LinkifiedText";
 import { RelationManager } from "./RelationManager";
@@ -70,11 +71,12 @@ export function DeliverableDetailContent({
           <button
             type="button"
             onClick={() => onUpdate({ done: !deliverable.done })}
-            className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+            className={cn(
+              "px-3 py-1.5 rounded text-xs font-medium transition-colors",
               deliverable.done
                 ? "bg-green-500/10 text-green-600 hover:bg-green-500/20"
-                : "bg-muted text-muted-foreground hover:bg-muted/80"
-            }`}
+                : "bg-muted text-muted-foreground hover:bg-muted/80",
+            )}
           >
             {deliverable.done ? "✓ Livré" : "En cours"}
           </button>

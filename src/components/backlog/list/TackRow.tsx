@@ -31,11 +31,12 @@ export function TaskRow({
 
   return (
     <div
-      className={`group flex cursor-pointer items-center gap-2 rounded-md border border-l-2 border-l-(--entity-task)! py-2 pr-2 pl-3 transition-colors ${
+      className={cn(
+        "group flex cursor-pointer items-center gap-2 rounded-md border border-l-2 border-l-(--entity-task)! py-2 pr-2 pl-3 transition-colors",
         selected
           ? "border-primary/25 bg-primary/7"
-          : "border-transparent hover:hover:bg-accent/45"
-      }`}
+          : "border-transparent hover:hover:bg-accent/45",
+      )}
       onClick={onSelect}
       onKeyDown={(e) => e.key === "Enter" && onSelect()}
       role="button"

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { QUESTION_STATUSES } from "@/constants/question-status";
+import { cn } from "@/lib/utils";
 import type { Question } from "@/models/question";
 import { LinkifiedText } from "./LinkifiedText";
 import { RelationManager } from "./RelationManager";
@@ -73,11 +74,12 @@ export function QuestionDetailContent({
               key={s.value}
               type="button"
               onClick={() => onUpdate({ status: s.value })}
-              className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+              className={cn(
+                "px-2 py-1 rounded text-xs font-medium transition-colors",
                 question.status === s.value
                   ? "ring-2 ring-offset-1"
-                  : "opacity-60 hover:opacity-100"
-              }`}
+                  : "opacity-60 hover:opacity-100",
+              )}
               style={{ backgroundColor: `${s.color}20`, color: s.color }}
             >
               {s.label}
