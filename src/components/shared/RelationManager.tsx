@@ -14,9 +14,14 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useDeliverables } from "@/hooks/useDeliverables";
+import { useEntityReferenceNavigation } from "@/hooks/useEntityReferenceNavigation";
 import { useQuestions } from "@/hooks/useQuestions";
 import { useRelations } from "@/hooks/useRelations";
 import { useTasks } from "@/hooks/useTasks";
+import {
+  type EntityReferenceType,
+  getEntityReferenceLabel,
+} from "@/lib/entity-references";
 import { cn } from "@/lib/utils";
 import { RELATION_LABELS, type RelationType } from "@/models/relation";
 
@@ -48,6 +53,12 @@ const TYPE_LABELS: Record<string, string> = {
   deliverable: "Livrable",
 };
 
+const REFERENCE_TYPE_BY_ITEM_TYPE: Record<string, EntityReferenceType> = {
+  task: "tasks",
+  question: "questions",
+  deliverable: "deliverables",
+};
+
 interface RelationManagerProps {
   itemId: string;
   projectId: string;
@@ -58,6 +69,7 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
   const tasks = useTasks();
   const questions = useQuestions();
   const deliverables = useDeliverables();
+  const openReference = useEntityReferenceNavigation(projectId);
 
   const [adding, setAdding] = useState(false);
   const [relType, setRelType] = useState<RelationType>("relates");
@@ -99,12 +111,33 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
 
   const getItemLabel = (id: string) => {
     const task = tasks.find((t) => t.id === id);
-    if (task) return { label: task.title, type: "task" };
+    if (task) return { label: task.title, number: task.number, type: "task" };
     const question = questions.find((q) => q.id === id);
-    if (question) return { label: question.title, type: "question" };
+    if (question)
+      return {
+        label: question.title,
+        number: question.number,
+        type: "question",
+      };
     const deliverable = deliverables.find((d) => d.id === id);
-    if (deliverable) return { label: deliverable.title, type: "deliverable" };
-    return { label: "Inconnu", type: "unknown" };
+    if (deliverable)
+      return {
+        label: deliverable.title,
+        number: deliverable.number,
+        type: "deliverable",
+      };
+    return { label: "Inconnu", number: 0, type: "unknown" };
+  };
+
+  const openRelatedItem = (item: ReturnType<typeof getItemLabel>) => {
+    const referenceType = REFERENCE_TYPE_BY_ITEM_TYPE[item.type];
+    if (!referenceType) return;
+
+    openReference({
+      type: referenceType,
+      number: item.number,
+      label: getEntityReferenceLabel(referenceType, item.number),
+    });
   };
 
   const handleAdd = (targetId: string) => {
@@ -140,15 +173,29 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
             return (
               <div
                 key={rel.id}
+                role="button"
+                tabIndex={0}
                 className={cn(
-                  "flex items-center gap-2 text-xs p-2 rounded-md border group",
+                  "flex items-center gap-2 text-xs p-2 rounded-md border group cursor-pointer transition-colors hover:bg-accent/40",
                   style.bg,
                 )}
+                onClick={() => openRelatedItem(other)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") openRelatedItem(other);
+                }}
               >
                 <Icon className={cn("h-3.5 w-3.5 shrink-0", style.color)} />
                 <span className={cn("font-medium shrink-0", style.color)}>
                   {RELATION_LABELS[displayType]}
                 </span>
+                {other.number > 0 ? (
+                  <span className="font-data text-[10px] text-muted-foreground shrink-0">
+                    {getEntityReferenceLabel(
+                      REFERENCE_TYPE_BY_ITEM_TYPE[other.type],
+                      other.number,
+                    )}
+                  </span>
+                ) : null}
                 <span className="flex-1 font-medium text-foreground truncate">
                   {other.label}
                 </span>
@@ -157,6 +204,7 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
                 </span>
                 <ConfirmDialog
                   triggerClassName="inline-flex"
+                  stopPropagation
                   trigger={
                     <Button
                       variant="ghost"
