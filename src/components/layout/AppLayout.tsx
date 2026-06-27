@@ -1,7 +1,6 @@
 import { Clock, FileText, KanbanSquare, List } from "lucide-react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ActivityReport } from "@/components/time/report/ActivityReport";
-import { useProjects } from "@/hooks/useProjects";
 import { cn } from "@/lib/utils";
 import { DataActions } from "./DataActions";
 import { GlobalSearchBox } from "./GlobalSearchBox";
@@ -19,7 +18,6 @@ const TABS = [
 export function AppLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { activeProject } = useProjects();
 
   const currentTab =
     TABS.find((t) => location.pathname.startsWith(t.value))?.value ?? "/board";
@@ -29,17 +27,7 @@ export function AppLayout() {
       <div className="flex flex-col flex-1 min-w-0">
         <header className="z-10 flex lg:flex-row flex-col lg:items-center gap-2 bg-card px-4 py-1.5 border-border/70 border-b h-12 shrink-0">
           <section className="flex flex-1 items-center gap-3 min-w-0">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <span
-                className="rounded-full ring-2 ring-background size-2.5 shrink-0"
-                style={{
-                  backgroundColor: activeProject?.color ?? "var(--rule-strong)",
-                }}
-              />
-              <h1 className="font-heading font-semibold text-lg truncate leading-none tracking-normal">
-                {activeProject?.name ?? "Aucun projet"}
-              </h1>
-            </div>
+            <ProjectSelector />
             <nav className="flex gap-1 px-2 md:px-3 pb-2 md:pb-0 md:overflow-visible overflow-x-auto">
               {TABS.map(({ value, label, icon: Icon }) => {
                 const active = currentTab === value;
@@ -76,7 +64,6 @@ export function AppLayout() {
               <ActivityReport />
               <TagManager />
               <DataActions />
-              <ProjectSelector />
             </div>
           </div>
         </header>
