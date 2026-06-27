@@ -15,6 +15,8 @@ import {
 
 interface ConfirmDialogProps {
   trigger: React.ReactNode;
+  triggerClassName?: string;
+  stopPropagation?: boolean;
   title: string;
   description: string;
   confirmLabel?: string;
@@ -23,6 +25,8 @@ interface ConfirmDialogProps {
 
 export function ConfirmDialog({
   trigger,
+  triggerClassName = "w-full",
+  stopPropagation = false,
   title,
   description,
   confirmLabel = "Supprimer",
@@ -33,8 +37,11 @@ export function ConfirmDialog({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger
-        render={<span className="w-full" />}
+        render={<span className={triggerClassName} />}
         nativeButton={false}
+        onClick={(event) => {
+          if (stopPropagation) event.stopPropagation();
+        }}
       >
         {trigger}
       </AlertDialogTrigger>

@@ -1,6 +1,7 @@
 import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -81,14 +82,21 @@ export function MilestoneTimeline({ projectId }: MilestoneTimelineProps) {
                       {m.name}
                     </span>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="opacity-0 group-hover:opacity-100 w-6 h-6 shrink-0"
-                    onClick={() => deleteMilestone(m.id)}
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </Button>
+                  <ConfirmDialog
+                    triggerClassName="inline-flex"
+                    trigger={
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="opacity-0 group-hover:opacity-100 w-6 h-6 shrink-0"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    }
+                    title="Supprimer le jalon"
+                    description="Cette action est irréversible. Le jalon sera définitivement supprimé."
+                    onConfirm={() => deleteMilestone(m.id)}
+                  />
                 </div>
               );
             })}

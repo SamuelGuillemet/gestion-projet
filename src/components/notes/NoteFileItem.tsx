@@ -1,6 +1,7 @@
 import { FileText, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { useNote } from "@/hooks/useNotes";
 import { cn } from "@/lib/utils";
@@ -73,17 +74,22 @@ export function NoteFileItem({
           {note.title}
         </span>
       )}
-      <Button
-        variant="destructive"
-        size="icon"
-        className="opacity-0 group-hover:opacity-100 size-5 transition-opacity"
-        onClick={(e) => {
-          e.stopPropagation();
-          onDelete();
-        }}
-      >
-        <Trash2 className="size-3" />
-      </Button>
+      <ConfirmDialog
+        triggerClassName="inline-flex"
+        stopPropagation
+        trigger={
+          <Button
+            variant="destructive"
+            size="icon"
+            className="opacity-0 group-hover:opacity-100 size-5 transition-opacity"
+          >
+            <Trash2 className="size-3" />
+          </Button>
+        }
+        title="Supprimer la note"
+        description="Cette action est irréversible. La note sera définitivement supprimée."
+        onConfirm={onDelete}
+      />
     </div>
   );
 }

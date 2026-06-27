@@ -2,6 +2,7 @@ import { CheckCircle2, Circle, Trash2 } from "lucide-react";
 import { TagBadge } from "@/components/shared/TagBadge";
 import { StatusBadge } from "@/components/shared/TaskStatusBadge";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useTags } from "@/hooks/useTags";
 import { useTask, useTaskActions } from "@/hooks/useTasks";
 import { cn } from "@/lib/utils";
@@ -64,18 +65,25 @@ export function TaskRow({
         </div>
       )}
       <StatusBadge columnId={task.columnId} />
-      <Button
-        variant="ghost"
-        size="icon"
-        className="opacity-0 group-hover:opacity-100 w-6 h-6 transition-opacity shrink-0"
-        onClick={(e) => {
-          e.stopPropagation();
+      <ConfirmDialog
+        triggerClassName="inline-flex"
+        stopPropagation
+        trigger={
+          <Button
+            variant="ghost"
+            size="icon"
+            className="opacity-0 group-hover:opacity-100 w-6 h-6 transition-opacity shrink-0"
+          >
+            <Trash2 className="w-3 h-3" />
+          </Button>
+        }
+        title="Supprimer la tâche"
+        description="Cette action est irréversible. La tâche sera définitivement supprimée."
+        onConfirm={() => {
           deleteTask(taskId);
           clearIfSelected(taskId);
         }}
-      >
-        <Trash2 className="w-3 h-3" />
-      </Button>
+      />
     </div>
   );
 }

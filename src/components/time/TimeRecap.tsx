@@ -1,6 +1,7 @@
 import { Check, Pencil, Trash2, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { useTasksByProjectId } from "@/hooks/useTasks";
 import {
@@ -210,14 +211,21 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
                               >
                                 <Pencil className="w-3 h-3" />
                               </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="opacity-0 group-hover:opacity-100 w-6 h-6 text-destructive transition-opacity"
-                                onClick={() => deleteTimeEntry(entry.id)}
-                              >
-                                <Trash2 className="w-3 h-3" />
-                              </Button>
+                              <ConfirmDialog
+                                triggerClassName="inline-flex"
+                                trigger={
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="opacity-0 group-hover:opacity-100 w-6 h-6 text-destructive transition-opacity"
+                                  >
+                                    <Trash2 className="w-3 h-3" />
+                                  </Button>
+                                }
+                                title="Supprimer l'entrée"
+                                description="Cette action est irréversible. L'entrée de temps sera définitivement supprimée."
+                                onConfirm={() => deleteTimeEntry(entry.id)}
+                              />
                             </div>
                           </td>
                         </>

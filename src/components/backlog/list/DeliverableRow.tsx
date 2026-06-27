@@ -1,5 +1,6 @@
 import { Package, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useDeliverable, useDeliverableActions } from "@/hooks/useDeliverables";
 import { cn } from "@/lib/utils";
 import { useBacklogUI } from "../backlog-state";
@@ -52,18 +53,25 @@ export function DeliverableRow({ deliverableId }: { deliverableId: string }) {
           {deliverable.type}
         </span>
       )}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="opacity-0 group-hover:opacity-100 w-6 h-6 transition-opacity shrink-0"
-        onClick={(e) => {
-          e.stopPropagation();
+      <ConfirmDialog
+        triggerClassName="inline-flex"
+        stopPropagation
+        trigger={
+          <Button
+            variant="ghost"
+            size="icon"
+            className="opacity-0 group-hover:opacity-100 w-6 h-6 transition-opacity shrink-0"
+          >
+            <Trash2 className="w-3 h-3" />
+          </Button>
+        }
+        title="Supprimer le livrable"
+        description="Cette action est irréversible. Le livrable sera définitivement supprimé."
+        onConfirm={() => {
           deleteDeliverable(deliverableId);
           clearIfSelected(deliverableId);
         }}
-      >
-        <Trash2 className="w-3 h-3" />
-      </Button>
+      />
     </div>
   );
 }

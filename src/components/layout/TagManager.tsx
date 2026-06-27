@@ -1,6 +1,7 @@
 import { Check, Pencil, Plus, Tags, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   Dialog,
   DialogContent,
@@ -146,14 +147,21 @@ export function TagManager() {
                     >
                       <Pencil className="w-3 h-3" />
                     </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="opacity-0 group-hover:opacity-100 w-6 h-6 text-destructive transition-opacity"
-                      onClick={() => deleteTag(tag.id)}
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </Button>
+                    <ConfirmDialog
+                      triggerClassName="inline-flex"
+                      trigger={
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="opacity-0 group-hover:opacity-100 w-6 h-6 text-destructive transition-opacity"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      }
+                      title="Supprimer le tag"
+                      description="Cette action est irréversible. Le tag sera définitivement supprimé."
+                      onConfirm={() => deleteTag(tag.id)}
+                    />
                   </>
                 )}
               </div>

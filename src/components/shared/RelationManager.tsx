@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useDeliverables } from "@/hooks/useDeliverables";
@@ -154,14 +155,21 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
                 <span className="bg-white/80 px-1.5 py-0.5 border rounded text-[10px] text-muted-foreground">
                   {TYPE_LABELS[other.type] || "Inconnu"}
                 </span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="opacity-0 group-hover:opacity-100 w-5 h-5 transition-opacity shrink-0"
-                  onClick={() => deleteRelation(rel.id)}
-                >
-                  <Trash2 className="w-3 h-3" />
-                </Button>
+                <ConfirmDialog
+                  triggerClassName="inline-flex"
+                  trigger={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="opacity-0 group-hover:opacity-100 w-5 h-5 transition-opacity shrink-0"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </Button>
+                  }
+                  title="Supprimer la relation"
+                  description="Cette action est irréversible. La relation sera définitivement supprimée."
+                  onConfirm={() => deleteRelation(rel.id)}
+                />
               </div>
             );
           })}
