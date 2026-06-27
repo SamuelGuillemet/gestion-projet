@@ -36,6 +36,9 @@ export function DeliverableRow({ deliverableId }: { deliverableId: string }) {
           "text-muted-foreground": !deliverable.done,
         })}
       />
+      <span className="font-data text-[10px] text-muted-foreground shrink-0">
+        !{deliverable.number}
+      </span>
       <span
         className={cn("flex-1 text-sm truncate", {
           "line-through text-muted-foreground": deliverable.done,

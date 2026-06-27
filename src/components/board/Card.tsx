@@ -39,13 +39,18 @@ export function Card({ taskId, isDragging }: CardProps) {
         <div className="flex items-start gap-2">
           <GripVertical className="opacity-0 group-hover:opacity-100 mt-0.5 w-4 h-4 text-muted-foreground/40 transition-opacity shrink-0" />
           <div className="flex-1 min-w-0">
-            <span
-              className={cn("block text-sm font-medium leading-snug", {
-                "line-through text-muted-foreground": task.done,
-              })}
-            >
-              {task.title}
-            </span>
+            <div className="flex items-start gap-1.5 min-w-0">
+              <span className="font-data text-[10px] text-muted-foreground shrink-0">
+                #{task.number}
+              </span>
+              <span
+                className={cn("block text-sm font-medium leading-snug", {
+                  "line-through text-muted-foreground": task.done,
+                })}
+              >
+                {task.title}
+              </span>
+            </div>
             {task.description && (
               <p className="mt-1 text-muted-foreground text-xs line-clamp-2 leading-relaxed">
                 {task.description}

@@ -1,4 +1,4 @@
-export const STORE_VERSION = 3;
+export const STORE_VERSION = 4;
 
 export const IDB_STORES_NAMES = [
   "gp-projects",

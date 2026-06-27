@@ -1,5 +1,6 @@
 import { run as v1Run, version as v1Version } from "./001_v1_to_v2";
 import { run as v2Run, version as v2Version } from "./002_v2_to_v3";
+import { run as v3Run, version as v3Version } from "./003_v3_to_v4";
 
 type Migration = { version: number; run: () => Promise<boolean> };
 
@@ -8,6 +9,7 @@ const STORE_VERSION_KEY = "store-version";
 const MIGRATIONS: Migration[] = [
   { version: v1Version, run: v1Run },
   { version: v2Version, run: v2Run },
+  { version: v3Version, run: v3Run },
 ];
 
 const LEGACY_FLAG = "gp-migration-done";

@@ -1,6 +1,7 @@
 export interface Task {
   id: string;
   projectId: string;
+  number: number;
   title: string;
   description: string;
   columnId: string;

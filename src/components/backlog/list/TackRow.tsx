@@ -50,6 +50,9 @@ export function TaskRow({
           <Circle className="w-4 h-4" />
         )}
       </span>
+      <span className="font-data text-[10px] text-muted-foreground shrink-0">
+        #{task.number}
+      </span>
       <span
         className={cn("flex-1 text-sm truncate", {
           "line-through text-muted-foreground": task.done,

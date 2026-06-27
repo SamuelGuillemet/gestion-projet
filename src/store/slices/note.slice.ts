@@ -2,6 +2,17 @@ import type { StateCreator } from "zustand";
 import { generateId } from "@/lib/utils";
 import type { Note } from "@/models/note";
 
+function getNextNoteNumber(notes: Note[], projectId: string) {
+  return (
+    Math.max(
+      0,
+      ...notes
+        .filter((note) => note.projectId === projectId)
+        .map((note) => note.number ?? 0),
+    ) + 1
+  );
+}
+
 export interface NoteSlice {
   notes: Note[];
   addNote: (projectId: string, title: string) => void;
@@ -21,7 +32,13 @@ export const createNoteSlice: StateCreator<NoteSlice, [], [], NoteSlice> = (
     set((state) => ({
       notes: [
         ...state.notes,
-        { id: generateId(), projectId, title, content: "" },
+        {
+          id: generateId(),
+          projectId,
+          number: getNextNoteNumber(state.notes, projectId),
+          title,
+          content: "",
+        },
       ],
     })),
 

@@ -38,6 +38,9 @@ export function QuestionRow({ questionId }: { questionId: string }) {
           "text-muted-foreground": question.status === "to-ask",
         })}
       />
+      <span className="font-data text-[10px] text-muted-foreground shrink-0">
+        ?{question.number}
+      </span>
       <span
         className={cn("flex-1 text-sm truncate", {
           "line-through text-muted-foreground": question.status === "resolved",

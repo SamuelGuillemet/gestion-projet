@@ -17,6 +17,10 @@ import {
   transform as v2Transform,
   version as v2Version,
 } from "./migrations/002_v2_to_v3";
+import {
+  transform as v3Transform,
+  version as v3Version,
+} from "./migrations/003_v3_to_v4";
 
 type Transformations = {
   version: number;
@@ -26,6 +30,7 @@ type Transformations = {
 const TRANSFORMATIONS: Transformations[] = [
   { version: v1Version, transform: v1Transform },
   { version: v2Version, transform: v2Transform },
+  { version: v3Version, transform: v3Transform },
 ];
 
 function parseImportedMarkdownImageAssets(data: Record<string, unknown>) {

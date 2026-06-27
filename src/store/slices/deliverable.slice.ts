@@ -2,6 +2,20 @@ import type { StateCreator } from "zustand";
 import { generateId } from "@/lib/utils";
 import type { Deliverable } from "@/models/deliverable";
 
+function getNextDeliverableNumber(
+  deliverables: Deliverable[],
+  projectId: string,
+) {
+  return (
+    Math.max(
+      0,
+      ...deliverables
+        .filter((deliverable) => deliverable.projectId === projectId)
+        .map((deliverable) => deliverable.number ?? 0),
+    ) + 1
+  );
+}
+
 export interface DeliverableSlice {
   deliverables: Deliverable[];
   addDeliverable: (projectId: string, title: string) => string;
@@ -27,7 +41,13 @@ export const createDeliverableSlice: StateCreator<
     set((state) => ({
       deliverables: [
         ...state.deliverables,
-        { id, projectId, title, done: false },
+        {
+          id,
+          projectId,
+          number: getNextDeliverableNumber(state.deliverables, projectId),
+          title,
+          done: false,
+        },
       ],
     }));
     return id;

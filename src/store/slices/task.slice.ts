@@ -7,6 +7,17 @@ import {
 import { generateId } from "@/lib/utils";
 import type { Task } from "@/models/task";
 
+function getNextTaskNumber(tasks: Task[], projectId: string) {
+  return (
+    Math.max(
+      0,
+      ...tasks
+        .filter((task) => task.projectId === projectId)
+        .map((task) => task.number ?? 0),
+    ) + 1
+  );
+}
+
 export interface TaskSlice {
   tasks: Task[];
   addTask: (projectId: string, title: string) => string;
@@ -35,6 +46,7 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
           {
             id,
             projectId,
+            number: getNextTaskNumber(state.tasks, projectId),
             title,
             description: "",
             columnId: BOARD_COLUMNS[0].id,

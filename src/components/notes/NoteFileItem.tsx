@@ -49,6 +49,9 @@ export function NoteFileItem({
       tabIndex={0}
     >
       <FileText className="opacity-70 w-3.5 h-3.5 shrink-0" />
+      <span className="font-data text-[10px] text-muted-foreground shrink-0">
+        %{note.number}
+      </span>
       {editing ? (
         <Input
           value={editValue}
