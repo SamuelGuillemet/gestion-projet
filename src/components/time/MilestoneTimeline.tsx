@@ -7,6 +7,7 @@ import {
   useMilestonesByProjectId,
   useTimeActions,
 } from "@/hooks/useTimeTracking";
+import { cn } from "@/lib/utils";
 
 interface MilestoneTimelineProps {
   projectId: string;
@@ -54,34 +55,40 @@ export function MilestoneTimeline({ projectId }: MilestoneTimelineProps) {
         </Button>
       </div>
 
-      <div className="px-2">
+      <div>
         {sorted.length > 0 && (
-          <div className="relative space-y-4 ml-1 pl-4 border-muted border-l-2">
+          <div className="gap-2 grid sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
             {sorted.map((m) => {
               const isPast = new Date(m.date) < new Date();
               return (
-                <div key={m.id} className="group relative">
-                  <div
-                    className={`absolute -left-6.25 top-1 h-4 w-4 rounded-full border-2 ${
+                <div
+                  key={m.id}
+                  className="group flex items-start gap-3 bg-background/70 p-3 border rounded-md min-w-0"
+                >
+                  <span
+                    className={cn(
+                      "mt-1 h-3 w-3 rounded-full border-2 shrink-0",
                       isPast
                         ? "border-(--entity-deliverable) bg-(--entity-deliverable)"
-                        : "border-primary bg-background"
-                    }`}
+                        : "border-primary bg-background",
+                    )}
                   />
-                  <div className="flex items-center gap-2 ml-4">
-                    <span className="w-24 font-data text-muted-foreground text-xs">
+                  <div className="min-w-0 flex-1">
+                    <span className="block font-data text-muted-foreground text-xs">
                       {m.date}
                     </span>
-                    <span className="font-medium text-sm">{m.name}</span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="opacity-0 group-hover:opacity-100 w-5 h-5"
-                      onClick={() => deleteMilestone(m.id)}
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </Button>
+                    <span className="block font-medium text-sm truncate">
+                      {m.name}
+                    </span>
                   </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="opacity-0 group-hover:opacity-100 w-6 h-6 shrink-0"
+                    onClick={() => deleteMilestone(m.id)}
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </Button>
                 </div>
               );
             })}
