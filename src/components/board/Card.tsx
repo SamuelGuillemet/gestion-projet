@@ -1,11 +1,39 @@
 import { useSortable } from "@dnd-kit/react/sortable";
-import { GripVertical } from "lucide-react";
-import { useState } from "react";
+import {
+  ArrowRightLeft,
+  Ban,
+  Copy,
+  GripVertical,
+  type LucideIcon,
+  ShieldAlert,
+} from "lucide-react";
+import { useMemo, useState } from "react";
 import { TagBadge } from "@/components/shared/TagBadge";
+import { useRelations } from "@/hooks/useRelations";
 import { useTags } from "@/hooks/useTags";
 import { useTask } from "@/hooks/useTasks";
 import { cn } from "@/lib/utils";
+import { RELATION_LABELS, type RelationType } from "@/models/relation";
 import { CardDetail } from "./CardDetail";
+
+const RELATION_CARD_STYLES: Record<
+  RelationType,
+  { icon: LucideIcon; className: string }
+> = {
+  blocks: { icon: Ban, className: "text-red-600 border-red-200 bg-red-50" },
+  "blocked-by": {
+    icon: ShieldAlert,
+    className: "text-orange-600 border-orange-200 bg-orange-50",
+  },
+  relates: {
+    icon: ArrowRightLeft,
+    className: "text-blue-600 border-blue-200 bg-blue-50",
+  },
+  duplicates: {
+    icon: Copy,
+    className: "text-purple-600 border-purple-200 bg-purple-50",
+  },
+};
 
 interface CardProps {
   taskId: string;
@@ -15,11 +43,29 @@ interface CardProps {
 export function Card({ taskId, isDragging }: CardProps) {
   const task = useTask(taskId);
   const { tags } = useTags();
+  const { relations } = useRelations();
   const [detailOpen, setDetailOpen] = useState(false);
 
   if (!task) return null;
 
   const taskTags = tags.filter((t) => task.tags.includes(t.id));
+  const relationStatuses = useMemo(() => {
+    const counts = new Map<RelationType, number>();
+
+    for (const relation of relations) {
+      if (relation.sourceId !== task.id && relation.targetId !== task.id) {
+        continue;
+      }
+
+      const displayType =
+        relation.sourceId === task.id
+          ? relation.type
+          : getInverseType(relation.type);
+      counts.set(displayType, (counts.get(displayType) ?? 0) + 1);
+    }
+
+    return [...counts.entries()];
+  }, [relations, task.id]);
 
   return (
     <>
@@ -63,6 +109,28 @@ export function Card({ taskId, isDragging }: CardProps) {
                 ))}
               </div>
             )}
+            {relationStatuses.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-2">
+                {relationStatuses.map(([type, count]) => {
+                  const style = RELATION_CARD_STYLES[type];
+                  const Icon = style.icon;
+
+                  return (
+                    <span
+                      key={type}
+                      className={cn(
+                        "inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-medium",
+                        style.className,
+                      )}
+                      title={RELATION_LABELS[type]}
+                    >
+                      <Icon className="size-3" />
+                      {count > 1 ? count : null}
+                    </span>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -73,6 +141,17 @@ export function Card({ taskId, isDragging }: CardProps) {
       />
     </>
   );
+}
+
+function getInverseType(type: RelationType): RelationType {
+  switch (type) {
+    case "blocks":
+      return "blocked-by";
+    case "blocked-by":
+      return "blocks";
+    default:
+      return type;
+  }
 }
 
 export function SortableCard({
