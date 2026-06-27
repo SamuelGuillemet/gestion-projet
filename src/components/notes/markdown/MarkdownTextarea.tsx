@@ -2,6 +2,7 @@ import { ImagePlus } from "lucide-react";
 import {
   type ClipboardEvent,
   type DragEvent,
+  type KeyboardEvent,
   type TextareaHTMLAttributes,
   useRef,
   useState,
@@ -41,6 +42,31 @@ function extractDroppedImageFiles(files: Iterable<File>) {
   return [...files].filter((file) => file.type.startsWith("image/"));
 }
 
+function insertUndoableText(
+  textarea: HTMLTextAreaElement,
+  text: string,
+  selectionStart: number,
+  selectionEnd: number,
+  onChange: (value: string) => void,
+) {
+  textarea.focus();
+  textarea.setSelectionRange(selectionStart, selectionEnd);
+
+  if (document.execCommand("insertText", false, text)) {
+    return;
+  }
+
+  textarea.setRangeText(text, selectionStart, selectionEnd, "end");
+  textarea.dispatchEvent(
+    new InputEvent("input", {
+      bubbles: true,
+      data: text,
+      inputType: "insertText",
+    }),
+  );
+  onChange(textarea.value);
+}
+
 export function MarkdownTextarea({
   className,
   onChange,
@@ -54,6 +80,8 @@ export function MarkdownTextarea({
     if (files.length === 0) return;
 
     const textarea = textareaRef.current;
+    if (!textarea) return;
+
     const selectionStart = textarea?.selectionStart ?? value.length;
     const selectionEnd = textarea?.selectionEnd ?? value.length;
 
@@ -65,17 +93,13 @@ export function MarkdownTextarea({
     );
 
     const insertedText = fragments.join("\n");
-    const nextValue =
-      value.slice(0, selectionStart) + insertedText + value.slice(selectionEnd);
-
-    onChange(nextValue);
-
-    requestAnimationFrame(() => {
-      if (!textarea) return;
-      const nextSelection = selectionStart + insertedText.length;
-      textarea.focus();
-      textarea.setSelectionRange(nextSelection, nextSelection);
-    });
+    insertUndoableText(
+      textarea,
+      insertedText,
+      selectionStart,
+      selectionEnd,
+      onChange,
+    );
   };
 
   const handlePaste = async (event: ClipboardEvent<HTMLTextAreaElement>) => {
@@ -113,7 +137,7 @@ export function MarkdownTextarea({
     setIsDragging(false);
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Tab") {
       event.preventDefault();
 
@@ -123,15 +147,7 @@ export function MarkdownTextarea({
       const selectionStart = textarea.selectionStart;
       const selectionEnd = textarea.selectionEnd;
 
-      const nextValue = `${value.slice(0, selectionStart)}\t${value.slice(selectionEnd)}`;
-
-      onChange(nextValue);
-
-      requestAnimationFrame(() => {
-        const nextSelection = selectionStart + 1;
-        textarea.focus();
-        textarea.setSelectionRange(nextSelection, nextSelection);
-      });
+      insertUndoableText(textarea, "\t", selectionStart, selectionEnd, onChange);
     }
   };
 
