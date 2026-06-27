@@ -7,6 +7,7 @@ import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import remarkGithubAlerts from "remark-github-alerts";
 import { isMarkdownImageUri } from "@/lib/markdown-images";
+import { cn } from "@/lib/utils";
 import { IdbImage } from "./plugins/IdbImage";
 import { Mermaid } from "./plugins/Mermaid";
 import { rehypeIdbImages } from "./plugins/rehype-idb-images";
@@ -46,6 +47,7 @@ export function MarkdownPreview({ content }: Props) {
     () => ({
       img: MarkdownImage,
       pre: MarkdownPre,
+      table: MarkdownTable,
     }),
     [],
   );
@@ -81,6 +83,17 @@ function MarkdownPre({
     <pre {...props} className={className}>
       {children}
     </pre>
+  );
+}
+
+function MarkdownTable({
+  className,
+  ...props
+}: ComponentPropsWithoutRef<"table">) {
+  return (
+    <div className="my-4 max-w-full overflow-x-auto">
+      <table {...props} className={cn("min-w-full", className)} />
+    </div>
   );
 }
 
