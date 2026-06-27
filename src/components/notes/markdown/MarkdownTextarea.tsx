@@ -147,7 +147,13 @@ export function MarkdownTextarea({
       const selectionStart = textarea.selectionStart;
       const selectionEnd = textarea.selectionEnd;
 
-      insertUndoableText(textarea, "\t", selectionStart, selectionEnd, onChange);
+      insertUndoableText(
+        textarea,
+        "\t",
+        selectionStart,
+        selectionEnd,
+        onChange,
+      );
     }
   };
 
