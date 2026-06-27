@@ -1,20 +1,53 @@
-import { createHashRouter, Navigate } from "react-router-dom";
-import { BacklogPage } from "@/components/backlog/BacklogPage";
-import { BoardPage } from "@/components/board/BoardPage";
+import { lazy, type ReactNode, Suspense } from "react";
+import { createHashRouter, Navigate, type RouteObject } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { NotesPage } from "@/components/notes/NotesPage";
-import { TimePage } from "@/components/time/TimePage";
 
-const routes = [
+const BoardPage = lazy(() =>
+  import("@/components/board/BoardPage").then((module) => ({
+    default: module.BoardPage,
+  })),
+);
+
+const BacklogPage = lazy(() =>
+  import("@/components/backlog/BacklogPage").then((module) => ({
+    default: module.BacklogPage,
+  })),
+);
+
+const NotesPage = lazy(() =>
+  import("@/components/notes/NotesPage").then((module) => ({
+    default: module.NotesPage,
+  })),
+);
+
+const TimePage = lazy(() =>
+  import("@/components/time/TimePage").then((module) => ({
+    default: module.TimePage,
+  })),
+);
+
+function RouteFallback() {
+  return (
+    <div className="flex justify-center items-center h-full text-muted-foreground text-sm">
+      Chargement...
+    </div>
+  );
+}
+
+function withRouteSuspense(element: ReactNode) {
+  return <Suspense fallback={<RouteFallback />}>{element}</Suspense>;
+}
+
+const routes: RouteObject[] = [
   {
     path: "/",
     element: <AppLayout />,
     children: [
       { index: true, element: <Navigate to="/board" replace /> },
-      { path: "board", element: <BoardPage /> },
-      { path: "backlog", element: <BacklogPage /> },
-      { path: "notes", element: <NotesPage /> },
-      { path: "time", element: <TimePage /> },
+      { path: "board", element: withRouteSuspense(<BoardPage />) },
+      { path: "backlog", element: withRouteSuspense(<BacklogPage />) },
+      { path: "notes", element: withRouteSuspense(<NotesPage />) },
+      { path: "time", element: withRouteSuspense(<TimePage />) },
     ],
   },
 ];

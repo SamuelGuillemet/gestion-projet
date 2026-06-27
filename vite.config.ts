@@ -6,6 +6,31 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   base: process.env.VITE_BASE_URL || "/",
+  build: {
+    rolldownOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules/mermaid")) return "vendor-mermaid";
+          if (
+            id.includes("node_modules/katex") ||
+            id.includes("node_modules/cytoscape")
+          ) {
+            return "vendor-diagrams";
+          }
+          if (
+            id.includes("node_modules/react-markdown") ||
+            id.includes("node_modules/remark-") ||
+            id.includes("node_modules/rehype-") ||
+            id.includes("node_modules/highlight.js") ||
+            id.includes("node_modules/lowlight")
+          ) {
+            return "vendor-markdown";
+          }
+          return undefined;
+        },
+      },
+    },
+  },
   plugins: [
     react(),
     babel({ presets: [reactCompilerPreset()] }),

@@ -1,4 +1,5 @@
 import { Clock, FileText, KanbanSquare, List } from "lucide-react";
+import { useCallback } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ActivityReport } from "@/components/time/report/ActivityReport";
 import { cn } from "@/lib/utils";
@@ -7,6 +8,13 @@ import { GlobalSearchBox } from "./GlobalSearchBox";
 import { GlobalSearchDialog } from "./GlobalSearchDialog";
 import { ProjectSelector } from "./ProjectSelector";
 import { TagManager } from "./TagManager";
+
+const ROUTE_PREFETCHERS: Record<string, () => Promise<unknown>> = {
+  "/board": () => import("@/components/board/BoardPage"),
+  "/backlog": () => import("@/components/backlog/BacklogPage"),
+  "/notes": () => import("@/components/notes/NotesPage"),
+  "/time": () => import("@/components/time/TimePage"),
+};
 
 const TABS = [
   { value: "/board", label: "Board", icon: KanbanSquare },
@@ -21,6 +29,12 @@ export function AppLayout() {
 
   const currentTab =
     TABS.find((t) => location.pathname.startsWith(t.value))?.value ?? "/board";
+
+  const prefetchRoute = useCallback((path: string) => {
+    const importer = ROUTE_PREFETCHERS[path];
+    if (!importer) return;
+    void importer();
+  }, []);
 
   return (
     <div className="flex md:flex-row flex-col bg-background h-screen overflow-hidden text-foreground atelier-shell">
@@ -37,6 +51,8 @@ export function AppLayout() {
                     type="button"
                     aria-current={active ? "page" : undefined}
                     data-active={active}
+                    onMouseEnter={() => prefetchRoute(value)}
+                    onFocus={() => prefetchRoute(value)}
                     onClick={() => navigate(value)}
                     className={cn(
                       "group flex items-center gap-2.5 px-3 py-2 border rounded-md min-w-28 md:min-w-0 text-sm text-left transition-all",
