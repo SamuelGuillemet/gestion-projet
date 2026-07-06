@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import type { Tag } from "@/models/tag";
 
 interface TagBadgeProps {
@@ -7,12 +6,12 @@ interface TagBadgeProps {
 
 export function TagBadge({ tag }: TagBadgeProps) {
   return (
-    <Badge
-      variant="outline"
-      className="text-xs px-1.5 py-0"
-      style={{ borderColor: tag.color, color: tag.color }}
-    >
+    <div className="inline-flex items-center gap-1 bg-card/60 px-2 py-0.5 border rounded-sm text-xs">
+      <span
+        className="rounded-full w-2 h-2"
+        style={{ backgroundColor: tag.color }}
+      />
       {tag.name}
-    </Badge>
+    </div>
   );
 }

@@ -78,7 +78,7 @@ export function QuestionDetailContent({
                 "px-2 py-1 rounded font-medium text-xs transition-colors",
                 question.status === s.value
                   ? "ring-2 ring-offset-1"
-                  : "opacity-60 hover:opacity-100",
+                  : "opacity-60 hover:opacity-100 border border-muted-foreground/20",
               )}
               style={{ backgroundColor: `${s.color}20`, color: s.color }}
             >

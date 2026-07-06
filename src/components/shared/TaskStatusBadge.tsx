@@ -12,10 +12,6 @@ export function StatusBadge({ columnId }: { columnId: string }) {
         border: `1px solid ${col.color}40`,
       }}
     >
-      <span
-        className="rounded-full w-1.5 h-1.5"
-        style={{ backgroundColor: col.color }}
-      />
       {col.label}
     </span>
   );
