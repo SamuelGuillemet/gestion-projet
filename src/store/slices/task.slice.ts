@@ -27,6 +27,7 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
   addTask: (projectId, title) => {
     const id = generateId();
     set((state) => {
+      const now = new Date().toISOString();
       const columnTasks = state.tasks.filter(
         (t) => t.projectId === projectId && t.columnId === BOARD_COLUMNS[0].id,
       );
@@ -43,6 +44,11 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
             order: columnTasks.length,
             tags: [],
             done: false,
+            priority: "medium",
+            size: "medium",
+            checks: [],
+            createdAt: now,
+            updatedAt: now,
           },
         ],
       };
@@ -52,7 +58,11 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
 
   updateTask: (id, data) =>
     set((state) => ({
-      tasks: state.tasks.map((t) => (t.id === id ? { ...t, ...data } : t)),
+      tasks: state.tasks.map((t) =>
+        t.id === id
+          ? { ...t, ...data, updatedAt: new Date().toISOString() }
+          : t,
+      ),
     })),
 
   deleteTask: (id) =>
@@ -68,11 +78,13 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
         );
         if (!columnId) return t;
         const newOrder = newState[columnId].indexOf(t.id);
+        const changed = columnId !== t.columnId || newOrder !== t.order;
         return {
           ...t,
           columnId,
           order: newOrder,
           done: columnId === DONE_COLUMN_ID,
+          updatedAt: changed ? new Date().toISOString() : t.updatedAt,
         };
       }),
     })),

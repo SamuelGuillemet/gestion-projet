@@ -7,6 +7,7 @@ import { useTags } from "@/hooks/useTags";
 import { useTask } from "@/hooks/useTasks";
 import { cn } from "@/lib/utils";
 import { RelationBadge } from "../shared/RelationBadge";
+import { TaskFocusBadges } from "../shared/TaskFocusBadges";
 import { CardDetail } from "./CardDetail";
 
 interface CardProps {
@@ -60,7 +61,8 @@ export function Card({ taskId, isDragging }: CardProps) {
                   {task.description}
                 </p>
               )}
-              <div className="flex justify-between items-center mt-2">
+              <TaskFocusBadges task={task} compact />
+              <div className="flex justify-between items-center">
                 <div className="flex flex-wrap gap-1">
                   {taskTags.map((tag) => (
                     <TagBadge key={tag.id} tag={tag} />

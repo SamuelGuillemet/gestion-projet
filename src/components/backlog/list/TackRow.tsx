@@ -67,6 +67,7 @@ export function TaskRow({
           ))}
         </div>
       )}
+      {/* <TaskFocusBadges task={task} compact /> */}
       <StatusBadge columnId={task.columnId} />
       <ConfirmDialog
         triggerClassName="inline-flex"

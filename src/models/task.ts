@@ -1,3 +1,8 @@
+import type { CheckItem } from "./shared";
+
+export type TaskPriority = "low" | "medium" | "high";
+export type TaskSize = "small" | "medium" | "large";
+
 export interface Task {
   id: string;
   projectId: string;
@@ -8,4 +13,10 @@ export interface Task {
   order: number;
   tags: string[];
   done: boolean;
+  priority?: TaskPriority;
+  dueDate?: string;
+  size?: TaskSize;
+  checks?: CheckItem[];
+  createdAt?: string;
+  updatedAt?: string;
 }
