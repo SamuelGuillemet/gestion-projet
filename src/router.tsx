@@ -8,6 +8,12 @@ const BoardPage = lazy(() =>
   })),
 );
 
+const FocusPage = lazy(() =>
+  import("@/components/focus/FocusPage").then((module) => ({
+    default: module.FocusPage,
+  })),
+);
+
 const BacklogPage = lazy(() =>
   import("@/components/backlog/BacklogPage").then((module) => ({
     default: module.BacklogPage,
@@ -43,7 +49,8 @@ const routes: RouteObject[] = [
     path: "/",
     element: <AppLayout />,
     children: [
-      { index: true, element: <Navigate to="/board" replace /> },
+      { index: true, element: <Navigate to="/focus" replace /> },
+      { path: "focus", element: withRouteSuspense(<FocusPage />) },
       { path: "board", element: withRouteSuspense(<BoardPage />) },
       { path: "backlog", element: withRouteSuspense(<BacklogPage />) },
       { path: "notes", element: withRouteSuspense(<NotesPage />) },

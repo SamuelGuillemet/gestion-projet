@@ -1,4 +1,4 @@
-export interface BoardColumn {
+interface BoardColumn {
   id: string;
   label: string;
   color: string;
@@ -14,6 +14,9 @@ export const BOARD_COLUMNS: BoardColumn[] = [
 export type BoardColumnId = (typeof BOARD_COLUMNS)[number]["id"];
 
 export const DONE_COLUMN_ID = "done";
+export const TODO_COLUMN_ID = "todo";
+export const IN_PROGRESS_COLUMN_ID = "in-progress";
+export const WAITING_COLUMN_ID = "waiting";
 
 export function getEmptyRecordOfColumns(): Record<BoardColumnId, string[]> {
   return BOARD_COLUMNS.reduce(

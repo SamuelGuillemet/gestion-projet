@@ -1,4 +1,4 @@
-import { Clock, FileText, KanbanSquare, List } from "lucide-react";
+import { Clock, FileText, KanbanSquare, List, Target } from "lucide-react";
 import { useCallback } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ActivityReport } from "@/components/time/report/ActivityReport";
@@ -10,6 +10,7 @@ import { ProjectSelector } from "./ProjectSelector";
 import { TagManager } from "./TagManager";
 
 const ROUTE_PREFETCHERS: Record<string, () => Promise<unknown>> = {
+  "/focus": () => import("@/components/focus/FocusPage"),
   "/board": () => import("@/components/board/BoardPage"),
   "/backlog": () => import("@/components/backlog/BacklogPage"),
   "/notes": () => import("@/components/notes/NotesPage"),
@@ -17,6 +18,7 @@ const ROUTE_PREFETCHERS: Record<string, () => Promise<unknown>> = {
 };
 
 const TABS = [
+  { value: "/focus", label: "Focus", icon: Target },
   { value: "/board", label: "Board", icon: KanbanSquare },
   { value: "/backlog", label: "Backlog", icon: List },
   { value: "/notes", label: "Notes", icon: FileText },
