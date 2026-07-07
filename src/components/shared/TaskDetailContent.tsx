@@ -114,6 +114,7 @@ export function TaskDetailContent({
           />
           <HighlightLinks
             text={task.description}
+            projectId={task.projectId}
             className="mt-1 text-muted-foreground text-xs leading-relaxed whitespace-pre-wrap"
           />
         </div>

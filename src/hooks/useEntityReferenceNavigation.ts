@@ -139,6 +139,7 @@ type ResolvedEntityReference = {
 
 export function useResolvedEntityReference(
   value: string | EntityReference,
+  projectId?: string | null,
 ): ResolvedEntityReference | null {
   const reference =
     typeof value === "string" ? parseEntityReference(value) : value;
@@ -148,7 +149,9 @@ export function useResolvedEntityReference(
   const deliverables = useDeliverableStore((state) => state.deliverables);
   const notes = useNoteStore((state) => state.notes);
 
-  if (!reference || !activeProjectId) return null;
+  const targetProjectId = projectId ?? activeProjectId;
+
+  if (!reference || !targetProjectId) return null;
 
   const itemsByType: Record<EntityReferenceType, EntityReferenceRecord[]> = {
     tasks,
@@ -158,7 +161,7 @@ export function useResolvedEntityReference(
   };
   const target = itemsByType[reference.type].find(
     (item) =>
-      item.projectId === activeProjectId && item.number === reference.number,
+      item.projectId === targetProjectId && item.number === reference.number,
   );
   if (!target) return null;
 

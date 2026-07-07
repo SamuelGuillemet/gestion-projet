@@ -51,6 +51,7 @@ export function DeliverableDetailContent({
         />
         <HighlightLinks
           text={deliverable.description}
+          projectId={deliverable.projectId}
           className="mt-2 text-muted-foreground text-xs leading-relaxed whitespace-pre-wrap"
         />
       </div>

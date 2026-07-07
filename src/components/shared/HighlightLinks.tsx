@@ -10,9 +10,14 @@ const URL_EXACT_REGEX = /^https?:\/\/[^\s]+$/;
 interface HighlightLinksProps {
   text?: string | null;
   className?: string;
+  projectId?: string | null;
 }
 
-export function HighlightLinks({ text, className }: HighlightLinksProps) {
+export function HighlightLinks({
+  text,
+  className,
+  projectId,
+}: HighlightLinksProps) {
   if (!text?.trim()) {
     return null;
   }
@@ -50,6 +55,7 @@ export function HighlightLinks({ text, className }: HighlightLinksProps) {
                     key={`${token.value}-${partIndex}-${tokenIndex}`}
                     reference={token.reference}
                     className="text-xs"
+                    projectId={projectId}
                   />
                 );
               });

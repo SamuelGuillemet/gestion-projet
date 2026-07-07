@@ -42,6 +42,7 @@ export function QuestionDetailContent({
         />
         <HighlightLinks
           text={question.description}
+          projectId={question.projectId}
           className="mt-2 text-muted-foreground text-xs leading-relaxed whitespace-pre-wrap"
         />
       </div>

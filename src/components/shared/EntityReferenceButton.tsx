@@ -12,17 +12,22 @@ type EntityReferenceButtonProps = Omit<
 > & {
   reference?: EntityReference;
   referenceLabel?: string;
+  projectId?: string | null;
 };
 
 export function EntityReferenceButton({
   className,
   reference,
   referenceLabel,
+  projectId,
   ...props
 }: EntityReferenceButtonProps) {
   const label = reference?.label ?? referenceLabel ?? "";
-  const openReference = useEntityReferenceNavigation();
-  const resolvedReference = useResolvedEntityReference(reference ?? label);
+  const openReference = useEntityReferenceNavigation(projectId);
+  const resolvedReference = useResolvedEntityReference(
+    reference ?? label,
+    projectId,
+  );
 
   if (!resolvedReference) {
     return (
@@ -52,11 +57,11 @@ export function EntityReferenceButton({
       title={resolvedReference.title}
       onClick={() => openReference(resolvedReference.reference)}
     >
-      <Icon className="size-3.5 shrink-0" />
+      <Icon className="size-[1em] shrink-0" />
       <span>
         {resolvedReference.title}
         {" ("}
-        <span className="font-data text-[0.72rem] shrink-0">
+        <span className="font-data text-[0.9em] shrink-0">
           {resolvedReference.reference.label}
         </span>
         {")"}
