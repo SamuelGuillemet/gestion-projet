@@ -1,73 +1,109 @@
-# React + TypeScript + Vite
+# Gestion Projet
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Gestion Projet is a local-first project tracking app built with React, TypeScript, Vite, Tailwind CSS, and Zustand. It is designed for personal project follow-up without a backend: projects, tasks, questions, deliverables, notes, milestones, and time entries are stored in the browser.
 
-Currently, two official plugins are available:
+The app is organized around one active project at a time, with global search and JSON backup tools available from the main shell.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- **Focus**: daily overview of active projects, urgent tasks, blocked work, unanswered questions, and stale information.
+- **Board**: Kanban-style task board with drag and drop, task details, tags, status, priority, size, due dates, and checklists.
+- **Backlog**: structured project backlog for tasks, questions, and deliverables.
+- **Notes**: one Markdown workspace per project, with GitHub-flavored Markdown, alerts, code highlighting, Mermaid diagrams, and embedded image assets.
+- **Temps**: time tracking by project and task, milestone timeline, daily recap, and activity reporting over a selected date range.
+- **Global search**: searches notes, tasks, questions, and deliverables across projects.
+- **Import/export**: downloads and restores a JSON backup, including Markdown image assets.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Data Model
 
-## Expanding the ESLint configuration
+The main entities are:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Projects**: the top-level workspace unit, including name and color.
+- **Tasks**: board/backlog items with column, order, completion state, tags, priority, size, due date, and checks.
+- **Questions**: open or answered project questions, including recipient and answer content.
+- **Deliverables**: project outputs with description, type, version, and status metadata.
+- **Notes**: Markdown content attached to a project.
+- **Tags**: reusable labels shared across tasks.
+- **Relations**: links between entities.
+- **Time entries and milestones**: tracked work and planning markers.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+All persisted data is stored in IndexedDB through `idb-keyval` and `zustand/middleware` persistence. There is no API server, database service, or authentication layer.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Getting Started
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Install dependencies:
+
+```bash
+pnpm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Start the development server:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm dev
 ```
+
+Build the production bundle:
+
+```bash
+pnpm build
+```
+
+Preview the production build locally:
+
+```bash
+pnpm preview
+```
+
+## Scripts
+
+| Command        | Description                                                            |
+| -------------- | ---------------------------------------------------------------------- |
+| `pnpm dev`     | Start Vite in development mode.                                        |
+| `pnpm build`   | Run TypeScript project builds, then create the Vite production bundle. |
+| `pnpm preview` | Serve the built app locally.                                           |
+| `pnpm lint`    | Run Biome checks on `src/`.                                            |
+| `pnpm format`  | Format `src/` with Biome.                                              |
+| `pnpm check`   | Run Biome checks and apply safe fixes in `src/`.                       |
+
+## Application Structure
+
+```text
+src/
+  components/
+    backlog/     Backlog view and detail panels
+    board/       Kanban board, columns, cards, and card details
+    focus/       Daily focus dashboard and project/task summaries
+    layout/      App shell, project selector, search, tags, import/export
+    notes/       Markdown note list, editor, renderer, and image handling
+    shared/      Shared entity detail, badges, links, and relation controls
+    time/        Time entry forms, recap, milestones, and reports
+    ui/          Reusable UI primitives
+  hooks/         Read/write hooks around the stores
+  lib/           Domain helpers for references, Markdown, Mermaid, relations, time
+  models/        TypeScript domain models
+  store/         Zustand slices, IndexedDB storage, migrations, import/export
+```
+
+Routes are defined in `src/router.tsx` and loaded lazily behind the app shell. The app uses hash routing, so static hosting works without server-side route rewrites.
+
+## Persistence and Backups
+
+Data is saved automatically in the browser's IndexedDB under versioned store keys. Backup files are exported from the toolbar as `gestion-projet-backup-YYYY-MM-DD.json`.
+
+Importing a backup validates the store keys, applies available migrations, restores the data into IndexedDB, imports Markdown image assets, and reloads the app.
+
+Because storage is browser-local, use export regularly before clearing site data, changing browsers, or moving to another machine.
+
+## Technical Stack
+
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS 4
+- shadcn-style UI primitives
+- Base UI dialogs and controls
+- Zustand stores with IndexedDB persistence
+- DnD Kit for drag and drop
+- Biome for linting and formatting
+- React Markdown, Remark/Rehype, Highlight.js, and Mermaid for notes
