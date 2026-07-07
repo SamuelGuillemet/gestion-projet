@@ -22,13 +22,11 @@ export function TaskFocusBadges({
 }) {
   const openChecks = (task.checks ?? []).filter((check) => !check.done).length;
   const dueLabel = getDueLabel(task.dueDate);
-  const showPriority =
-    task.priority === "high" || (!compact && task.priority !== "medium");
   const showSize = !compact && task.size !== "medium";
   const showDue =
     task.columnId !== "done" && dueLabel && dueLabel.day <= MAX_DUE_DAYS;
 
-  if (!showDue && !showPriority && !showSize && openChecks === 0) {
+  if (!showDue && !task.priority && !showSize && openChecks === 0) {
     return null;
   }
 
@@ -43,7 +41,7 @@ export function TaskFocusBadges({
           {dueLabel.label}
         </Badge>
       ) : null}
-      {showPriority && task.priority ? (
+      {task.priority ? (
         <Badge color={PRIORITY_BY_VALUE[task.priority].color} title="Priorité">
           {PRIORITY_BY_VALUE[task.priority].label}
         </Badge>

@@ -44,8 +44,6 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
             order: columnTasks.length,
             tags: [],
             done: false,
-            priority: "medium",
-            size: "medium",
             checks: [],
             createdAt: now,
             updatedAt: now,

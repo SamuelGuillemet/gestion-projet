@@ -12,6 +12,10 @@ export const PRIORITY_OPTIONS: PriorityOption[] = [
   { value: "high", label: "🌋 Haute", color: "#ef4444" },
 ];
 
+export const PRIORITY_BY_VALUE = Object.fromEntries(
+  PRIORITY_OPTIONS.map((option) => [option.value, option]),
+);
+
 interface SizeOption {
   value: Task["size"];
   label: string;

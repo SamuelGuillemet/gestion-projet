@@ -3,6 +3,7 @@ import { TagBadge } from "@/components/shared/TagBadge";
 import { StatusBadge } from "@/components/shared/TaskStatusBadge";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { PRIORITY_BY_VALUE } from "@/constants/task-options";
 import { useTags } from "@/hooks/useTags";
 import { useTask, useTaskActions } from "@/hooks/useTasks";
 import { cn } from "@/lib/utils";
@@ -27,6 +28,7 @@ export function TaskRow({
   if (filterTag && !task.tags.includes(filterTag)) return null;
 
   const taskTags = tags.filter((t) => task.tags.includes(t.id));
+  const priority = task.priority ? PRIORITY_BY_VALUE[task.priority] : null;
 
   const onSelect = () => select({ type: "tasks", id: taskId });
 
@@ -67,7 +69,19 @@ export function TaskRow({
           ))}
         </div>
       )}
-      {/* <TaskFocusBadges task={task} compact /> */}
+      {priority ? (
+        <span
+          className="inline-flex items-center px-1.5 py-0.5 border rounded h-4.5 font-medium text-[10px] leading-none shrink-0"
+          style={{
+            borderColor: `${priority.color}55`,
+            backgroundColor: `${priority.color}16`,
+            color: priority.color,
+          }}
+          title="Priorité"
+        >
+          {priority.label}
+        </span>
+      ) : null}
       <StatusBadge columnId={task.columnId} />
       <ConfirmDialog
         triggerClassName="inline-flex"
