@@ -1,20 +1,6 @@
-import mermaid from "mermaid";
 import { useEffect, useState } from "react";
+import { renderMermaid } from "@/lib/mermaid";
 import { cn } from "@/lib/utils";
-
-let hasInitializedMermaid = false;
-
-function ensureMermaidInitialized() {
-  if (hasInitializedMermaid) return;
-
-  mermaid.initialize({
-    startOnLoad: false,
-    securityLevel: "strict",
-    theme: "default",
-  });
-
-  hasInitializedMermaid = true;
-}
 
 type Props = {
   definition: string;
@@ -37,12 +23,7 @@ export function Mermaid({ definition, className }: Props) {
 
     const renderDiagram = async () => {
       try {
-        ensureMermaidInitialized();
-        const { svg: nextSvg } = await mermaid.render(
-          `markdown-mermaid-${crypto.randomUUID()}`,
-          trimmedDefinition,
-        );
-
+        const nextSvg = await renderMermaid(trimmedDefinition);
         if (isDisposed) return;
         setSvg(nextSvg);
         setHasError(false);
@@ -64,7 +45,7 @@ export function Mermaid({ definition, className }: Props) {
     return (
       <pre
         className={cn(
-          "my-2 overflow-x-auto rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-destructive text-xs",
+          "bg-destructive/5 my-2 p-3 border border-destructive/40 rounded-lg overflow-x-auto text-destructive text-xs",
           className,
         )}
       >
@@ -77,7 +58,7 @@ export function Mermaid({ definition, className }: Props) {
     return (
       <div
         className={cn(
-          "my-2 flex min-h-20 items-center justify-center rounded-lg border bg-muted/30 px-3 py-6 text-muted-foreground text-sm",
+          "flex justify-center items-center bg-muted/30 my-2 px-3 py-6 border rounded-lg min-h-20 text-muted-foreground text-sm",
           className,
         )}
       >
@@ -89,12 +70,12 @@ export function Mermaid({ definition, className }: Props) {
   return (
     <div
       className={cn(
-        "my-2 overflow-x-auto rounded-lg border bg-card p-3",
+        "bg-card my-2 p-3 border rounded-lg overflow-x-auto",
         className,
       )}
     >
       <div
-        className="mermaid-diagram min-w-max"
+        className="min-w-max mermaid-diagram"
         dangerouslySetInnerHTML={{ __html: svg }}
       />
     </div>

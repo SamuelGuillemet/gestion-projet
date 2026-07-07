@@ -1,10 +1,31 @@
-import { Columns, Edit, Eye } from "lucide-react";
+import { Check, ClipboardCopy, Columns, Edit, Eye } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNote, useNoteActions } from "@/hooks/useNotes";
 import { cn } from "@/lib/utils";
 import { MarkdownPreview } from "./markdown/MarkdownPreview";
 import { MarkdownTextarea } from "./markdown/MarkdownTextarea";
+import { renderMarkdownToWordHtml } from "./markdown/word-html";
+
+export async function copyPreviewToWord(markdownText: string) {
+  if (!navigator.clipboard) {
+    return false;
+  }
+
+  if (typeof ClipboardItem === "undefined") {
+    await navigator.clipboard.writeText(markdownText);
+    return true;
+  }
+
+  const htmlDocument = await renderMarkdownToWordHtml(markdownText);
+  const clipboardItem = new ClipboardItem({
+    "text/html": new Blob([htmlDocument], { type: "text/html" }),
+    "text/plain": new Blob([markdownText], { type: "text/plain" }),
+  });
+
+  await navigator.clipboard.write([clipboardItem]);
+  return true;
+}
 
 type Props = {
   activeNoteId: string;
@@ -15,11 +36,22 @@ export function NoteEditorPanel({ activeNoteId }: Props) {
   const activeNote = useNote(activeNoteId);
   const [content, setContent] = useState("");
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const copyFeedbackRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [mode, setMode] = useState<"both" | "edit" | "preview">("both");
+  const [copyState, setCopyState] = useState<"idle" | "success" | "error">(
+    "idle",
+  );
 
   useEffect(() => {
     setContent(activeNote?.content ?? "");
   }, [activeNote?.content]);
+
+  useEffect(
+    () => () => {
+      if (copyFeedbackRef.current) clearTimeout(copyFeedbackRef.current);
+    },
+    [],
+  );
 
   const save = useCallback(
     (value: string) => {
@@ -35,60 +67,95 @@ export function NoteEditorPanel({ activeNoteId }: Props) {
     debounceRef.current = setTimeout(() => save(value), 500);
   };
 
+  const handleCopyForWord = async () => {
+    try {
+      await copyPreviewToWord(content);
+
+      setCopyState("success");
+    } catch {
+      setCopyState("error");
+    }
+
+    if (copyFeedbackRef.current) clearTimeout(copyFeedbackRef.current);
+    copyFeedbackRef.current = setTimeout(() => setCopyState("idle"), 1800);
+  };
+
   return (
     <div className="flex flex-col gap-3 p-3 grow">
       <div
         role="radiogroup"
         aria-label="Mode d'édition"
-        className="flex items-center self-end gap-1 bg-background/75 p-1 border rounded-md"
+        className="flex items-center self-end gap-1"
       >
         <Button
-          size="icon"
-          variant="ghost"
-          aria-pressed={mode === "both"}
-          title="Both (édition + prévisualisation)"
-          onClick={() => setMode("both")}
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            handleCopyForWord();
+          }}
+          title="Copier un contenu compatible avec Word"
           className={cn(
-            "p-0 rounded-md w-8 h-8",
-            mode === "both"
-              ? "bg-primary/10 text-primary"
-              : "hover:bg-accent/70",
+            "h-8",
+            copyState === "error" && "border-red-500/50 text-red-700",
           )}
         >
-          <Columns className="w-4 h-4" />
+          {copyState === "success" ? (
+            <Check className="mr-1 w-4 h-4" />
+          ) : (
+            <ClipboardCopy className="mr-1 w-4 h-4" />
+          )}
+          {copyState === "success" ? "Copié" : "Copy to Word"}
         </Button>
 
-        <Button
-          size="icon"
-          variant="ghost"
-          aria-pressed={mode === "edit"}
-          title="Edit (édition seule)"
-          onClick={() => setMode("edit")}
-          className={cn(
-            "p-0 rounded-md w-8 h-8",
-            mode === "edit"
-              ? "bg-primary/10 text-primary"
-              : "hover:bg-accent/70",
-          )}
-        >
-          <Edit className="w-4 h-4" />
-        </Button>
+        <div className="flex items-center gap-1 bg-background/75 p-1 border rounded-md">
+          <Button
+            size="icon"
+            variant="ghost"
+            aria-pressed={mode === "both"}
+            title="Both (édition + prévisualisation)"
+            onClick={() => setMode("both")}
+            className={cn(
+              "p-0 rounded-md w-8 h-8",
+              mode === "both"
+                ? "bg-primary/10 text-primary"
+                : "hover:bg-accent/70",
+            )}
+          >
+            <Columns className="w-4 h-4" />
+          </Button>
 
-        <Button
-          size="icon"
-          variant="ghost"
-          aria-pressed={mode === "preview"}
-          title="Preview (prévisualisation seule)"
-          onClick={() => setMode("preview")}
-          className={cn(
-            "p-0 rounded-md w-8 h-8",
-            mode === "preview"
-              ? "bg-primary/10 text-primary"
-              : "hover:bg-accent/70",
-          )}
-        >
-          <Eye className="w-4 h-4" />
-        </Button>
+          <Button
+            size="icon"
+            variant="ghost"
+            aria-pressed={mode === "edit"}
+            title="Edit (édition seule)"
+            onClick={() => setMode("edit")}
+            className={cn(
+              "p-0 rounded-md w-8 h-8",
+              mode === "edit"
+                ? "bg-primary/10 text-primary"
+                : "hover:bg-accent/70",
+            )}
+          >
+            <Edit className="w-4 h-4" />
+          </Button>
+
+          <Button
+            size="icon"
+            variant="ghost"
+            aria-pressed={mode === "preview"}
+            title="Preview (prévisualisation seule)"
+            onClick={() => setMode("preview")}
+            className={cn(
+              "p-0 rounded-md w-8 h-8",
+              mode === "preview"
+                ? "bg-primary/10 text-primary"
+                : "hover:bg-accent/70",
+            )}
+          >
+            <Eye className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
 
       <div className="overflow-y-auto grow">
