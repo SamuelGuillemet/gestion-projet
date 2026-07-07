@@ -86,9 +86,7 @@ function FocusOverviewCard({
           title={title}
           type={marker}
         />
-        {item.type === "task" ? (
-          <TaskFocusBadges task={item.task} compact />
-        ) : null}
+        {item.type === "task" ? <TaskFocusBadges task={item.task} /> : null}
       </div>
       {item.type === "task" ? (
         <StatusBadge columnId={item.task.columnId} />
