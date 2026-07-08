@@ -22,6 +22,14 @@ import {
   version as v3Version,
 } from "./migrations/003_v3_to_v4";
 
+export interface ExportPayload {
+  version: number;
+  state: { [k: string]: unknown };
+  assets: {
+    markdownImages: ExportedMarkdownImageAsset[];
+  };
+}
+
 type Transformations = {
   version: number;
   transform: (record: Record<string, unknown>) => Record<string, unknown>;
@@ -58,7 +66,7 @@ function parseImportedMarkdownImageAssets(data: Record<string, unknown>) {
   });
 }
 
-export async function exportData() {
+export async function exportData(): Promise<ExportPayload> {
   const entries = await Promise.all(
     IDB_STORES_NAMES.map(
       async (storeName) => [storeName, (await get(storeName)).state] as const,
@@ -72,7 +80,7 @@ export async function exportData() {
     assets: {
       markdownImages: markdownImageAssets,
     },
-  } as const;
+  };
 }
 
 export async function importData(data: Record<string, unknown>) {

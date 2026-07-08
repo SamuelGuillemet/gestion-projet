@@ -1,7 +1,9 @@
 import { Download, Upload } from "lucide-react";
 import { useRef } from "react";
+import { BackupManagerDialog } from "@/components/layout/BackupManagerDialog";
 import { Button } from "@/components/ui/button";
 import { exportData, importData } from "@/store/import-export";
+import { createSnapshot } from "@/store/snapshots";
 
 export function DataActions() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -29,6 +31,7 @@ export function DataActions() {
       }
 
       const parsed = parsedRaw as Record<string, unknown>;
+      await createSnapshot({ label: "pre-import" });
       await importData(parsed);
       globalThis.location.reload();
     } catch (e) {
@@ -66,6 +69,7 @@ export function DataActions() {
         className="hidden"
         onChange={handleImport}
       />
+      <BackupManagerDialog />
     </div>
   );
 }
