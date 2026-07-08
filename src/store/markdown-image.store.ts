@@ -25,7 +25,7 @@ async function blobToBase64(blob: Blob) {
   let binary = "";
 
   for (const byte of bytes) {
-    binary += String.fromCharCode(byte);
+    binary += String.fromCodePoint(byte);
   }
 
   return btoa(binary);
@@ -36,7 +36,7 @@ function base64ToBlob(base64: string, mimeType: string) {
   const bytes = new Uint8Array(binary.length);
 
   for (let i = 0; i < binary.length; i += 1) {
-    bytes[i] = binary.charCodeAt(i);
+    bytes[i] = binary.codePointAt(i) ?? 0;
   }
 
   return new Blob([bytes], { type: mimeType });

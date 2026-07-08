@@ -1,4 +1,5 @@
 import { useShallow } from "zustand/react/shallow";
+import { deleteQuestionCascade } from "@/store/cascade-delete";
 import { useQuestionStore } from "@/store";
 
 export function useQuestionIds(projectId: string | null) {
@@ -20,6 +21,6 @@ export function useQuestions() {
 export function useQuestionActions() {
   const addQuestion = useQuestionStore((s) => s.addQuestion);
   const updateQuestion = useQuestionStore((s) => s.updateQuestion);
-  const deleteQuestion = useQuestionStore((s) => s.deleteQuestion);
+  const deleteQuestion = deleteQuestionCascade;
   return { addQuestion, updateQuestion, deleteQuestion };
 }

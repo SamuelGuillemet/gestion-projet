@@ -1,4 +1,5 @@
 import { useShallow } from "zustand/react/shallow";
+import { deleteNoteCascade } from "@/store/cascade-delete";
 import { useNoteStore } from "@/store";
 
 export function useNoteIds(projectId: string | null) {
@@ -16,6 +17,6 @@ export function useNote(id: string) {
 export function useNoteActions() {
   const addNote = useNoteStore((s) => s.addNote);
   const updateNote = useNoteStore((s) => s.updateNote);
-  const deleteNote = useNoteStore((s) => s.deleteNote);
+  const deleteNote = deleteNoteCascade;
   return { addNote, updateNote, deleteNote };
 }

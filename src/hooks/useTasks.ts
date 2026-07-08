@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { getEmptyRecordOfColumns } from "@/constants/board-columns";
+import { deleteTaskCascade } from "@/store/cascade-delete";
 import { useTaskStore } from "@/store";
 
 export function useTasks() {
@@ -46,7 +47,7 @@ export function useTask(id: string) {
 export function useTaskActions() {
   const addTask = useTaskStore((s) => s.addTask);
   const updateTask = useTaskStore((s) => s.updateTask);
-  const deleteTask = useTaskStore((s) => s.deleteTask);
+  const deleteTask = deleteTaskCascade;
   const moveTask = useTaskStore((s) => s.dndTasks);
   return { addTask, updateTask, deleteTask, moveTask };
 }
