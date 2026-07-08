@@ -1,6 +1,7 @@
-import { Check, ChevronDown, Plus } from "lucide-react";
+import { Check, ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -23,6 +24,7 @@ export function ProjectSelector() {
     setActiveProject,
     addProject,
     updateProject,
+    deleteProject,
   } = useProjects();
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -44,6 +46,18 @@ export function ProjectSelector() {
     setDraftColor(activeProject?.color ?? DEFAULT_PROJECT_COLOR);
     setDraftDescription(activeProject?.description ?? "");
   }, [activeProject, isCreating]);
+
+  const handleDeleteActiveProject = () => {
+    if (!activeProject) return;
+
+    const fallbackProjectId =
+      projects.find((project) => project.id !== activeProject.id)?.id ?? null;
+
+    deleteProject(activeProject.id);
+    setActiveProject(fallbackProjectId);
+    clear();
+    setIsCreating(fallbackProjectId === null);
+  };
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
@@ -246,6 +260,19 @@ export function ProjectSelector() {
                   )}
                   {isCreating ? "Créer" : "Enregistrer"}
                 </Button>
+                {!isCreating && activeProject ? (
+                  <ConfirmDialog
+                    trigger={
+                      <Button variant="destructive" size="sm" className="w-full">
+                        <Trash2 className="mr-1 w-3 h-3" />
+                        Supprimer le projet
+                      </Button>
+                    }
+                    title="Supprimer le projet"
+                    description="Cette action est irréversible. Le projet, ses tâches, questions, livrables, notes, jalons et entrées de temps seront supprimés."
+                    onConfirm={handleDeleteActiveProject}
+                  />
+                ) : null}
               </>
             ) : (
               <p className="py-6 text-muted-foreground text-sm text-center">
