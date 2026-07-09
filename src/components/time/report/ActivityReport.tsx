@@ -1,6 +1,7 @@
 import { BarChart3 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useTasks } from "@/hooks/useTasks";
 import {
   Dialog,
   DialogContent,
@@ -31,6 +32,7 @@ export function ActivityReport() {
   >({});
 
   const timeEntries = useTimeEntries();
+  const tasks = useTasks();
   const { projects } = useProjects();
 
   const windowEntries = filterTimeEntriesByDates(
@@ -44,7 +46,7 @@ export function ActivityReport() {
     plannedDaysState,
   );
 
-  const report = reportByDateAndProject(timeEntries, projects);
+  const report = reportByDateAndProject(timeEntries, projects, tasks);
 
   const grandTotal = sumTimeEntryMinutes(timeEntries);
 
@@ -53,9 +55,14 @@ export function ActivityReport() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={<span className="w-full" />} nativeButton={false}>
-        <Button variant="outline" size="sm" className="gap-1.5">
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-1.5"
+          title="Rapport d'activité"
+        >
           <BarChart3 className="w-4 h-4" />
-          Rapport
+          <span className="hidden 2xl:inline">Rapport</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="w-full sm:max-w-4xl max-h-[80vh] overflow-y-auto">

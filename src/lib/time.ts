@@ -1,4 +1,5 @@
 import type { Project } from "@/models/project";
+import type { Task } from "@/models/task";
 import type { TimeEntry } from "@/models/time-entry";
 
 const MINUTES_PER_DAY = 8 * 60;
@@ -21,30 +22,57 @@ export function formatMinutes(minutes: number): string {
 export function reportByDateAndProject(
   timeEntries: TimeEntry[],
   projects: Project[],
+  tasks: Task[],
 ) {
-  const byDate: Record<string, Record<string, number>> = {};
+  const byDate: Record<
+    string,
+    Record<string, { minutes: number; taskMinutesByTaskId: Record<string, number> }>
+  > = {};
 
   for (const entry of timeEntries) {
     if (!byDate[entry.date]) byDate[entry.date] = {};
-    if (!byDate[entry.date][entry.projectId])
-      byDate[entry.date][entry.projectId] = 0;
-    byDate[entry.date][entry.projectId] += entry.minutes;
+    if (!byDate[entry.date][entry.projectId]) {
+      byDate[entry.date][entry.projectId] = {
+        minutes: 0,
+        taskMinutesByTaskId: {},
+      };
+    }
+    byDate[entry.date][entry.projectId].minutes += entry.minutes;
+    const taskMinutesByTaskId = byDate[entry.date][entry.projectId].taskMinutesByTaskId;
+    taskMinutesByTaskId[entry.taskId] =
+      (taskMinutesByTaskId[entry.taskId] ?? 0) + entry.minutes;
   }
 
   const dates = Object.keys(byDate).sort((a, b) => b.localeCompare(a));
 
   return dates.map((date) => ({
     date,
-    projects: Object.entries(byDate[date]).map(([projectId, minutes]) => {
+    projects: Object.entries(byDate[date]).map(([projectId, projectData]) => {
       const project = projects.find((p) => p.id === projectId);
+      const tasksBreakdown = Object.entries(projectData.taskMinutesByTaskId)
+        .map(([taskId, minutes]) => {
+          const task = tasks.find((t) => t.id === taskId);
+          return {
+            taskId,
+            taskNumber: task?.number ?? -1,
+            taskTitle: task?.title ?? "Tache supprimee",
+            minutes,
+          };
+        })
+        .sort((a, b) => b.minutes - a.minutes);
+
       return {
         projectId,
         projectName: project?.name ?? "Projet supprimé",
         projectColor: project?.color ?? "#888",
-        minutes,
+        minutes: projectData.minutes,
+        tasksBreakdown,
       };
     }),
-    total: Object.values(byDate[date]).reduce((sum, m) => sum + m, 0),
+    total: Object.values(byDate[date]).reduce(
+      (sum, projectData) => sum + projectData.minutes,
+      0,
+    ),
   }));
 }
 
@@ -188,12 +216,14 @@ export function formatShortDateLabel(date: string): string {
 }
 
 export function formatLongDateLabel(date: string): string {
-  return new Date(`${date}T00:00:00`).toLocaleDateString(FR_LOCALE, {
+  const sDate = new Date(`${date}T00:00:00`).toLocaleDateString(FR_LOCALE, {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
   });
+  // Uppercase the first letter of the weekday
+  return sDate.charAt(0).toUpperCase() + sDate.slice(1);
 }
 
 export function filterTimeEntriesByDates(

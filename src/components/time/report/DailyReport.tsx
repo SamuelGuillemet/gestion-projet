@@ -1,3 +1,9 @@
+import { Eye } from "lucide-react";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import {
   formatLongDateLabel,
   formatMinutes,
@@ -41,6 +47,46 @@ export function DailyReport({ report }: DailyReportProps) {
                     style={{ backgroundColor: project.projectColor }}
                   />
                   <span>{project.projectName}</span>
+                  {project.tasksBreakdown.length > 0 ? (
+                    <HoverCard>
+                      <HoverCardTrigger
+                        render={
+                          <button
+                            type="button"
+                            className="rounded p-1 text-muted-foreground hover:text-foreground"
+                            aria-label={`Voir le detail des taches pour ${project.projectName}`}
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                          </button>
+                        }
+                      />
+                      <HoverCardContent
+                        side="right"
+                        align="center"
+                        className="w-64 p-2 text-xs"
+                      >
+                        <table className="w-full border-collapse">
+                          <tbody>
+                            {project.tasksBreakdown.map((task) => (
+                              <tr key={task.taskId} className="align-top">
+                                <td className="py-0.5 pr-2 text-muted-foreground whitespace-nowrap">
+                                  {`#${task.taskNumber}`}
+                                </td>
+                                <td className="py-0.5 pr-2">
+                                  <span className="line-clamp-1">
+                                    {task.taskTitle}
+                                  </span>
+                                </td>
+                                <td className="py-0.5 text-muted-foreground text-right whitespace-nowrap">
+                                  {formatMinutes(task.minutes)}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </HoverCardContent>
+                    </HoverCard>
+                  ) : null}
                 </div>
                 <span className="text-muted-foreground">
                   {formatMinutes(project.minutes)}
