@@ -22,7 +22,7 @@ export function TaskFocusBadges({
 }) {
   const openChecks = (task.checks ?? []).filter((check) => !check.done).length;
   const dueLabel = getDueLabel(task.dueDate);
-  const showSize = !compact && task.size !== "medium";
+  const showSize = !compact && task.size !== "small";
   const showDue =
     task.columnId !== "done" && dueLabel && dueLabel.day <= MAX_DUE_DAYS;
 
