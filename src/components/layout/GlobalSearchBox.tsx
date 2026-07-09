@@ -22,7 +22,7 @@ export function GlobalSearchBox() {
     <Button
       type="button"
       variant="outline"
-      className="justify-start gap-2 bg-card/75 hover:bg-accent/80 shadow-none border-foreground/15 w-full sm:w-64 xl:w-80 h-9 font-normal text-muted-foreground"
+      className="justify-start gap-2 bg-card/75 hover:bg-accent/80 shadow-none border-foreground/15 xl:w-64 h-9 font-normal text-muted-foreground"
       onClick={() => {
         setOpen(true);
       }}

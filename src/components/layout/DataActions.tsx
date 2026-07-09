@@ -51,7 +51,7 @@ export function DataActions() {
         title="Exporter les données"
       >
         <Download className="w-4 h-4" />
-        Exporter
+        <span className="hidden 2xl:inline">Exporter</span>
       </Button>
       <Button
         variant="outline"
@@ -60,7 +60,7 @@ export function DataActions() {
         title="Importer des données"
       >
         <Upload className="w-4 h-4" />
-        Importer
+        <span className="hidden 2xl:inline">Importer</span>
       </Button>
       <input
         ref={fileInputRef}

@@ -48,9 +48,14 @@ export function TagManager() {
   return (
     <Dialog onOpenChange={(open) => open && setNewColor(generateRandomHex())}>
       <DialogTrigger render={<span className="w-full" />} nativeButton={false}>
-        <Button variant="outline" size="sm" className="gap-1.5">
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-1.5"
+          title="Gérer les tags"
+        >
           <Tags className="w-4 h-4" />
-          Tags
+          <span className="hidden 2xl:inline">Tags</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-sm">

@@ -24,7 +24,7 @@ export function ProjectsOverview({
           Créez un projet pour voir les priorités du jour.
         </EmptyState>
       ) : (
-        <div className="gap-3 grid grid-cols-6 mt-3">
+        <div className="gap-3 grid grid-cols-5 2xl:grid-cols-6 mt-3">
           {summaries.map((summary) => (
             <ProjectOverviewCard key={summary.project.id} summary={summary} />
           ))}

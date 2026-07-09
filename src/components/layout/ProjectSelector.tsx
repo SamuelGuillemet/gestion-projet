@@ -111,7 +111,7 @@ export function ProjectSelector() {
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
-      <div className="group/project relative min-w-0">
+      <div className="group/project relative min-w-68">
         <PopoverTrigger
           render={
             <Button
@@ -263,7 +263,11 @@ export function ProjectSelector() {
                 {!isCreating && activeProject ? (
                   <ConfirmDialog
                     trigger={
-                      <Button variant="destructive" size="sm" className="w-full">
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        className="w-full"
+                      >
                         <Trash2 className="mr-1 w-3 h-3" />
                         Supprimer le projet
                       </Button>

@@ -1,7 +1,6 @@
 import { BarChart3 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useTasks } from "@/hooks/useTasks";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useProjects } from "@/hooks/useProjects";
+import { useTasks } from "@/hooks/useTasks";
 import { useTimeEntries } from "@/hooks/useTimeTracking";
 import {
   buildWeeklyProjectProgress,

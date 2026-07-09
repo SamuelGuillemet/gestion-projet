@@ -108,7 +108,7 @@ export function BackupManagerDialog() {
       <DialogTrigger render={<span />} nativeButton={false}>
         <Button variant="outline" size="sm" title="Gérer les backups">
           <Archive className="w-4 h-4" />
-          Backups
+          <span className="hidden 2xl:inline">Backups</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl max-h-[82vh] overflow-y-auto">
@@ -150,10 +150,7 @@ export function BackupManagerDialog() {
                 <ConfirmDialog
                   triggerClassName="inline-flex"
                   trigger={
-                    <Button
-                      variant="outline"
-                      size="sm"
-                    >
+                    <Button variant="outline" size="sm">
                       <RotateCcw className="w-4 h-4" />
                       Appliquer ce backup
                     </Button>
@@ -191,10 +188,7 @@ export function BackupManagerDialog() {
                     <ConfirmDialog
                       triggerClassName="inline-flex"
                       trigger={
-                        <Button
-                          variant="outline"
-                          size="sm"
-                        >
+                        <Button variant="outline" size="sm">
                           <RotateCcw className="w-4 h-4" />
                           Appliquer
                         </Button>
@@ -209,10 +203,7 @@ export function BackupManagerDialog() {
                     <ConfirmDialog
                       triggerClassName="inline-flex"
                       trigger={
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                        >
+                        <Button variant="destructive" size="sm">
                           <Trash2 className="w-4 h-4" />
                           Supprimer
                         </Button>
