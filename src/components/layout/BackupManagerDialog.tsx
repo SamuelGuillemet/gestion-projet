@@ -19,10 +19,15 @@ import {
   type SnapshotMetadata,
 } from "@/store/snapshots";
 
+const formatSnapshotDate = (isoDate: string) =>
+  new Date(isoDate).toLocaleString("fr-FR", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+
 export function BackupManagerDialog() {
   const [open, setOpen] = useState(false);
   const [snapshots, setSnapshots] = useState<SnapshotMetadata[]>([]);
-  const [isSnapshotLoading, setIsSnapshotLoading] = useState(false);
 
   useEffect(() => {
     const runAutoBackup = async () => {
@@ -48,28 +53,20 @@ export function BackupManagerDialog() {
   }, []);
 
   const refreshSnapshots = async () => {
-    setIsSnapshotLoading(true);
     try {
       setSnapshots(await listSnapshots());
     } catch (e) {
       alert("Impossible de charger les snapshots");
       console.error(e);
-    } finally {
-      setIsSnapshotLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (!open) return;
-    refreshSnapshots();
-  }, [open]);
 
   const handleSnapshot = async () => {
     try {
       await createSnapshot({ label: "manual" });
       await refreshSnapshots();
     } catch (e) {
-      alert("Impossible de créer le snapshot");
+      alert("Impossible de créer le backup");
       console.error(e);
     }
   };
@@ -78,6 +75,7 @@ export function BackupManagerDialog() {
     try {
       await createSnapshot({ label: `pre-restore:${snapshot.id}` });
       await restoreSnapshot(snapshot.id);
+      await refreshSnapshots();
       globalThis.location.reload();
     } catch (e) {
       alert("Impossible d'appliquer ce backup");
@@ -95,16 +93,17 @@ export function BackupManagerDialog() {
     }
   };
 
-  const formatSnapshotDate = (isoDate: string) =>
-    new Date(isoDate).toLocaleString("fr-FR", {
-      dateStyle: "medium",
-      timeStyle: "short",
-    });
-
   const recommendedSnapshot = snapshots[0] ?? null;
 
+  const onOpenChange = async (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen) {
+      await refreshSnapshots();
+    }
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger render={<span />} nativeButton={false}>
         <Button variant="outline" size="sm" title="Gérer les backups">
           <Archive className="w-4 h-4" />
@@ -130,7 +129,6 @@ export function BackupManagerDialog() {
               variant="ghost"
               size="sm"
               onClick={() => refreshSnapshots()}
-              disabled={isSnapshotLoading}
             >
               Rafraîchir
             </Button>
@@ -168,57 +166,53 @@ export function BackupManagerDialog() {
 
           <div className="space-y-2">
             <p className="font-medium text-sm">Historique des snapshots</p>
-            {isSnapshotLoading ? (
-              <p className="text-muted-foreground text-xs">Chargement...</p>
-            ) : (
-              <div className="space-y-2">
-                {snapshots.map((snapshot) => (
-                  <div
-                    key={snapshot.id}
-                    className="flex sm:flex-row flex-col sm:items-center gap-2 bg-card/65 p-2 border rounded-md"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-xs">
-                        {formatSnapshotDate(snapshot.createdAt)}
-                      </p>
-                      <p className="text-muted-foreground text-xs truncate">
-                        {snapshot.label ?? "sans libellé"}
-                      </p>
-                    </div>
-                    <ConfirmDialog
-                      triggerClassName="inline-flex"
-                      trigger={
-                        <Button variant="outline" size="sm">
-                          <RotateCcw className="w-4 h-4" />
-                          Appliquer
-                        </Button>
-                      }
-                      title="Appliquer un backup"
-                      description="L'état actuel sera remplacé. Un snapshot de sécurité sera créé juste avant la restauration."
-                      confirmLabel="Appliquer"
-                      onConfirm={() => {
-                        handleRestoreSnapshot(snapshot);
-                      }}
-                    />
-                    <ConfirmDialog
-                      triggerClassName="inline-flex"
-                      trigger={
-                        <Button variant="destructive" size="sm">
-                          <Trash2 className="w-4 h-4" />
-                          Supprimer
-                        </Button>
-                      }
-                      title="Supprimer ce backup"
-                      description="Cette action est irréversible. Le backup sélectionné sera définitivement supprimé."
-                      confirmLabel="Supprimer"
-                      onConfirm={() => {
-                        handleDeleteSnapshot(snapshot);
-                      }}
-                    />
+            <div className="space-y-2">
+              {snapshots?.map((snapshot) => (
+                <div
+                  key={snapshot.id}
+                  className="flex sm:flex-row flex-col sm:items-center gap-2 bg-card/65 p-2 border rounded-md"
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-xs">
+                      {formatSnapshotDate(snapshot.createdAt)}
+                    </p>
+                    <p className="text-muted-foreground text-xs truncate">
+                      {snapshot.label ?? "sans libellé"}
+                    </p>
                   </div>
-                ))}
-              </div>
-            )}
+                  <ConfirmDialog
+                    triggerClassName="inline-flex"
+                    trigger={
+                      <Button variant="outline" size="sm">
+                        <RotateCcw className="w-4 h-4" />
+                        Appliquer
+                      </Button>
+                    }
+                    title="Appliquer un backup"
+                    description="L'état actuel sera remplacé. Un snapshot de sécurité sera créé juste avant la restauration."
+                    confirmLabel="Appliquer"
+                    onConfirm={() => {
+                      handleRestoreSnapshot(snapshot);
+                    }}
+                  />
+                  <ConfirmDialog
+                    triggerClassName="inline-flex"
+                    trigger={
+                      <Button variant="destructive" size="sm">
+                        <Trash2 className="w-4 h-4" />
+                        Supprimer
+                      </Button>
+                    }
+                    title="Supprimer ce backup"
+                    description="Cette action est irréversible. Le backup sélectionné sera définitivement supprimé."
+                    confirmLabel="Supprimer"
+                    onConfirm={() => {
+                      handleDeleteSnapshot(snapshot);
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </DialogContent>

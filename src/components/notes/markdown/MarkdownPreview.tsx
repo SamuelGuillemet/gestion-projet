@@ -1,6 +1,6 @@
 import powershell from "highlight.js/lib/languages/powershell";
 import { common } from "lowlight";
-import { type ComponentPropsWithoutRef, useMemo } from "react";
+import type { ComponentPropsWithoutRef } from "react";
 import Markdown from "react-markdown";
 import rehypeHighlightRaw from "rehype-highlight";
 import remarkBreaks from "remark-breaks";
@@ -24,6 +24,13 @@ const rehypePlugins = [
   rehypeMermaid,
   rehypeHighlight,
 ];
+
+const components = {
+  a: MarkdownLink,
+  img: MarkdownImage,
+  pre: MarkdownPre,
+  table: MarkdownTable,
+};
 
 const urlTransform = (value: string) => {
   const colon = value.indexOf(":");
@@ -49,16 +56,6 @@ type Props = {
 };
 
 export function MarkdownPreview({ content }: Props) {
-  const components = useMemo(
-    () => ({
-      a: MarkdownLink,
-      img: MarkdownImage,
-      pre: MarkdownPre,
-      table: MarkdownTable,
-    }),
-    [],
-  );
-
   return (
     <article className="prose-code:bg-muted prose-pre:bg-muted prose-code:px-1 prose-code:py-0.5 prose-pre:border prose-code:rounded-sm max-w-none prose-headings:font-heading prose-headings:font-semibold prose-a:text-primary prose-code:text-primary/80 prose-p:leading-relaxed prose prose-sm prose-slate">
       <Markdown

@@ -110,19 +110,6 @@ export function getEntityReferenceTypeFromPrefix(prefix: string) {
   );
 }
 
-export function getRelationEntityType(type: EntityReferenceType) {
-  return ENTITY_REFERENCE_DEFINITIONS[type].relationType ?? null;
-}
-
-export function getEntityReferenceTypeFromRelationType(relationType: string) {
-  return (
-    BACKLOG_ENTITY_REFERENCE_TYPES.find(
-      (type) =>
-        ENTITY_REFERENCE_DEFINITIONS[type].relationType === relationType,
-    ) ?? null
-  );
-}
-
 export function getEntityReferenceTypeLabel(type: EntityReferenceType) {
   return ENTITY_REFERENCE_DEFINITIONS[type].label;
 }
@@ -133,11 +120,6 @@ export function getEntityReferenceTypePluralLabel(type: EntityReferenceType) {
 
 export function getEntityReferenceIcon(type: EntityReferenceType) {
   return ENTITY_REFERENCE_DEFINITIONS[type].icon;
-}
-
-export function getRelationEntityTypeLabel(type: RelationEntityType) {
-  const referenceType = getEntityReferenceTypeFromRelationType(type);
-  return referenceType ? getEntityReferenceTypeLabel(referenceType) : type;
 }
 
 export function parseEntityReference(value: string): EntityReference | null {

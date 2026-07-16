@@ -1,9 +1,4 @@
-import {
-  type ComponentPropsWithoutRef,
-  memo,
-  useEffect,
-  useState,
-} from "react";
+import { type ComponentPropsWithoutRef, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { getMarkdownImageBlob } from "@/store/markdown-image.store";
 
@@ -50,27 +45,29 @@ function loadCachedImage(src: string) {
   return nextCachedImage;
 }
 
-export const IdbImage = memo(function IdbImage({
+export function IdbImage({
   alt,
   className,
   src,
   ...props
 }: ComponentPropsWithoutRef<"img"> & { src: string }) {
-  const [resolvedSrc, setResolvedSrc] = useState<string | null>(() =>
-    getCachedObjectUrl(src),
-  );
+  const [loadedImage, setLoadedImage] = useState<{
+    src: string;
+    objectUrl: string | null;
+  } | null>(null);
+  const resolvedSrc =
+    getCachedObjectUrl(src) ??
+    (loadedImage?.src === src ? loadedImage.objectUrl : null);
 
   useEffect(() => {
     let isDisposed = false;
     const cachedImage = loadCachedImage(src);
 
-    setResolvedSrc(cachedImage.objectUrl);
-
     if (!cachedImage.promise) return;
 
     void cachedImage.promise.then((objectUrl) => {
       if (isDisposed) return;
-      setResolvedSrc(objectUrl);
+      setLoadedImage({ src, objectUrl });
     });
 
     return () => {
@@ -94,4 +91,4 @@ export const IdbImage = memo(function IdbImage({
       className={cn("my-2 border rounded-xl object-contain", className)}
     />
   );
-});
+}

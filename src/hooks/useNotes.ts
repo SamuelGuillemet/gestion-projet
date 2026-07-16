@@ -1,6 +1,6 @@
 import { useShallow } from "zustand/react/shallow";
-import { deleteNoteCascade } from "@/store/cascade-delete";
 import { useNoteStore } from "@/store";
+import { deleteNoteCascade } from "@/store/cascade-delete";
 
 export function useNoteIds(projectId: string | null) {
   return useNoteStore(

@@ -9,7 +9,7 @@ const SNAPSHOT_KEY_PREFIX = "snapshot:";
 const DEFAULT_SNAPSHOT_RETENTION = 14;
 const AUTO_BACKUP_INTERVAL_MS = 12 * 60 * 60 * 1000;
 const AUTO_BACKUP_LAST_AT_KEY = "gp-auto-backup-last-at";
-const AUTO_BACKUP_LAST_SIGNATURE_KEY = "gp-auto-backup-last-signature";
+const AUTO_BACKUP_LAST_KEY = "gp-auto-backup-last-key";
 
 export interface SnapshotMetadata {
   id: string;
@@ -61,7 +61,7 @@ export async function createSnapshot(options: {
   return persistSnapshot(data, options.label);
 }
 
-function getDataSignature(data: ExportPayload): string {
+function getDataKey(data: ExportPayload): string {
   return JSON.stringify({
     version: data.version,
     state: data.state,
@@ -79,9 +79,9 @@ function getLastAutoBackupAt(): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-function setLastAutoBackupState(atMs: number, signature: string) {
+function setLastAutoBackupState(atMs: number, key: string) {
   globalThis.localStorage.setItem(AUTO_BACKUP_LAST_AT_KEY, String(atMs));
-  globalThis.localStorage.setItem(AUTO_BACKUP_LAST_SIGNATURE_KEY, signature);
+  globalThis.localStorage.setItem(AUTO_BACKUP_LAST_KEY, key);
 }
 
 async function persistSnapshot(
@@ -116,18 +116,16 @@ export async function createAutoSnapshotIfNeeded(): Promise<AutoSnapshotResult> 
   }
 
   const data = await exportData();
-  const signature = getDataSignature(data);
-  const lastSignature = globalThis.localStorage.getItem(
-    AUTO_BACKUP_LAST_SIGNATURE_KEY,
-  );
+  const key = getDataKey(data);
+  const lastKey = globalThis.localStorage.getItem(AUTO_BACKUP_LAST_KEY);
 
-  if (lastSignature === signature) {
+  if (lastKey === key) {
     console.log("[auto-backup] No changes detected, skipping");
     return { created: false, reason: "no-change" };
   }
 
   const snapshot = await persistSnapshot(data, "auto-12h");
-  setLastAutoBackupState(nowMs, signature);
+  setLastAutoBackupState(nowMs, key);
 
   return {
     created: true,

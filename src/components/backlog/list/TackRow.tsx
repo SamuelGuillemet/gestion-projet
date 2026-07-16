@@ -24,10 +24,11 @@ export function TaskRow({
   const clearIfSelected = useBacklogUI((s) => s.clearIfSelected);
 
   if (!task) return null;
+  const taskTagIds = new Set(task.tags);
   // Apply tag filter
-  if (filterTag && !task.tags.includes(filterTag)) return null;
+  if (filterTag && !taskTagIds.has(filterTag)) return null;
 
-  const taskTags = tags.filter((t) => task.tags.includes(t.id));
+  const taskTags = tags.filter((t) => taskTagIds.has(t.id));
   const priority = task.priority ? PRIORITY_BY_VALUE[task.priority] : null;
 
   const onSelect = () => select({ type: "tasks", id: taskId });

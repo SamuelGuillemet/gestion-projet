@@ -1,5 +1,5 @@
 import { Clock, Plus, Trash2, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import {
   useTimeActions,
   useTimeEntriesByTaskId,
 } from "@/hooks/useTimeTracking";
+import { formatMinutes } from "@/lib/time";
 import { cn, generateId } from "@/lib/utils";
 import type { CheckItem } from "@/models/shared";
 import type { Task } from "@/models/task";
@@ -29,6 +30,8 @@ interface TaskDetailContentProps {
   onDelete: () => void;
 }
 
+const getEntryDateString = () => new Date().toISOString().slice(0, 10);
+
 export function TaskDetailContent({
   task,
   onUpdate,
@@ -38,23 +41,11 @@ export function TaskDetailContent({
   const taskTimeEntries = useTimeEntriesByTaskId(task.id);
   const { addTimeEntry } = useTimeActions();
 
-  const [entryDate, setEntryDate] = useState(
-    new Date().toISOString().slice(0, 10),
-  );
+  const [entryDate, setEntryDate] = useState(getEntryDateString);
   const [entryMinutes, setEntryMinutes] = useState("");
 
-  const totalMinutes = useMemo(
-    () => taskTimeEntries.reduce((sum, e) => sum + e.minutes, 0),
-    [taskTimeEntries],
-  );
-
-  const formatMinutes = (m: number) => {
-    const h = Math.floor(m / 60);
-    const min = m % 60;
-    if (h === 0) return `${min}min`;
-    if (min === 0) return `${h}h`;
-    return `${h}h${min.toString().padStart(2, "0")}`;
-  };
+  const totalMinutes = taskTimeEntries.reduce((sum, e) => sum + e.minutes, 0);
+  const taskTagIds = new Set(task.tags);
 
   const handleAddTime = () => {
     if (!entryDate || !entryMinutes) return;
@@ -65,7 +56,7 @@ export function TaskDetailContent({
   };
 
   const toggleTag = (tagId: string) => {
-    const newTags = task.tags.includes(tagId)
+    const newTags = taskTagIds.has(tagId)
       ? task.tags.filter((id) => id !== tagId)
       : [...task.tags, tagId];
     onUpdate({ tags: newTags });
@@ -165,7 +156,7 @@ export function TaskDetailContent({
                 onClick={() => toggleTag(tag.id)}
                 className={cn(
                   "inline-flex items-center gap-1 bg-card/60 px-2 py-0.5 border rounded-sm text-xs transition-colors",
-                  task.tags.includes(tag.id)
+                  taskTagIds.has(tag.id)
                     ? "border-primary bg-primary/10"
                     : "hover:border-primary/50",
                 )}
@@ -342,6 +333,7 @@ function ChecksList({
           <div key={check.id} className="flex items-center gap-2">
             <input
               type="checkbox"
+              aria-label={`Marquer le check "${check.title}" comme ${check.done ? "non fait" : "fait"}`}
               checked={check.done}
               onChange={(e) => onUpdate(check.id, { done: e.target.checked })}
               className="size-4 accent-primary shrink-0"

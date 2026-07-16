@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 import {
   BACKLOG_ENTITY_REFERENCE_TYPES,
@@ -33,55 +32,51 @@ export function useRelationOfTask(taskId: string) {
   const questions = useQuestionStore(useShallow((s) => s.questions));
   const deliverables = useDeliverableStore(useShallow((s) => s.deliverables));
 
-  return useMemo(() => {
-    const itemsByType: Record<
-      BacklogEntityReferenceType,
-      EntityReferenceRecord[]
-    > = {
-      tasks,
-      questions,
-      deliverables,
-    };
-    const itemById = new Map<string, RelationLookupItem>();
+  const itemsByType = {
+    tasks,
+    questions,
+    deliverables,
+  };
 
-    for (const type of BACKLOG_ENTITY_REFERENCE_TYPES) {
-      for (const item of itemsByType[type]) {
-        itemById.set(item.id, { ...item, type });
-      }
+  const itemById = new Map<string, RelationLookupItem>();
+
+  for (const type of BACKLOG_ENTITY_REFERENCE_TYPES) {
+    for (const item of itemsByType[type]) {
+      itemById.set(item.id, { ...item, type });
+    }
+  }
+
+  const relationStatuses: RelatedEntityRelation[] = [];
+
+  for (const relation of relations) {
+    if (relation.sourceId !== taskId && relation.targetId !== taskId) {
+      continue;
     }
 
-    const relationStatuses: RelatedEntityRelation[] = [];
-
-    for (const relation of relations) {
-      if (relation.sourceId !== taskId && relation.targetId !== taskId) {
-        continue;
-      }
-
-      const displayType =
-        relation.sourceId === taskId
-          ? relation.type
-          : getInverseType(relation.type);
-      const relatedId =
-        relation.sourceId === taskId ? relation.targetId : relation.sourceId;
-      const relatedItem = itemById.get(relatedId);
-      if (!relatedItem) {
-        continue;
-      }
-
-      relationStatuses.push({
-        id: relation.id,
-        type: displayType,
-        reference: {
-          type: relatedItem.type,
-          number: relatedItem.number,
-          label: getEntityReferenceLabel(relatedItem.type, relatedItem.number),
-        },
-        title: relatedItem.title || "Sans titre",
-      });
+    const displayType =
+      relation.sourceId === taskId
+        ? relation.type
+        : getInverseType(relation.type);
+    const relatedId =
+      relation.sourceId === taskId ? relation.targetId : relation.sourceId;
+    const relatedItem = itemById.get(relatedId);
+    if (!relatedItem) {
+      continue;
     }
 
-    return relationStatuses;
-  }, [deliverables, questions, relations, taskId, tasks]);
+    relationStatuses.push({
+      id: relation.id,
+      type: displayType,
+      reference: {
+        type: relatedItem.type,
+        number: relatedItem.number,
+        label: getEntityReferenceLabel(relatedItem.type, relatedItem.number),
+      },
+      title: relatedItem.title || "Sans titre",
+    });
+  }
+
+  return relationStatuses;
 }
 
 export function useRelations() {

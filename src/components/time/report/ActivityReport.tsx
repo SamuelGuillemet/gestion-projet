@@ -13,20 +13,27 @@ import { useTasks } from "@/hooks/useTasks";
 import { useTimeEntries } from "@/hooks/useTimeTracking";
 import {
   buildWeeklyProjectProgress,
+  createDefaultWorkdayDateRange,
   filterTimeEntriesByDates,
   formatMinutes,
   reportByDateAndProject,
   sumTimeEntryMinutes,
   sumWeeklyActualMinutes,
+  toWorkdayRangeFromDateSelection,
   type WorkdayRange,
 } from "@/lib/time";
 import { DailyReport } from "./DailyReport";
 import { RangeSelector } from "./RangeSelector";
 import { WeeklyProjectList } from "./WeeklyProjectList";
 
+const getPlannedDays = () => {
+  const defaultRange = createDefaultWorkdayDateRange(5);
+  return toWorkdayRangeFromDateSelection(defaultRange?.from, defaultRange?.to);
+};
+
 export function ActivityReport() {
   const [open, setOpen] = useState(false);
-  const [windowRange, setWindowRange] = useState<WorkdayRange | null>(null);
+  const [windowRange, setWindowRange] = useState<WorkdayRange>(getPlannedDays);
   const [plannedDaysState, setPlannedDaysState] = useState<
     Record<string, number>
   >({});

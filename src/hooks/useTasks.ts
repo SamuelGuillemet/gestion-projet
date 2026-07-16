@@ -1,8 +1,7 @@
-import { useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { getEmptyRecordOfColumns } from "@/constants/board-columns";
-import { deleteTaskCascade } from "@/store/cascade-delete";
 import { useTaskStore } from "@/store";
+import { deleteTaskCascade } from "@/store/cascade-delete";
 
 export function useTasks() {
   return useTaskStore(useShallow((s) => s.tasks));
@@ -31,13 +30,12 @@ export function useTaskColumnRecord(projectId: string | null) {
     ),
   );
 
-  return useMemo(() => {
-    const record = getEmptyRecordOfColumns();
-    for (const task of tasks) {
-      record[task.columnId].push(task.id);
-    }
-    return record;
-  }, [tasks]);
+  const record = getEmptyRecordOfColumns();
+  for (const task of tasks) {
+    record[task.columnId].push(task.id);
+  }
+
+  return record;
 }
 
 export function useTask(id: string) {

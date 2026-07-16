@@ -1,6 +1,6 @@
 import { useShallow } from "zustand/react/shallow";
-import { deleteDeliverableCascade } from "@/store/cascade-delete";
 import { useDeliverableStore } from "@/store";
+import { deleteDeliverableCascade } from "@/store/cascade-delete";
 
 export function useDeliverables() {
   return useDeliverableStore(useShallow((s) => s.deliverables));

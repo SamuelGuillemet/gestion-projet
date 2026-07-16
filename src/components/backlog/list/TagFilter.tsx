@@ -42,6 +42,7 @@ export function TagFilter({
       {selectedTag && (
         <button
           type="button"
+          aria-label="Clear tag filter"
           onClick={() => onSelectTag(null)}
           className="text-muted-foreground hover:text-foreground text-xs"
         >

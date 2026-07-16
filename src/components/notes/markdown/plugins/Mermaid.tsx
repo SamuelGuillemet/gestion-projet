@@ -7,15 +7,26 @@ type Props = {
   className?: string;
 };
 
+type MermaidState = {
+  definition: string;
+  svg: string | null;
+  hasError: boolean;
+};
+
 export function Mermaid({ definition, className }: Props) {
-  const [svg, setSvg] = useState<string | null>(null);
-  const [hasError, setHasError] = useState(false);
+  const trimmedDefinition = definition.trim();
+  const [renderedDiagram, setRenderedDiagram] = useState<MermaidState>(() => ({
+    definition: trimmedDefinition,
+    svg: null,
+    hasError: false,
+  }));
+  const currentDiagram =
+    renderedDiagram.definition === trimmedDefinition
+      ? renderedDiagram
+      : { definition: trimmedDefinition, svg: null, hasError: false };
 
   useEffect(() => {
-    const trimmedDefinition = definition.trim();
     if (!trimmedDefinition) {
-      setSvg(null);
-      setHasError(false);
       return;
     }
 
@@ -25,12 +36,18 @@ export function Mermaid({ definition, className }: Props) {
       try {
         const nextSvg = await renderMermaid(trimmedDefinition);
         if (isDisposed) return;
-        setSvg(nextSvg);
-        setHasError(false);
+        setRenderedDiagram({
+          definition: trimmedDefinition,
+          svg: nextSvg,
+          hasError: false,
+        });
       } catch {
         if (isDisposed) return;
-        setSvg(null);
-        setHasError(true);
+        setRenderedDiagram({
+          definition: trimmedDefinition,
+          svg: null,
+          hasError: true,
+        });
       }
     };
 
@@ -39,9 +56,9 @@ export function Mermaid({ definition, className }: Props) {
     return () => {
       isDisposed = true;
     };
-  }, [definition]);
+  }, [trimmedDefinition]);
 
-  if (hasError) {
+  if (currentDiagram.hasError) {
     return (
       <pre
         className={cn(
@@ -54,7 +71,7 @@ export function Mermaid({ definition, className }: Props) {
     );
   }
 
-  if (!svg) {
+  if (!currentDiagram.svg) {
     return (
       <div
         className={cn(
@@ -76,7 +93,7 @@ export function Mermaid({ definition, className }: Props) {
     >
       <div
         className="min-w-max mermaid-diagram"
-        dangerouslySetInnerHTML={{ __html: svg }}
+        dangerouslySetInnerHTML={{ __html: currentDiagram.svg }}
       />
     </div>
   );

@@ -36,46 +36,48 @@ export function NoteFileItem({
   return (
     <div
       className={cn(
-        "group flex items-center gap-2 px-2 py-2 border border-l-2 rounded-md transition-colors cursor-pointer",
+        "group flex items-center gap-2 px-2 py-2 border border-l-2 rounded-md transition-colors",
         {
           "border-primary/25 border-l-(--entity-task) bg-primary/8 text-primary":
             active,
           "border-transparent hover:bg-accent/50": !active,
         },
       )}
-      onClick={onSelect}
-      onKeyDown={(e) => e.key === "Enter" && onSelect()}
-      role="button"
-      tabIndex={0}
     >
-      <FileText className="opacity-70 w-3.5 h-3.5 shrink-0" />
       {editing ? (
-        <Input
-          value={editValue}
-          onChange={(e) => setEditValue(e.target.value)}
-          onBlur={handleSubmit}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleSubmit();
-            if (e.key === "Escape") setEditing(false);
-          }}
-          className="px-1 py-0 h-6 text-xs"
-          autoFocus
-          onClick={(e) => e.stopPropagation()}
-        />
+        <div className="flex flex-1 items-center gap-2 min-w-0">
+          <FileText className="opacity-70 w-3.5 h-3.5 shrink-0" />
+          <Input
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            onBlur={handleSubmit}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSubmit();
+              if (e.key === "Escape") setEditing(false);
+            }}
+            className="px-1 py-0 h-6 text-xs"
+            autoFocus
+          />
+        </div>
       ) : (
-        <span
-          className="flex-1 text-xs truncate leading-snug"
+        <button
+          type="button"
+          className="flex flex-1 items-center gap-2 min-w-0 text-left cursor-pointer"
+          onClick={onSelect}
           onDoubleClick={(e) => {
             e.stopPropagation();
             setEditValue(note.title);
             setEditing(true);
           }}
         >
-          {"("}
-          <span className="font-data text-[10px]">%{note.number}</span>
-          {") "}
-          {note.title}
-        </span>
+          <FileText className="opacity-70 w-3.5 h-3.5 shrink-0" />
+          <span className="flex-1 text-xs truncate leading-snug">
+            {"("}
+            <span className="font-data text-[10px]">%{note.number}</span>
+            {") "}
+            {note.title}
+          </span>
+        </button>
       )}
       <ConfirmDialog
         triggerClassName="inline-flex"

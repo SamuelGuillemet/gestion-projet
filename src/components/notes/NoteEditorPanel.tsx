@@ -1,5 +1,5 @@
 import { Check, ClipboardCopy, Columns, Edit, Eye } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNote, useNoteActions } from "@/hooks/useNotes";
 import { cn } from "@/lib/utils";
@@ -34,17 +34,13 @@ type Props = {
 export function NoteEditorPanel({ activeNoteId }: Props) {
   const { updateNote } = useNoteActions();
   const activeNote = useNote(activeNoteId);
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(activeNote?.content ?? "");
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const copyFeedbackRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [mode, setMode] = useState<"both" | "edit" | "preview">("both");
   const [copyState, setCopyState] = useState<"idle" | "success" | "error">(
     "idle",
   );
-
-  useEffect(() => {
-    setContent(activeNote?.content ?? "");
-  }, [activeNote?.content]);
 
   useEffect(
     () => () => {
@@ -53,13 +49,10 @@ export function NoteEditorPanel({ activeNoteId }: Props) {
     [],
   );
 
-  const save = useCallback(
-    (value: string) => {
-      if (!activeNoteId) return;
-      updateNote(activeNoteId, { content: value });
-    },
-    [activeNoteId, updateNote],
-  );
+  const save = (value: string) => {
+    if (!activeNoteId) return;
+    updateNote(activeNoteId, { content: value });
+  };
 
   const handleChange = (value: string) => {
     setContent(value);
