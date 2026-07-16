@@ -16,11 +16,13 @@ interface TimeEntryFormProps {
   projectId: string;
 }
 
+const getEntryDateString = () => new Date().toISOString().slice(0, 10);
+
 export function TimeEntryForm({ projectId }: TimeEntryFormProps) {
   const { addTimeEntry } = useTimeActions();
   const tasks = useTasksByProjectId(projectId);
   const [taskId, setTaskId] = useState("");
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  const [date, setDate] = useState(getEntryDateString);
   const [minutes, setMinutes] = useState("");
 
   const selectedTask = tasks.find((t) => t.id === taskId);

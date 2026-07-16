@@ -131,16 +131,18 @@ function rehypeCustomAssets() {
   const visitNode = async (node: HastNode): Promise<void> => {
     if (!node.children) return;
 
-    for (const child of node.children) {
-      if (child.type === "element") {
-        await transformMermaidNode(child);
-        await transformImageNode(child);
-        await transformAnchorNode(child);
-        await transformAlertDivNode(child);
-      }
+    await Promise.all(
+      node.children.map(async (child) => {
+        if (child.type === "element") {
+          await transformMermaidNode(child);
+          await transformImageNode(child);
+          await transformAnchorNode(child);
+          await transformAlertDivNode(child);
+        }
 
-      await visitNode(child);
-    }
+        await visitNode(child);
+      }),
+    );
   };
 
   return async (tree: HastNode) => {

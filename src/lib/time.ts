@@ -26,7 +26,10 @@ export function reportByDateAndProject(
 ) {
   const byDate: Record<
     string,
-    Record<string, { minutes: number; taskMinutesByTaskId: Record<string, number> }>
+    Record<
+      string,
+      { minutes: number; taskMinutesByTaskId: Record<string, number> }
+    >
   > = {};
 
   for (const entry of timeEntries) {
@@ -38,7 +41,8 @@ export function reportByDateAndProject(
       };
     }
     byDate[entry.date][entry.projectId].minutes += entry.minutes;
-    const taskMinutesByTaskId = byDate[entry.date][entry.projectId].taskMinutesByTaskId;
+    const taskMinutesByTaskId =
+      byDate[entry.date][entry.projectId].taskMinutesByTaskId;
     taskMinutesByTaskId[entry.taskId] =
       (taskMinutesByTaskId[entry.taskId] ?? 0) + entry.minutes;
   }
@@ -136,7 +140,7 @@ export function getRollingWorkdayRange(
   const workdayDates = getRollingWorkdayDates(windowEndDate, dayCount);
   return {
     startDate: workdayDates[0] ?? windowEndDate,
-    endDate: workdayDates[workdayDates.length - 1] ?? windowEndDate,
+    endDate: workdayDates.at(-1) ?? windowEndDate,
     workdayDates,
   };
 }

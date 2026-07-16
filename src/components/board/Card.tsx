@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/react/sortable";
 import { GripVertical } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { TagBadge } from "@/components/shared/TagBadge";
 import { useRelationOfTask } from "@/hooks/useRelations";
 import { useTags } from "@/hooks/useTags";
@@ -15,7 +15,7 @@ interface CardProps {
   isDragging?: boolean;
 }
 
-export function Card({ taskId, isDragging }: CardProps) {
+function Card({ taskId, isDragging }: CardProps) {
   const task = useTask(taskId);
   const { tags } = useTags();
   const relationStatuses = useRelationOfTask(taskId);
@@ -23,7 +23,8 @@ export function Card({ taskId, isDragging }: CardProps) {
 
   if (!task) return null;
 
-  const taskTags = tags.filter((t) => task.tags.includes(t.id));
+  const taskTagIds = new Set(task.tags);
+  const taskTags = tags.filter((t) => taskTagIds.has(t.id));
 
   return (
     <>
@@ -102,16 +103,18 @@ export function SortableCard({
   index: number;
   columnId: string;
 }) {
+  const sortableRef = useRef<HTMLDivElement>(null);
   const sortable = useSortable({
     id: taskId,
     index,
     type: "item",
     accept: "item",
     group: columnId,
+    element: sortableRef,
   });
 
   return (
-    <div ref={sortable.ref}>
+    <div ref={sortableRef}>
       <Card taskId={taskId} isDragging={sortable.isDragging} />
     </div>
   );

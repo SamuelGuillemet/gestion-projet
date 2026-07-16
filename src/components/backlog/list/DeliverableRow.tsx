@@ -19,43 +19,45 @@ export function DeliverableRow({ deliverableId }: { deliverableId: string }) {
   return (
     <div
       className={cn(
-        "group flex items-center gap-2 py-2 pr-2 pl-3 border border-l-2 border-l-(--entity-deliverable)! rounded-md transition-colors cursor-pointer",
+        "group flex items-center gap-2 py-2 pr-2 pl-3 border border-l-2 border-l-(--entity-deliverable)! rounded-md transition-colors",
         {
           "border-primary/25 bg-primary/7": selected,
           "border-transparent hover:hover:bg-accent/45": !selected,
         },
       )}
-      onClick={onSelect}
-      onKeyDown={(e) => e.key === "Enter" && onSelect()}
-      role="button"
-      tabIndex={0}
     >
-      <Package
-        className={cn("w-4 h-4 shrink-0", {
-          "text-emerald-500": deliverable.done,
-          "text-muted-foreground": !deliverable.done,
-        })}
-      />
-      <span className="font-data text-[10px] text-muted-foreground shrink-0">
-        !{deliverable.number}
-      </span>
-      <span
-        className={cn("flex-1 text-sm truncate", {
-          "line-through text-muted-foreground": deliverable.done,
-        })}
+      <button
+        type="button"
+        className="flex flex-1 items-center gap-2 min-w-0 text-left cursor-pointer"
+        onClick={onSelect}
       >
-        {deliverable.title}
-      </span>
-      {deliverable.version && (
-        <span className="bg-background/70 px-1.5 py-0.5 border rounded-sm font-data text-[10px] text-muted-foreground">
-          {deliverable.version}
+        <Package
+          className={cn("w-4 h-4 shrink-0", {
+            "text-emerald-500": deliverable.done,
+            "text-muted-foreground": !deliverable.done,
+          })}
+        />
+        <span className="font-data text-[10px] text-muted-foreground shrink-0">
+          !{deliverable.number}
         </span>
-      )}
-      {deliverable.type && (
-        <span className="bg-(--entity-deliverable)/10 px-1.5 py-0.5 rounded-sm text-[10px] text-(--entity-deliverable) border border-(--entity-deliverable)/25">
-          {deliverable.type}
+        <span
+          className={cn("flex-1 text-sm truncate", {
+            "line-through text-muted-foreground": deliverable.done,
+          })}
+        >
+          {deliverable.title}
         </span>
-      )}
+        {deliverable.version && (
+          <span className="bg-background/70 px-1.5 py-0.5 border rounded-sm font-data text-[10px] text-muted-foreground">
+            {deliverable.version}
+          </span>
+        )}
+        {deliverable.type && (
+          <span className="bg-(--entity-deliverable)/10 px-1.5 py-0.5 rounded-sm text-[10px] text-(--entity-deliverable) border border-(--entity-deliverable)/25">
+            {deliverable.type}
+          </span>
+        )}
+      </button>
       <ConfirmDialog
         triggerClassName="inline-flex"
         stopPropagation

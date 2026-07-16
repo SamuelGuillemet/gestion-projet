@@ -1,6 +1,6 @@
 import { useShallow } from "zustand/react/shallow";
-import { deleteTagCascade } from "@/store/cascade-delete";
 import { useTagStore } from "@/store";
+import { deleteTagCascade } from "@/store/cascade-delete";
 
 export function useTags() {
   const tags = useTagStore(useShallow((s) => s.tags));

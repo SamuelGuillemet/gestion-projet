@@ -67,6 +67,7 @@ export function TagManager() {
           <div className="flex items-center gap-2">
             <input
               type="color"
+              aria-label="New tag color"
               value={newColor}
               onChange={(e) => setNewColor(e.target.value)}
               className="border rounded-full w-8 h-8 cursor-pointer shrink-0"
@@ -104,6 +105,7 @@ export function TagManager() {
                   <>
                     <input
                       type="color"
+                      aria-label="Edit tag color"
                       value={editColor}
                       onChange={(e) => setEditColor(e.target.value)}
                       className="border rounded-full w-6 h-6 cursor-pointer shrink-0"

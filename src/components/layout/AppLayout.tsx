@@ -1,5 +1,4 @@
 import { Clock, FileText, KanbanSquare, List, Target } from "lucide-react";
-import { useCallback } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ActivityReport } from "@/components/time/report/ActivityReport";
 import { cn } from "@/lib/utils";
@@ -17,6 +16,12 @@ const ROUTE_PREFETCHERS: Record<string, () => Promise<unknown>> = {
   "/time": () => import("@/components/time/TimePage"),
 };
 
+const prefetchRoute = (path: string) => {
+  const importer = ROUTE_PREFETCHERS[path];
+  if (!importer) return;
+  void importer();
+};
+
 const TABS = [
   { value: "/focus", label: "Focus", icon: Target },
   { value: "/board", label: "Board", icon: KanbanSquare },
@@ -31,12 +36,6 @@ export function AppLayout() {
 
   const currentTab =
     TABS.find((t) => location.pathname.startsWith(t.value))?.value ?? "/board";
-
-  const prefetchRoute = useCallback((path: string) => {
-    const importer = ROUTE_PREFETCHERS[path];
-    if (!importer) return;
-    void importer();
-  }, []);
 
   return (
     <div className="flex md:flex-row flex-col bg-background h-screen overflow-hidden text-foreground atelier-shell">

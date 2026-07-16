@@ -1,5 +1,5 @@
 import { Check, ChevronDown, Plus, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
@@ -12,9 +12,140 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useProjects } from "@/hooks/useProjects";
 import { cn } from "@/lib/utils";
+import type { Project } from "@/models/project";
 import { useBacklogUI } from "../backlog/backlog-state";
 
 const DEFAULT_PROJECT_COLOR = "#6366f1";
+
+type ProjectDraft = {
+  projectId: string | null;
+  name: string;
+  color: string;
+  description: string;
+};
+
+type ProjectDraftUpdate = Partial<Omit<ProjectDraft, "projectId">>;
+
+const createProjectDraft = (): ProjectDraft => ({
+  projectId: null,
+  name: "",
+  color: DEFAULT_PROJECT_COLOR,
+  description: "",
+});
+
+const getBaseProjectDraft = (
+  isCreating: boolean,
+  activeProject: Project | null,
+): ProjectDraft => {
+  if (isCreating || !activeProject) {
+    return createProjectDraft();
+  }
+
+  return {
+    projectId: activeProject.id,
+    name: activeProject.name,
+    color: activeProject.color,
+    description: activeProject.description ?? "",
+  };
+};
+
+type ProjectDetailsFormProps = {
+  activeProject: Project | null;
+  isCreating: boolean;
+  currentDraft: ProjectDraft;
+  hasChanges: boolean;
+  updateDraft: (data: ProjectDraftUpdate) => void;
+  onSubmit: () => void;
+  onDeleteActiveProject: () => void;
+};
+
+function ProjectDetailsForm({
+  activeProject,
+  isCreating,
+  currentDraft,
+  hasChanges,
+  updateDraft,
+  onSubmit,
+  onDeleteActiveProject,
+}: ProjectDetailsFormProps) {
+  if (!activeProject && !isCreating) {
+    return (
+      <p className="py-6 text-muted-foreground text-sm text-center">
+        Sélectionnez ou créez un projet.
+      </p>
+    );
+  }
+
+  const SubmitIcon = isCreating ? Plus : Check;
+  const submitLabel = isCreating ? "Créer" : "Enregistrer";
+
+  return (
+    <>
+      <div>
+        <Label htmlFor="project-name" className="text-xs">
+          Nom
+        </Label>
+        <Input
+          id="project-name"
+          value={currentDraft.name}
+          onChange={(event) => updateDraft({ name: event.target.value })}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              onSubmit();
+            }
+          }}
+          className="mt-1 h-8"
+        />
+      </div>
+      <div>
+        <Label htmlFor="project-description" className="text-xs">
+          Description
+        </Label>
+        <Textarea
+          id="project-description"
+          value={currentDraft.description}
+          onChange={(event) => updateDraft({ description: event.target.value })}
+          className="mt-1 h-24 resize-none"
+          placeholder="Description du projet"
+        />
+      </div>
+      <div>
+        <Label className="text-xs">Couleur</Label>
+        <input
+          type="color"
+          aria-label="Project color"
+          value={currentDraft.color}
+          onChange={(event) => updateDraft({ color: event.target.value })}
+          className={cn(
+            "block bg-background mt-2 border rounded-full size-7 cursor-pointer",
+          )}
+        />
+      </div>
+      <Button
+        size="sm"
+        className="gap-1.5 w-full"
+        disabled={!currentDraft.name.trim() || (!isCreating && !hasChanges)}
+        onClick={onSubmit}
+      >
+        <SubmitIcon className="size-4" />
+        {submitLabel}
+      </Button>
+      {!isCreating && activeProject ? (
+        <ConfirmDialog
+          trigger={
+            <Button variant="destructive" size="sm" className="w-full">
+              <Trash2 className="mr-1 w-3 h-3" />
+              Supprimer le projet
+            </Button>
+          }
+          title="Supprimer le projet"
+          description="Cette action est irréversible. Le projet, ses tâches, questions, livrables, notes, jalons et entrées de temps seront supprimés."
+          onConfirm={onDeleteActiveProject}
+        />
+      ) : null}
+    </>
+  );
+}
 
 export function ProjectSelector() {
   const {
@@ -30,22 +161,15 @@ export function ProjectSelector() {
   const [isCreating, setIsCreating] = useState(false);
   const { clear } = useBacklogUI();
 
-  const [draftName, setDraftName] = useState("");
-  const [draftColor, setDraftColor] = useState(DEFAULT_PROJECT_COLOR);
-  const [draftDescription, setDraftDescription] = useState("");
+  const [draft, setDraft] = useState<ProjectDraft | null>(null);
 
-  useEffect(() => {
-    if (isCreating) {
-      setDraftName("");
-      setDraftColor(DEFAULT_PROJECT_COLOR);
-      setDraftDescription("");
-      return;
-    }
+  const baseDraft = getBaseProjectDraft(isCreating, activeProject);
+  const currentDraft =
+    draft?.projectId === baseDraft.projectId ? draft : baseDraft;
 
-    setDraftName(activeProject?.name ?? "");
-    setDraftColor(activeProject?.color ?? DEFAULT_PROJECT_COLOR);
-    setDraftDescription(activeProject?.description ?? "");
-  }, [activeProject, isCreating]);
+  const updateDraft = (data: ProjectDraftUpdate) => {
+    setDraft({ ...currentDraft, ...data });
+  };
 
   const handleDeleteActiveProject = () => {
     if (!activeProject) return;
@@ -57,15 +181,25 @@ export function ProjectSelector() {
     setActiveProject(fallbackProjectId);
     clear();
     setIsCreating(fallbackProjectId === null);
+    setDraft(fallbackProjectId === null ? createProjectDraft() : null);
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
-    if (nextOpen) setIsCreating(!activeProject);
+    if (nextOpen && !activeProject) {
+      setIsCreating(true);
+      setDraft(createProjectDraft());
+    }
+  };
+
+  const handleStartCreate = () => {
+    setIsCreating(true);
+    setDraft(createProjectDraft());
   };
 
   const handleSelectProject = (id: string) => {
     setIsCreating(false);
+    setDraft(null);
     setActiveProject(id);
     if (activeProjectId === id) return;
     clear();
@@ -73,32 +207,34 @@ export function ProjectSelector() {
   };
 
   const handleCreate = () => {
-    if (!draftName.trim()) return;
+    if (!currentDraft.name.trim()) return;
 
     const id = addProject(
-      draftName.trim(),
-      draftColor,
-      draftDescription.trim() || undefined,
+      currentDraft.name.trim(),
+      currentDraft.color,
+      currentDraft.description.trim() || undefined,
     );
     setActiveProject(id);
     setIsCreating(false);
+    setDraft(null);
   };
 
   const handleSave = () => {
-    if (!activeProject || !draftName.trim()) return;
+    if (!activeProject || !currentDraft.name.trim()) return;
 
     updateProject(activeProject.id, {
-      name: draftName.trim(),
-      color: draftColor,
-      description: draftDescription.trim() || undefined,
+      name: currentDraft.name.trim(),
+      color: currentDraft.color,
+      description: currentDraft.description.trim() || undefined,
     });
+    setDraft(null);
   };
 
   const hasChanges =
     !!activeProject &&
-    (draftName !== activeProject.name ||
-      draftColor !== activeProject.color ||
-      draftDescription !== (activeProject.description ?? ""));
+    (currentDraft.name !== activeProject.name ||
+      currentDraft.color !== activeProject.color ||
+      currentDraft.description !== (activeProject.description ?? ""));
 
   const handleSubmit = () => {
     if (isCreating) {
@@ -153,7 +289,7 @@ export function ProjectSelector() {
             <div className="space-y-1 pr-1 max-h-64 overflow-y-auto">
               <button
                 type="button"
-                onClick={() => setIsCreating(true)}
+                onClick={handleStartCreate}
                 className={cn(
                   "flex items-center gap-2 px-2 py-1.5 border border-dashed rounded-md w-full text-left transition-colors",
                   isCreating
@@ -206,83 +342,15 @@ export function ProjectSelector() {
             <div className="text-muted-foreground atelier-section-title">
               {isCreating ? "Nouveau projet" : "Détails"}
             </div>
-            {activeProject || isCreating ? (
-              <>
-                <div>
-                  <Label htmlFor="project-name" className="text-xs">
-                    Nom
-                  </Label>
-                  <Input
-                    id="project-name"
-                    value={draftName}
-                    onChange={(event) => setDraftName(event.target.value)}
-                    onKeyDown={(event) =>
-                      event.key === "Enter" && handleSubmit()
-                    }
-                    className="mt-1 h-8"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="project-description" className="text-xs">
-                    Description
-                  </Label>
-                  <Textarea
-                    id="project-description"
-                    value={draftDescription}
-                    onChange={(event) =>
-                      setDraftDescription(event.target.value)
-                    }
-                    className="mt-1 h-24 resize-none"
-                    placeholder="Description du projet"
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs">Couleur</Label>
-                  <input
-                    type="color"
-                    value={draftColor}
-                    onChange={(event) => setDraftColor(event.target.value)}
-                    className={cn(
-                      "block bg-background mt-2 border rounded-full size-7 cursor-pointer",
-                    )}
-                  />
-                </div>
-                <Button
-                  size="sm"
-                  className="gap-1.5 w-full"
-                  disabled={!draftName.trim() || (!isCreating && !hasChanges)}
-                  onClick={handleSubmit}
-                >
-                  {isCreating ? (
-                    <Plus className="size-4" />
-                  ) : (
-                    <Check className="size-4" />
-                  )}
-                  {isCreating ? "Créer" : "Enregistrer"}
-                </Button>
-                {!isCreating && activeProject ? (
-                  <ConfirmDialog
-                    trigger={
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        className="w-full"
-                      >
-                        <Trash2 className="mr-1 w-3 h-3" />
-                        Supprimer le projet
-                      </Button>
-                    }
-                    title="Supprimer le projet"
-                    description="Cette action est irréversible. Le projet, ses tâches, questions, livrables, notes, jalons et entrées de temps seront supprimés."
-                    onConfirm={handleDeleteActiveProject}
-                  />
-                ) : null}
-              </>
-            ) : (
-              <p className="py-6 text-muted-foreground text-sm text-center">
-                Sélectionnez ou créez un projet.
-              </p>
-            )}
+            <ProjectDetailsForm
+              activeProject={activeProject}
+              isCreating={isCreating}
+              currentDraft={currentDraft}
+              hasChanges={hasChanges}
+              updateDraft={updateDraft}
+              onSubmit={handleSubmit}
+              onDeleteActiveProject={handleDeleteActiveProject}
+            />
           </div>
         </div>
       </PopoverContent>

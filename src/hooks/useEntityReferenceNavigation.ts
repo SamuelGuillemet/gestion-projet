@@ -1,5 +1,4 @@
 import type { LucideIcon } from "lucide-react";
-import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { type Section, useBacklogUI } from "@/components/backlog/backlog-state";
 import { useNotesUI } from "@/components/notes/notes-state";
@@ -101,10 +100,7 @@ export function openEntityTarget(
 export function useEntityNavigation() {
   const navigate = useNavigate();
 
-  return useCallback(
-    (target: EntityNavigationTarget) => openEntityTarget(target, navigate),
-    [navigate],
-  );
+  return (target: EntityNavigationTarget) => openEntityTarget(target, navigate);
 }
 
 function resolveEntityReference(
@@ -117,18 +113,16 @@ function resolveEntityReference(
 
 export function useEntityReferenceNavigation(projectId?: string | null) {
   const openEntity = useEntityNavigation();
+  const activeProjectId = useProjectStore((state) => state.activeProjectId);
 
-  return useCallback(
-    (reference: EntityReference) => {
-      const targetProjectId =
-        projectId ?? useProjectStore.getState().activeProjectId;
-      if (!targetProjectId) return false;
+  const targetProjectId = projectId ?? activeProjectId;
 
-      const target = resolveEntityReference(reference, targetProjectId);
-      return target ? openEntity(target) : false;
-    },
-    [openEntity, projectId],
-  );
+  return (reference: EntityReference) => {
+    if (!targetProjectId) return false;
+
+    const target = resolveEntityReference(reference, targetProjectId);
+    return target ? openEntity(target) : false;
+  };
 }
 
 type ResolvedEntityReference = {

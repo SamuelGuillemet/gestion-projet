@@ -1,5 +1,5 @@
 import { Search } from "lucide-react";
-import { type KeyboardEvent, useEffect, useMemo, useRef } from "react";
+import { type KeyboardEvent, useEffect, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -33,7 +33,7 @@ export function GlobalSearchDialog() {
     (s) => s.setHighlightedIndex,
   );
 
-  const results = useMemo(() => buildGlobalSearchResults(query), [query]);
+  const results = buildGlobalSearchResults(query);
 
   const openResult = (result: GlobalSearchResult) => {
     if (openEntity({ type: result.type, id: result.id })) {

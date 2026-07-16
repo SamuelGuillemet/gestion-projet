@@ -1,5 +1,5 @@
 import { Check, Pencil, Trash2, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,14 @@ import {
   useTimeEntriesByProjectId,
 } from "@/hooks/useTimeTracking";
 import { formatMinutes } from "@/lib/time";
+
+function getByTaskMap(timeEntries: { taskId: string; minutes: number }[]) {
+  const map = new Map<string, number>();
+  for (const entry of timeEntries) {
+    map.set(entry.taskId, (map.get(entry.taskId) ?? 0) + entry.minutes);
+  }
+  return map;
+}
 
 interface TimeRecapProps {
   projectId: string;
@@ -22,35 +30,18 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
   const [editDate, setEditDate] = useState("");
   const [editMinutes, setEditMinutes] = useState("");
 
-  const totalMinutes = useMemo(
-    () => timeEntries.reduce((sum, e) => sum + e.minutes, 0),
-    [timeEntries],
-  );
+  const totalMinutes = timeEntries.reduce((sum, e) => sum + e.minutes, 0);
 
-  const taskMap = useMemo(() => {
-    const map = new Map<string, string>();
-    for (const t of tasks) map.set(t.id, t.title);
-    return map;
-  }, [tasks]);
+  const taskMap = new Map(tasks.map((t) => [t.id, t.title]));
 
-  const byTask = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const entry of timeEntries) {
-      map.set(entry.taskId, (map.get(entry.taskId) ?? 0) + entry.minutes);
-    }
-    return map;
-  }, [timeEntries]);
+  const byTask = getByTaskMap(timeEntries);
 
-  const taskTotals = useMemo(
-    () =>
-      [...byTask.entries()].sort((a, b) => {
-        if (b[1] !== a[1]) return b[1] - a[1];
-        return (taskMap.get(a[0]) ?? "Tâche supprimée").localeCompare(
-          taskMap.get(b[0]) ?? "Tâche supprimée",
-        );
-      }),
-    [byTask, taskMap],
-  );
+  const taskTotals = [...byTask.entries()].sort((a, b) => {
+    if (b[1] !== a[1]) return b[1] - a[1];
+    const aLabel = taskMap.get(a[0]) ?? "Tâche supprimée";
+    const bLabel = taskMap.get(b[0]) ?? "Tâche supprimée";
+    return aLabel.localeCompare(bLabel);
+  });
 
   const startEdit = (id: string, date: string, minutes: number) => {
     setEditingId(id);

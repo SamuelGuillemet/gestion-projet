@@ -26,7 +26,7 @@ export function MilestoneTimeline({ projectId }: MilestoneTimelineProps) {
     setDate("");
   };
 
-  const sorted = [...milestones].sort((a, b) => a.date.localeCompare(b.date));
+  const sorted = milestones.toSorted((a, b) => a.date.localeCompare(b.date));
 
   return (
     <div>

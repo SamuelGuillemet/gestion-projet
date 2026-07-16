@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import {
   DONE_COLUMN_ID,
   IN_PROGRESS_COLUMN_ID,
@@ -96,18 +95,15 @@ export function useFocusDashboardData(hiddenProjectIds: Set<string>) {
 
 function useFocusDates(): FocusDates {
   const todayKey = toIsoDateInput(new Date());
+  const todayDate = parseIsoDate(todayKey) ?? new Date();
 
-  return useMemo(() => {
-    const todayDate = parseIsoDate(todayKey) ?? new Date();
-
-    return {
-      todayKey,
-      todayDate,
-      dueSoonEndKey: toIsoDateInput(addDays(todayDate, DUE_SOON_DAYS)),
-      weekStartKey: toIsoDateInput(getWeekStart(todayDate)),
-      dateLabel: formatTodayLabel(todayKey),
-    };
-  }, [todayKey]);
+  return {
+    todayKey,
+    todayDate,
+    dueSoonEndKey: toIsoDateInput(addDays(todayDate, DUE_SOON_DAYS)),
+    weekStartKey: toIsoDateInput(getWeekStart(todayDate)),
+    dateLabel: formatTodayLabel(todayKey),
+  };
 }
 
 function useVisibleFocusRecords(
@@ -117,35 +113,33 @@ function useVisibleFocusRecords(
   timeEntries: TimeEntry[],
   hiddenProjectIds: Set<string>,
 ): VisibleFocusRecords {
-  return useMemo(() => {
-    const visibleProjects = projects.filter(
-      (project) => !hiddenProjectIds.has(project.id),
-    );
-    const visibleProjectIds = new Set(
-      visibleProjects.map((project) => project.id),
-    );
-    const visibleTasks = tasks.filter((task) =>
-      visibleProjectIds.has(task.projectId),
-    );
-    const visibleQuestions = questions.filter((question) =>
-      visibleProjectIds.has(question.projectId),
-    );
-    const visibleTimeEntries = timeEntries.filter((entry) =>
-      visibleProjectIds.has(entry.projectId),
-    );
-    const projectById = new Map(
-      visibleProjects.map((project) => [project.id, project]),
-    );
+  const visibleProjects = projects.filter(
+    (project) => !hiddenProjectIds.has(project.id),
+  );
+  const visibleProjectIds = new Set(
+    visibleProjects.map((project) => project.id),
+  );
+  const visibleTasks = tasks.filter((task) =>
+    visibleProjectIds.has(task.projectId),
+  );
+  const visibleQuestions = questions.filter((question) =>
+    visibleProjectIds.has(question.projectId),
+  );
+  const visibleTimeEntries = timeEntries.filter((entry) =>
+    visibleProjectIds.has(entry.projectId),
+  );
+  const projectById = new Map(
+    visibleProjects.map((project) => [project.id, project]),
+  );
 
-    return {
-      visibleProjects,
-      visibleTasks,
-      visibleQuestions,
-      visibleTimeEntries,
-      projectById,
-      openTasks: visibleTasks.filter(isOpenTask),
-    };
-  }, [hiddenProjectIds, projects, questions, tasks, timeEntries]);
+  return {
+    visibleProjects,
+    visibleTasks,
+    visibleQuestions,
+    visibleTimeEntries,
+    projectById,
+    openTasks: visibleTasks.filter(isOpenTask),
+  };
 }
 
 function useFocusProjectSummaries(
@@ -157,82 +151,68 @@ function useFocusProjectSummaries(
   }: VisibleFocusRecords,
   { todayKey, dueSoonEndKey, weekStartKey }: FocusDates,
 ) {
-  return useMemo(
-    () =>
-      visibleProjects
-        .map((project): ProjectSummary => {
-          const projectTasks = visibleTasks.filter(
-            (task) => task.projectId === project.id,
-          );
-          const projectOpenTasks = projectTasks.filter(isOpenTask);
-          const projectQuestions = visibleQuestions.filter(
-            (question) => question.projectId === project.id,
-          );
-          const projectWeekMinutes = visibleTimeEntries
-            .filter(
-              (entry) =>
-                entry.projectId === project.id &&
-                entry.date >= weekStartKey &&
-                entry.date <= todayKey,
-            )
-            .reduce((sum, entry) => sum + entry.minutes, 0);
-          const completedTasks = projectTasks.filter(isCompletedTask).length;
+  return visibleProjects
+    .map((project): ProjectSummary => {
+      const projectTasks = visibleTasks.filter(
+        (task) => task.projectId === project.id,
+      );
+      const projectOpenTasks = projectTasks.filter(isOpenTask);
+      const projectQuestions = visibleQuestions.filter(
+        (question) => question.projectId === project.id,
+      );
+      const projectWeekMinutes = visibleTimeEntries
+        .filter(
+          (entry) =>
+            entry.projectId === project.id &&
+            entry.date >= weekStartKey &&
+            entry.date <= todayKey,
+        )
+        .reduce((sum, entry) => sum + entry.minutes, 0);
+      const completedTasks = projectTasks.filter(isCompletedTask).length;
 
-          return {
-            project,
-            totalTasks: projectTasks.length,
-            completedTasks,
-            progress:
-              projectTasks.length > 0
-                ? Math.round((completedTasks / projectTasks.length) * 100)
-                : 0,
-            todoTasks: projectOpenTasks.filter(
-              (task) => task.columnId === TODO_COLUMN_ID,
-            ).length,
-            inProgressTasks: projectOpenTasks.filter(
-              (task) => task.columnId === IN_PROGRESS_COLUMN_ID,
-            ).length,
-            waitingTasks: projectOpenTasks.filter(
-              (task) => task.columnId === WAITING_COLUMN_ID,
-            ).length,
-            weekMinutes: projectWeekMinutes,
-            unansweredQuestions: projectQuestions.filter(
-              (question) => question.status !== "resolved",
-            ).length,
-            overdueTasks: projectOpenTasks.filter((task) =>
-              isTaskOverdue(task, todayKey),
-            ).length,
-            dueSoonTasks: projectOpenTasks.filter((task) =>
-              isTaskDueSoon(task, todayKey, dueSoonEndKey),
-            ).length,
-          };
-        })
-        .sort((leftSummary, rightSummary) => {
-          const rightOpenTasks =
-            rightSummary.todoTasks +
-            rightSummary.inProgressTasks +
-            rightSummary.waitingTasks;
-          const leftOpenTasks =
-            leftSummary.todoTasks +
-            leftSummary.inProgressTasks +
-            leftSummary.waitingTasks;
-          if (rightOpenTasks !== leftOpenTasks) {
-            return rightOpenTasks - leftOpenTasks;
-          }
-          return leftSummary.project.name.localeCompare(
-            rightSummary.project.name,
-          );
-        }),
-    [
-      dueSoonEndKey,
-      todayKey,
-      visibleProjects,
-      visibleQuestions,
-      visibleTasks,
-      visibleTimeEntries,
-      weekStartKey,
-    ],
-  );
+      return {
+        project,
+        totalTasks: projectTasks.length,
+        completedTasks,
+        progress:
+          projectTasks.length > 0
+            ? Math.round((completedTasks / projectTasks.length) * 100)
+            : 0,
+        todoTasks: projectOpenTasks.filter(
+          (task) => task.columnId === TODO_COLUMN_ID,
+        ).length,
+        inProgressTasks: projectOpenTasks.filter(
+          (task) => task.columnId === IN_PROGRESS_COLUMN_ID,
+        ).length,
+        waitingTasks: projectOpenTasks.filter(
+          (task) => task.columnId === WAITING_COLUMN_ID,
+        ).length,
+        weekMinutes: projectWeekMinutes,
+        unansweredQuestions: projectQuestions.filter(
+          (question) => question.status !== "resolved",
+        ).length,
+        overdueTasks: projectOpenTasks.filter((task) =>
+          isTaskOverdue(task, todayKey),
+        ).length,
+        dueSoonTasks: projectOpenTasks.filter((task) =>
+          isTaskDueSoon(task, todayKey, dueSoonEndKey),
+        ).length,
+      };
+    })
+    .sort((leftSummary, rightSummary) => {
+      const rightOpenTasks =
+        rightSummary.todoTasks +
+        rightSummary.inProgressTasks +
+        rightSummary.waitingTasks;
+      const leftOpenTasks =
+        leftSummary.todoTasks +
+        leftSummary.inProgressTasks +
+        leftSummary.waitingTasks;
+      if (rightOpenTasks !== leftOpenTasks) {
+        return rightOpenTasks - leftOpenTasks;
+      }
+      return leftSummary.project.name.localeCompare(rightSummary.project.name);
+    });
 }
 
 function useFocusOverviewItems(
@@ -242,54 +222,52 @@ function useFocusOverviewItems(
   todayKey: string,
   dueSoonEndKey: string,
 ) {
-  return useMemo(() => {
-    const inProgressTasks = openTasks
-      .filter((task) => task.columnId === IN_PROGRESS_COLUMN_ID)
-      .sort(compareFocusTasks);
-    const todoTasks = openTasks
-      .filter((task) => task.columnId === TODO_COLUMN_ID)
-      .sort(compareNextTodoTasks);
-    const dueTasks = openTasks
+  const inProgressTasks = openTasks
+    .filter((task) => task.columnId === IN_PROGRESS_COLUMN_ID)
+    .sort(compareFocusTasks);
+  const todoTasks = openTasks
+    .filter((task) => task.columnId === TODO_COLUMN_ID)
+    .sort(compareNextTodoTasks);
+  const dueTasks = openTasks
+    .filter(
+      (task) =>
+        isTaskOverdue(task, todayKey) ||
+        isTaskDueSoon(task, todayKey, dueSoonEndKey),
+    )
+    .sort(compareFocusTasks);
+  const focusTasks = uniqueFocusTasks([...inProgressTasks, ...dueTasks]);
+  const focusTaskIds = new Set(focusTasks.map((task) => task.id));
+  const notStartedTasks = todoTasks.filter(
+    (task) => !focusTaskIds.has(task.id),
+  );
+  const notStartedItems: FocusOverviewItem[] = [
+    ...notStartedTasks.map((task) => toTaskOverviewItem(task, projectById)),
+    ...visibleQuestions
+      .filter((question) => question.status === "to-ask")
+      .map((question) => toQuestionOverviewItem(question, projectById)),
+  ].sort(compareOverviewItems);
+  const priorityItems: FocusOverviewItem[] = focusTasks.map((task) =>
+    toTaskOverviewItem(task, projectById),
+  );
+  const blockedItems: FocusOverviewItem[] = [
+    ...openTasks
       .filter(
         (task) =>
-          isTaskOverdue(task, todayKey) ||
-          isTaskDueSoon(task, todayKey, dueSoonEndKey),
+          task.columnId === WAITING_COLUMN_ID && !focusTaskIds.has(task.id),
       )
-      .sort(compareFocusTasks);
-    const focusTasks = uniqueFocusTasks([...inProgressTasks, ...dueTasks]);
-    const focusTaskIds = new Set(focusTasks.map((task) => task.id));
-    const notStartedTasks = todoTasks.filter(
-      (task) => !focusTaskIds.has(task.id),
-    );
-    const notStartedItems: FocusOverviewItem[] = [
-      ...notStartedTasks.map((task) => toTaskOverviewItem(task, projectById)),
-      ...visibleQuestions
-        .filter((question) => question.status === "to-ask")
-        .map((question) => toQuestionOverviewItem(question, projectById)),
-    ].sort(compareOverviewItems);
-    const priorityItems: FocusOverviewItem[] = focusTasks.map((task) =>
-      toTaskOverviewItem(task, projectById),
-    );
-    const blockedItems: FocusOverviewItem[] = [
-      ...openTasks
-        .filter(
-          (task) =>
-            task.columnId === WAITING_COLUMN_ID && !focusTaskIds.has(task.id),
-        )
-        .map((task) => toTaskOverviewItem(task, projectById)),
-      ...visibleQuestions
-        .filter((question) => question.status === "pending")
-        .map((question) => toQuestionOverviewItem(question, projectById)),
-    ].sort(compareOverviewItems);
+      .map((task) => toTaskOverviewItem(task, projectById)),
+    ...visibleQuestions
+      .filter((question) => question.status === "pending")
+      .map((question) => toQuestionOverviewItem(question, projectById)),
+  ].sort(compareOverviewItems);
 
-    return {
-      inProgressTasks,
-      todoTasks: notStartedTasks,
-      blockedItems,
-      notStartedItems,
-      priorityItems,
-    };
-  }, [dueSoonEndKey, openTasks, projectById, todayKey, visibleQuestions]);
+  return {
+    inProgressTasks,
+    todoTasks: notStartedTasks,
+    blockedItems,
+    notStartedItems,
+    priorityItems,
+  };
 }
 
 function useFocusStaleTasks(
@@ -297,22 +275,16 @@ function useFocusStaleTasks(
   projectById: Map<string, Project>,
   todayDate: Date,
 ) {
-  return useMemo(
-    () =>
-      openTasks
-        .map(
-          (task): StaleFocusTask => ({
-            task,
-            project: projectById.get(task.projectId) ?? null,
-            staleDays: getTaskStaleDays(task, todayDate),
-          }),
-        )
-        .filter((item) => item.staleDays >= STALE_DAYS)
-        .sort(
-          (leftItem, rightItem) => rightItem.staleDays - leftItem.staleDays,
-        ),
-    [openTasks, projectById, todayDate],
-  );
+  return openTasks
+    .map(
+      (task): StaleFocusTask => ({
+        task,
+        project: projectById.get(task.projectId) ?? null,
+        staleDays: getTaskStaleDays(task, todayDate),
+      }),
+    )
+    .filter((item) => item.staleDays >= STALE_DAYS)
+    .sort((leftItem, rightItem) => rightItem.staleDays - leftItem.staleDays);
 }
 
 function isOpenTask(task: Task) {

@@ -67,12 +67,14 @@ function parseImportedMarkdownImageAssets(data: Record<string, unknown>) {
 }
 
 export async function exportData(): Promise<ExportPayload> {
-  const entries = await Promise.all(
-    IDB_STORES_NAMES.map(
-      async (storeName) => [storeName, (await get(storeName)).state] as const,
+  const [entries, markdownImageAssets] = await Promise.all([
+    Promise.all(
+      IDB_STORES_NAMES.map(
+        async (storeName) => [storeName, (await get(storeName)).state] as const,
+      ),
     ),
-  );
-  const markdownImageAssets = await exportMarkdownImageAssets();
+    exportMarkdownImageAssets(),
+  ]);
 
   return {
     version: STORE_VERSION,

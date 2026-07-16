@@ -1,5 +1,5 @@
 import { CalendarDays } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { DateRange } from "react-day-picker";
 import { fr } from "react-day-picker/locale";
 import { Button } from "@/components/ui/button";
@@ -30,13 +30,6 @@ export function RangeSelector({
     () => createDefaultWorkdayDateRange(5),
   );
 
-  useEffect(() => {
-    const defaultRange = createDefaultWorkdayDateRange(5);
-    onWindowRangeChange(
-      toWorkdayRangeFromDateSelection(defaultRange?.from, defaultRange?.to),
-    );
-  }, []);
-
   const windowRange = toWorkdayRangeFromDateSelection(
     selectedRange?.from,
     selectedRange?.to,
@@ -50,7 +43,7 @@ export function RangeSelector({
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-3 items-start">
+    <div className="items-start gap-3 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
       <div>
         <Popover>
           <PopoverTrigger
@@ -63,7 +56,7 @@ export function RangeSelector({
               </Button>
             }
           />
-          <PopoverContent align="start" className="w-auto p-1">
+          <PopoverContent align="start" className="p-1 w-auto">
             <Calendar
               mode="range"
               numberOfMonths={1}
@@ -74,7 +67,7 @@ export function RangeSelector({
           </PopoverContent>
         </Popover>
       </div>
-      <div className="text-muted-foreground text-xs space-y-1 lg:text-right">
+      <div className="space-y-1 text-muted-foreground text-xs lg:text-right">
         <div>
           Jours ouvres retenus:{" "}
           <strong>{windowRange.workdayDates.length}</strong>

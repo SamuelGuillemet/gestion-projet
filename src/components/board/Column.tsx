@@ -1,5 +1,6 @@
 import { CollisionPriority } from "@dnd-kit/abstract";
 import { useDroppable } from "@dnd-kit/react";
+import { useRef } from "react";
 import { BOARD_COLUMNS, type BoardColumnId } from "@/constants/board-columns";
 import { cn } from "@/lib/utils";
 import { SortableCard } from "./Card";
@@ -10,11 +11,13 @@ interface ColumnProps {
 }
 
 export function Column({ columnId, taskIds }: ColumnProps) {
+  const droppableRef = useRef<HTMLDivElement>(null);
   const droppable = useDroppable({
     id: columnId,
     type: "column",
     accept: "item",
     collisionPriority: CollisionPriority.Low,
+    element: droppableRef,
   });
 
   const column = BOARD_COLUMNS.find((col) => col.id === columnId);
@@ -22,7 +25,7 @@ export function Column({ columnId, taskIds }: ColumnProps) {
 
   return (
     <div
-      ref={droppable.ref}
+      ref={droppableRef}
       className={cn(
         "flex flex-col rounded-md w-full min-w-80 transition-all duration-200 atelier-card",
         droppable.isDropTarget &&

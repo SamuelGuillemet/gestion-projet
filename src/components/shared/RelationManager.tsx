@@ -1,5 +1,5 @@
 import { Plus, Trash2, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,6 @@ import { useTasks } from "@/hooks/useTasks";
 import {
   BACKLOG_ENTITY_REFERENCE_TYPES,
   type BacklogEntityReferenceType,
-  type EntityReferenceRecord,
   getEntityReferenceLabel,
   getEntityReferenceTypeLabel,
   getEntityReferenceTypePluralLabel,
@@ -47,55 +46,36 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
     "all" | BacklogEntityReferenceType
   >("all");
 
-  const itemRelations = useMemo(
-    () =>
-      relations.filter((r) => r.sourceId === itemId || r.targetId === itemId),
-    [relations, itemId],
+  const itemRelations = relations.filter(
+    (r) => r.sourceId === itemId || r.targetId === itemId,
+  );
+  const itemsByType = {
+    tasks,
+    questions,
+    deliverables,
+  };
+  const allBacklogItems = BACKLOG_ENTITY_REFERENCE_TYPES.flatMap((type) =>
+    itemsByType[type].map((item) => ({
+      id: item.id,
+      projectId: item.projectId,
+      label: item.title,
+      number: item.number,
+      type,
+    })),
   );
 
-  const allBacklogItems = useMemo(() => {
-    const itemsByType: Record<
-      BacklogEntityReferenceType,
-      EntityReferenceRecord[]
-    > = {
-      tasks,
-      questions,
-      deliverables,
-    };
-
-    return BACKLOG_ENTITY_REFERENCE_TYPES.flatMap((type) =>
-      itemsByType[type].map((item) => ({
-        id: item.id,
-        projectId: item.projectId,
-        label: item.title,
-        number: item.number,
-        type,
-      })),
-    );
-  }, [tasks, questions, deliverables]);
-
-  const projectItems = useMemo(() => {
-    return allBacklogItems.filter(
-      (item) => item.projectId === projectId && item.id !== itemId,
-    );
-  }, [allBacklogItems, projectId, itemId]);
-
-  const filteredItems = useMemo(() => {
-    let items = projectItems;
-    if (typeFilter !== "all") {
-      items = items.filter((i) => i.type === typeFilter);
-    }
-    if (search.trim()) {
-      const lower = search.toLowerCase();
-      items = items.filter((i) => i.label.toLowerCase().includes(lower));
-    }
-    return items;
-  }, [projectItems, search, typeFilter]);
-
-  const itemById = useMemo(
-    () => new Map(allBacklogItems.map((item) => [item.id, item])),
-    [allBacklogItems],
+  const projectItems = allBacklogItems.filter(
+    (item) => item.projectId === projectId && item.id !== itemId,
   );
+
+  const filteredItems = projectItems.filter((i) => {
+    if (typeFilter !== "all" && i.type !== typeFilter) return false;
+    if (search.trim() && !i.label.toLowerCase().includes(search.toLowerCase()))
+      return false;
+    return true;
+  });
+
+  const itemById = new Map(allBacklogItems.map((item) => [item.id, item]));
 
   const getItemLabel = (id: string): RelationItem =>
     itemById.get(id) ?? { label: "Inconnu", number: 0, type: null, id };
@@ -223,6 +203,7 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
               autoFocus
             />
             <select
+              aria-label="Filtrer par type"
               value={typeFilter}
               onChange={(e) =>
                 setTypeFilter(e.target.value as typeof typeFilter)
@@ -242,6 +223,7 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
               <button
                 key={item.id}
                 type="button"
+                aria-label={`Ajouter une relation avec ${item.label}`}
                 onClick={() => handleAdd(item.id)}
                 className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded w-full text-xs text-left transition-colors"
               >
