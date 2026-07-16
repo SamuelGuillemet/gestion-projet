@@ -1,0 +1,11 @@
+{
+  "$schema": "https://react.doctor/schema/config.json",
+  "lint": true,
+  "deadCode": true,
+  "supplyChain": { "enabled": false },
+  "rules": {
+    "react-doctor/js-combine-iterations": "off",
+    "react-doctor/require-pnpm-hardening": "off",
+    "react-doctor/only-export-components": "off"
+  }
+}
