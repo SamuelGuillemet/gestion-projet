@@ -171,7 +171,7 @@ function buildWordHtmlDocument(bodyHtml: string) {
 </html>`;
 }
 
-export async function renderMarkdownToWordHtml(markdown: string) {
+async function renderMarkdownToWordHtml(markdown: string) {
   const processor = unified().use(remarkParse);
 
   for (const plugin of REMARK_PLUGINS) {
@@ -188,4 +188,24 @@ export async function renderMarkdownToWordHtml(markdown: string) {
 
   const result = await processor.process(markdown || "");
   return buildWordHtmlDocument(String(result));
+}
+
+export async function copyPreviewToWord(markdownText: string) {
+  if (!navigator.clipboard) {
+    return false;
+  }
+
+  if (typeof ClipboardItem === "undefined") {
+    await navigator.clipboard.writeText(markdownText);
+    return true;
+  }
+
+  const htmlDocument = await renderMarkdownToWordHtml(markdownText);
+  const clipboardItem = new ClipboardItem({
+    "text/html": new Blob([htmlDocument], { type: "text/html" }),
+    "text/plain": new Blob([markdownText], { type: "text/plain" }),
+  });
+
+  await navigator.clipboard.write([clipboardItem]);
+  return true;
 }

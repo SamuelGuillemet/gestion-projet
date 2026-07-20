@@ -7,6 +7,8 @@ import { GlobalSearchBox } from "./GlobalSearchBox";
 import { GlobalSearchDialog } from "./GlobalSearchDialog";
 import { ProjectSelector } from "./ProjectSelector";
 import { TagManager } from "./TagManager";
+import { useEffect } from "react";
+import { flushPendingIdbStorageWrites, hasPendingIdbStorageWrites } from "@/store/idb-storage";
 
 const ROUTE_PREFETCHERS: Record<string, () => Promise<unknown>> = {
   "/focus": () => import("@/components/focus/FocusPage"),
@@ -36,6 +38,25 @@ export function AppLayout() {
 
   const currentTab =
     TABS.find((t) => location.pathname.startsWith(t.value))?.value ?? "/board";
+
+  useEffect(() => {
+    const handleBeforeUnload = async (e: BeforeUnloadEvent) => {
+      if (!hasPendingIdbStorageWrites()) {
+        return;
+      }
+      e.preventDefault();
+      await flushPendingIdbStorageWrites();
+    }
+
+    window.addEventListener("pagehide", handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      flushPendingIdbStorageWrites();
+      window.removeEventListener("pagehide", handleBeforeUnload);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   return (
     <div className="flex md:flex-row flex-col bg-background h-screen overflow-hidden text-foreground atelier-shell">

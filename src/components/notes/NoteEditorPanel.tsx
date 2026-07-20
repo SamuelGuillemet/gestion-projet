@@ -1,32 +1,11 @@
 import { Check, ClipboardCopy, Columns, Edit, Eye } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useDebounce } from "@/hooks/useDebounce";
 import { useNote, useNoteActions } from "@/hooks/useNotes";
 import { cn } from "@/lib/utils";
 import { MarkdownPreview } from "./markdown/MarkdownPreview";
 import { MarkdownTextarea } from "./markdown/MarkdownTextarea";
-import { renderMarkdownToWordHtml } from "./markdown/word-html";
-
-export async function copyPreviewToWord(markdownText: string) {
-  if (!navigator.clipboard) {
-    return false;
-  }
-
-  if (typeof ClipboardItem === "undefined") {
-    await navigator.clipboard.writeText(markdownText);
-    return true;
-  }
-
-  const htmlDocument = await renderMarkdownToWordHtml(markdownText);
-  const clipboardItem = new ClipboardItem({
-    "text/html": new Blob([htmlDocument], { type: "text/html" }),
-    "text/plain": new Blob([markdownText], { type: "text/plain" }),
-  });
-
-  await navigator.clipboard.write([clipboardItem]);
-  return true;
-}
+import { copyPreviewToWord } from "./markdown/word-html";
 
 type Props = {
   activeNoteId: string;
@@ -42,10 +21,10 @@ export function NoteEditorPanel({ activeNoteId }: Props) {
     "idle",
   );
 
-  const debouncedSave = useDebounce((value: string) => {
+  const save = (value: string) => {
     if (!activeNoteId) return;
     updateNote(activeNoteId, { content: value });
-  }, 500);
+  };
 
   useEffect(
     () => () => {
@@ -56,7 +35,7 @@ export function NoteEditorPanel({ activeNoteId }: Props) {
 
   const handleChange = (value: string) => {
     setContent(value);
-    debouncedSave(value);
+    save(value);
   };
 
   const handleCopyForWord = async () => {
