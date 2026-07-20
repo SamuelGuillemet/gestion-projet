@@ -1,6 +1,7 @@
 import { Check, ClipboardCopy, Columns, Edit, Eye } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useDebounce } from "@/hooks/useDebounce";
 import { useNote, useNoteActions } from "@/hooks/useNotes";
 import { cn } from "@/lib/utils";
 import { MarkdownPreview } from "./markdown/MarkdownPreview";
@@ -35,12 +36,16 @@ export function NoteEditorPanel({ activeNoteId }: Props) {
   const { updateNote } = useNoteActions();
   const activeNote = useNote(activeNoteId);
   const [content, setContent] = useState(activeNote?.content ?? "");
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const copyFeedbackRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [mode, setMode] = useState<"both" | "edit" | "preview">("both");
   const [copyState, setCopyState] = useState<"idle" | "success" | "error">(
     "idle",
   );
+
+  const debouncedSave = useDebounce((value: string) => {
+    if (!activeNoteId) return;
+    updateNote(activeNoteId, { content: value });
+  }, 500);
 
   useEffect(
     () => () => {
@@ -49,15 +54,9 @@ export function NoteEditorPanel({ activeNoteId }: Props) {
     [],
   );
 
-  const save = (value: string) => {
-    if (!activeNoteId) return;
-    updateNote(activeNoteId, { content: value });
-  };
-
   const handleChange = (value: string) => {
     setContent(value);
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => save(value), 500);
+    debouncedSave(value);
   };
 
   const handleCopyForWord = async () => {

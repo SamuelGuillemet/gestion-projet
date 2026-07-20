@@ -25,7 +25,7 @@ export function NotesPage() {
       <NoteList activeNoteId={activeNoteId} setActiveNoteId={setActiveNoteId} />
 
       {activeNoteId ? (
-        <NoteEditorPanel activeNoteId={activeNoteId} />
+        <NoteEditorPanel key={activeNoteId} activeNoteId={activeNoteId} />
       ) : (
         <div className="flex flex-1 justify-center items-center text-muted-foreground">
           <div className="space-y-2 text-center">
