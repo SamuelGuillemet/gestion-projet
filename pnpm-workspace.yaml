@@ -1,4 +1,7 @@
 packages:
   - "."
 
+allowBuilds:
+  sharp: true
+
 minimumReleaseAge: 2880
