@@ -1,14 +1,18 @@
 import { Clock, FileText, KanbanSquare, List, Target } from "lucide-react";
+import { useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ActivityReport } from "@/components/time/report/ActivityReport";
 import { cn } from "@/lib/utils";
+import {
+  flushPendingIdbStorageWrites,
+  hasPendingIdbStorageWrites,
+} from "@/store/idb-storage";
 import { DataActions } from "./DataActions";
 import { GlobalSearchBox } from "./GlobalSearchBox";
 import { GlobalSearchDialog } from "./GlobalSearchDialog";
+import { HelpDialog } from "./HelpDialog";
 import { ProjectSelector } from "./ProjectSelector";
 import { TagManager } from "./TagManager";
-import { useEffect } from "react";
-import { flushPendingIdbStorageWrites, hasPendingIdbStorageWrites } from "@/store/idb-storage";
 
 const ROUTE_PREFETCHERS: Record<string, () => Promise<unknown>> = {
   "/focus": () => import("@/components/focus/FocusPage"),
@@ -46,7 +50,7 @@ export function AppLayout() {
       }
       e.preventDefault();
       await flushPendingIdbStorageWrites();
-    }
+    };
 
     window.addEventListener("pagehide", handleBeforeUnload);
     window.addEventListener("beforeunload", handleBeforeUnload);
@@ -102,6 +106,7 @@ export function AppLayout() {
               <ActivityReport />
               <TagManager />
               <DataActions />
+              <HelpDialog />
             </div>
           </div>
         </header>
