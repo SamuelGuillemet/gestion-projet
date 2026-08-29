@@ -108,10 +108,11 @@ function Badge({
           "border-border bg-background/75 text-muted-foreground":
             tone === "neutral",
           "border-primary/35 bg-primary/10 text-primary": tone === "blue",
-          "border-red-500/30 bg-red-500/10 text-red-700": tone === "red",
-          "border-amber-500/35 bg-amber-500/10 text-amber-700":
+          "border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400":
+            tone === "red",
+          "border-amber-500/35 bg-amber-500/10 text-amber-700 dark:text-amber-400":
             tone === "amber",
-          "border-green-600/30 bg-green-600/10 text-green-700":
+          "border-green-600/30 bg-green-600/10 text-green-700 dark:text-green-400":
             tone === "green",
         },
       )}

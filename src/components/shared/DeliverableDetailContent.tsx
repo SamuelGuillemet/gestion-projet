@@ -75,7 +75,7 @@ export function DeliverableDetailContent({
             className={cn(
               "px-3 py-1.5 border border-muted-foreground/20 rounded font-medium text-xs transition-colors",
               deliverable.done
-                ? "bg-green-500/10 text-green-600 hover:bg-green-500/20"
+                ? "bg-green-500/10 text-green-600 hover:bg-green-500/20 dark:text-green-400"
                 : "bg-muted text-muted-foreground hover:bg-muted/80",
             )}
           >

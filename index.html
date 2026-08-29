@@ -5,6 +5,18 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>gestion-projet</title>
+    <script>
+      (function () {
+        try {
+          var mode = localStorage.getItem("gp-theme");
+          var isDark =
+            mode === "dark" ||
+            (mode !== "light" &&
+              matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.classList.toggle("dark", isDark);
+        } catch {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -12,28 +12,32 @@ export const RELATION_STYLES: Record<
   { color: string; bg: string; icon: LucideIcon; className: string }
 > = {
   blocks: {
-    color: "text-red-600",
-    bg: "bg-red-50 border-red-200",
+    color: "text-red-600 dark:text-red-400",
+    bg: "bg-red-50 border-red-200 dark:bg-red-500/10 dark:border-red-500/30",
     icon: Ban,
-    className: "text-red-600 border-red-200 bg-red-50",
+    className:
+      "text-red-600 border-red-200 bg-red-50 dark:text-red-400 dark:border-red-500/30 dark:bg-red-500/10",
   },
   "blocked-by": {
-    color: "text-orange-600",
-    bg: "bg-orange-50 border-orange-200",
+    color: "text-orange-600 dark:text-orange-400",
+    bg: "bg-orange-50 border-orange-200 dark:bg-orange-500/10 dark:border-orange-500/30",
     icon: ShieldAlert,
-    className: "text-orange-600 border-orange-200 bg-orange-50",
+    className:
+      "text-orange-600 border-orange-200 bg-orange-50 dark:text-orange-400 dark:border-orange-500/30 dark:bg-orange-500/10",
   },
   relates: {
-    color: "text-blue-600",
-    bg: "bg-blue-50 border-blue-200",
+    color: "text-blue-600 dark:text-blue-400",
+    bg: "bg-blue-50 border-blue-200 dark:bg-blue-500/10 dark:border-blue-500/30",
     icon: ArrowRightLeft,
-    className: "text-blue-600 border-blue-200 bg-blue-50",
+    className:
+      "text-blue-600 border-blue-200 bg-blue-50 dark:text-blue-400 dark:border-blue-500/30 dark:bg-blue-500/10",
   },
   duplicates: {
-    color: "text-purple-600",
-    bg: "bg-purple-50 border-purple-200",
+    color: "text-purple-600 dark:text-purple-400",
+    bg: "bg-purple-50 border-purple-200 dark:bg-purple-500/10 dark:border-purple-500/30",
     icon: Copy,
-    className: "text-purple-600 border-purple-200 bg-purple-50",
+    className:
+      "text-purple-600 border-purple-200 bg-purple-50 dark:text-purple-400 dark:border-purple-500/30 dark:bg-purple-500/10",
   },
 };
 

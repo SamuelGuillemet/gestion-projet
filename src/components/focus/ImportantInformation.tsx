@@ -46,7 +46,7 @@ export function ImportantInformation({
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <StatusBadge columnId={task.columnId} />
-                <span className="inline-flex items-center gap-1 bg-amber-500/10 px-1.5 py-0.5 border border-amber-500/35 rounded font-medium text-[10px] text-amber-700 leading-none">
+                <span className="inline-flex items-center gap-1 bg-amber-500/10 px-1.5 py-0.5 border border-amber-500/35 rounded font-medium text-[10px] text-amber-700 dark:text-amber-400 leading-none">
                   <Clock3 className="size-3" />
                   {staleDays} j
                 </span>

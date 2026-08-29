@@ -67,7 +67,8 @@ export function NoteEditorPanel({ activeNoteId }: Props) {
           title="Copier un contenu compatible avec Word"
           className={cn(
             "h-8",
-            copyState === "error" && "border-red-500/50 text-red-700",
+            copyState === "error" &&
+              "border-red-500/50 text-red-700 dark:text-red-400",
           )}
         >
           {copyState === "success" ? (

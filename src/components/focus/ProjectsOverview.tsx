@@ -154,9 +154,10 @@ function ProjectBadge({
       className={cn(
         "inline-flex items-center px-1.5 py-0.5 border rounded font-medium text-[10px] leading-none",
         tone === "amber" &&
-          "border-amber-500/35 bg-amber-500/10 text-amber-700",
+          "border-amber-500/35 bg-amber-500/10 text-amber-700 dark:text-amber-400",
         tone === "blue" && "border-primary/35 bg-primary/10 text-primary",
-        tone === "red" && "border-red-500/35 bg-red-500/10 text-red-700",
+        tone === "red" &&
+          "border-red-500/35 bg-red-500/10 text-red-700 dark:text-red-400",
       )}
     >
       {label}

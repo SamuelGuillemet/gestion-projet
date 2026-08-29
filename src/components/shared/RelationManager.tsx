@@ -140,7 +140,7 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
                   {other.label}
                 </button>
                 <div className="grow"></div>
-                <span className="bg-white/80 px-1.5 py-0.5 border rounded text-[10px] text-muted-foreground">
+                <span className="bg-muted px-1.5 py-0.5 border rounded text-[10px] text-muted-foreground">
                   {other.type
                     ? getEntityReferenceTypeLabel(other.type)
                     : "Inconnu"}

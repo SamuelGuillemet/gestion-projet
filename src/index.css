@@ -6,6 +6,7 @@
 @import "@fontsource-variable/outfit";
 @import "@fontsource-variable/fraunces";
 @import "remark-github-alerts/styles/github-colors-light.css";
+@import "remark-github-alerts/styles/github-colors-dark-class.css";
 @import "remark-github-alerts/styles/github-base.css";
 @import "highlight.js/styles/atom-one-light.css";
 
@@ -108,6 +109,28 @@
   --entity-time: var(--signal);
 
   --workspace-shadow: 0 18px 50px rgb(24 33 29 / 0.08);
+}
+
+.dark {
+  --paper: #14181a;
+  --paper-strong: #1b2124;
+  --ink: #eef1ef;
+  --ink-soft: #a9b4ad;
+  --rule: #2a3134;
+  --rule-strong: #3c454a;
+  --blueprint: #6ea8ff;
+  --signal: #ff6b57;
+  --moss: #4fd67a;
+  --amber: #f0b429;
+  --plum: #c084d4;
+  --primary-foreground: #0b0f10;
+  --secondary: #22292c;
+  --muted: #1c2124;
+  --accent: #20262a;
+  --sidebar: #191f21;
+  --sidebar-primary-foreground: #0b0f10;
+  --sidebar-accent: #232a2d;
+  --workspace-shadow: 0 18px 50px rgb(0 0 0 / 0.35);
 }
 
 @layer base {
@@ -247,6 +270,11 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 
 .prose pre {
   padding: 0.25rem;
+}
+
+.dark .hljs {
+  color: var(--foreground);
+  background: var(--card);
 }
 
 body > div[id^="dmarkdown-mermaid-"] {

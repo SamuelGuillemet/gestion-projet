@@ -13,6 +13,7 @@ import { GlobalSearchDialog } from "./GlobalSearchDialog";
 import { HelpDialog } from "./HelpDialog";
 import { ProjectSelector } from "./ProjectSelector";
 import { TagManager } from "./TagManager";
+import { ThemeToggle } from "./ThemeToggle";
 
 const ROUTE_PREFETCHERS: Record<string, () => Promise<unknown>> = {
   "/focus": () => import("@/components/focus/FocusPage"),
@@ -106,6 +107,7 @@ export function AppLayout() {
               <ActivityReport />
               <TagManager />
               <DataActions />
+              <ThemeToggle />
               <HelpDialog />
             </div>
           </div>
