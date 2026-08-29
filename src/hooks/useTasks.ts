@@ -42,10 +42,21 @@ export function useTask(id: string) {
   return useTaskStore((s) => s.tasks.find((t) => t.id === id));
 }
 
+export function useSubtasks(parentTaskId: string) {
+  return useTaskStore(
+    useShallow((s) =>
+      s.tasks
+        .filter((task) => task.parentTaskId === parentTaskId)
+        .sort((a, b) => a.order - b.order),
+    ),
+  );
+}
+
 export function useTaskActions() {
   const addTask = useTaskStore((s) => s.addTask);
+  const addSubtask = useTaskStore((s) => s.addSubtask);
   const updateTask = useTaskStore((s) => s.updateTask);
   const deleteTask = deleteTaskCascade;
   const moveTask = useTaskStore((s) => s.dndTasks);
-  return { addTask, updateTask, deleteTask, moveTask };
+  return { addTask, addSubtask, updateTask, deleteTask, moveTask };
 }

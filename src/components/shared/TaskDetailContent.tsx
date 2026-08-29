@@ -1,5 +1,6 @@
-import { Clock, Plus, Trash2, X } from "lucide-react";
+import { CheckCircle2, Circle, Clock, Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
+import { StatusBadge } from "@/components/shared/TaskStatusBadge";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
@@ -7,11 +8,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { BOARD_COLUMNS } from "@/constants/board-columns";
 import { PRIORITY_OPTIONS, SIZE_OPTIONS } from "@/constants/task-options";
+import { useEntityNavigation } from "@/hooks/useEntityReferenceNavigation";
 import { useTags } from "@/hooks/useTags";
+import { useSubtasks, useTask, useTaskActions } from "@/hooks/useTasks";
 import {
   useTimeActions,
   useTimeEntriesByTaskId,
 } from "@/hooks/useTimeTracking";
+import { getEntityReferenceLabel } from "@/lib/entity-references";
 import { formatMinutes } from "@/lib/time";
 import { cn, generateId } from "@/lib/utils";
 import type { CheckItem } from "@/models/shared";
@@ -173,6 +177,8 @@ export function TaskDetailContent({
 
         <RelationManager itemId={task.id} projectId={task.projectId} />
 
+        <SubtasksSection task={task} />
+
         <div>
           <div className="flex justify-between items-center">
             <Label className="flex items-center gap-1 text-muted-foreground text-xs">
@@ -297,6 +303,131 @@ export function TaskDetailContent({
         />
       </div>
     </>
+  );
+}
+
+function SubtasksSection({ task }: { task: Task }) {
+  const subtasks = useSubtasks(task.id);
+  const parent = useTask(task.parentTaskId ?? "");
+  const { addSubtask, deleteTask } = useTaskActions();
+  const openEntity = useEntityNavigation();
+  const [title, setTitle] = useState("");
+
+  if (task.parentTaskId) {
+    return parent ? (
+      <div>
+        <Label className="text-muted-foreground text-xs">Tâche parente</Label>
+        <button
+          type="button"
+          className="group flex items-center gap-2 hover:bg-accent/45 mt-2 py-2 pr-3 pl-3 border rounded-md w-full text-left transition-colors"
+          onClick={() => openEntity({ type: "tasks", id: parent.id })}
+        >
+          <span className="text-muted-foreground shrink-0">
+            {parent.done ? (
+              <CheckCircle2 className="size-4 text-green-500" />
+            ) : (
+              <Circle className="size-4" />
+            )}
+          </span>
+          <span className="font-data text-muted-foreground text-xs shrink-0">
+            {getEntityReferenceLabel("tasks", parent.number)}
+          </span>
+          <span
+            className={cn("flex-1 text-sm truncate", {
+              "text-muted-foreground line-through": parent.done,
+            })}
+          >
+            {parent.title}
+          </span>
+          <StatusBadge columnId={parent.columnId} />
+        </button>
+      </div>
+    ) : null;
+  }
+
+  const add = () => {
+    const nextTitle = title.trim();
+    if (!nextTitle) return;
+    addSubtask(task.id, nextTitle);
+    setTitle("");
+  };
+
+  return (
+    <div>
+      <div className="flex justify-between items-center gap-2">
+        <Label className="text-muted-foreground text-xs">Sous-tâches</Label>
+        <span className="font-data text-muted-foreground text-xs">
+          {subtasks.filter((subtask) => subtask.done).length}/{subtasks.length}
+        </span>
+      </div>
+      <div className="space-y-2 mt-2">
+        {subtasks.map((subtask) => (
+          <div
+            key={subtask.id}
+            className="group flex items-center gap-1 hover:bg-accent/45 p-1 border rounded-md transition-colors"
+          >
+            <button
+              type="button"
+              className="flex flex-1 items-center gap-2 px-1 py-0.5 min-w-0 text-left"
+              onClick={() => openEntity({ type: "tasks", id: subtask.id })}
+            >
+              {subtask.done ? (
+                <CheckCircle2 className="size-4 text-green-500 shrink-0" />
+              ) : (
+                <Circle className="size-4 text-muted-foreground shrink-0" />
+              )}
+              <span className="font-data text-muted-foreground text-xs shrink-0">
+                {getEntityReferenceLabel("tasks", subtask.number)}
+              </span>
+              <span
+                className={cn("flex-1 text-sm truncate", {
+                  "text-muted-foreground line-through": subtask.done,
+                })}
+              >
+                {subtask.title}
+              </span>
+              <StatusBadge columnId={subtask.columnId} />
+            </button>
+            <ConfirmDialog
+              stopPropagation
+              triggerClassName="ml-auto inline-flex shrink-0"
+              trigger={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="opacity-60 hover:opacity-100 size-7 transition-opacity"
+                  aria-label={`Supprimer la sous-tâche ${subtask.title}`}
+                >
+                  <Trash2 className="size-3.5" />
+                </Button>
+              }
+              title="Supprimer la sous-tâche"
+              description="Cette action supprimera également son temps et ses relations."
+              onConfirm={() => deleteTask(subtask.id)}
+            />
+          </div>
+        ))}
+        <div className="flex items-center gap-2">
+          <Input
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            onKeyDown={(event) => event.key === "Enter" && add()}
+            placeholder="Nouvelle sous-tâche..."
+            className="h-8 text-sm"
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="h-8"
+            onClick={add}
+          >
+            <Plus className="size-4" />
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }
 

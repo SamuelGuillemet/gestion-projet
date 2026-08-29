@@ -22,13 +22,26 @@ function removeRelationsByEntityIds(entityIds: Set<string>) {
 }
 
 export function deleteTaskCascade(taskId: string) {
-  useTaskStore.getState().deleteTask(taskId);
+  const taskIds = new Set(
+    useTaskStore
+      .getState()
+      .tasks.filter(
+        (task) => task.id === taskId || task.parentTaskId === taskId,
+      )
+      .map((task) => task.id),
+  );
 
-  useTimeStore.setState((state) => ({
-    timeEntries: state.timeEntries.filter((entry) => entry.taskId !== taskId),
+  useTaskStore.setState((state) => ({
+    tasks: state.tasks.filter((task) => !taskIds.has(task.id)),
   }));
 
-  removeRelationsByEntityIds(new Set([taskId]));
+  useTimeStore.setState((state) => ({
+    timeEntries: state.timeEntries.filter(
+      (entry) => !taskIds.has(entry.taskId),
+    ),
+  }));
+
+  removeRelationsByEntityIds(taskIds);
 }
 
 export function deleteQuestionCascade(questionId: string) {

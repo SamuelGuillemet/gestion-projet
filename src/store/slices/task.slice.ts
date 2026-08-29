@@ -11,9 +11,10 @@ import { getNextProjectScopedNumber } from "./utils";
 export interface TaskSlice {
   tasks: Task[];
   addTask: (projectId: string, title: string) => string;
+  addSubtask: (parentTaskId: string, title: string) => string | null;
   updateTask: (
     id: string,
-    data: Partial<Omit<Task, "id" | "projectId">>,
+    data: Partial<Omit<Task, "id" | "projectId" | "parentTaskId">>,
   ) => void;
   deleteTask: (id: string) => void;
   dndTasks: (newState: Record<BoardColumnId, string[]>) => void;
@@ -42,6 +43,41 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
             description: "",
             columnId: BOARD_COLUMNS[0].id,
             order: columnTasks.length,
+            tags: [],
+            done: false,
+            checks: [],
+            createdAt: now,
+            updatedAt: now,
+          },
+        ],
+      };
+    });
+    return id;
+  },
+
+  addSubtask: (parentTaskId, title) => {
+    const id = generateId();
+    set((state) => {
+      const parent = state.tasks.find((task) => task.id === parentTaskId);
+      if (!parent || parent.parentTaskId) return state;
+
+      const now = new Date().toISOString();
+      return {
+        tasks: [
+          ...state.tasks,
+          {
+            id,
+            projectId: parent.projectId,
+            number: getNextProjectScopedNumber(state.tasks, parent.projectId),
+            parentTaskId,
+            title,
+            description: "",
+            columnId: BOARD_COLUMNS[0].id,
+            order: state.tasks.filter(
+              (task) =>
+                task.projectId === parent.projectId &&
+                task.columnId === BOARD_COLUMNS[0].id,
+            ).length,
             tags: [],
             done: false,
             checks: [],

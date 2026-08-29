@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { QuestionStatusBadge } from "@/components/shared/QuestionStatusBadge";
 import { TaskFocusBadges } from "@/components/shared/TaskFocusBadges";
 import { StatusBadge } from "@/components/shared/TaskStatusBadge";
+import { getEntityReferenceLabel } from "@/lib/entity-references";
 import type { Project } from "@/models/project";
 import { EmptyState, ProjectName, SectionTitle } from "./FocusPrimitives";
 import type { FocusOverviewItem } from "./focus-data";
@@ -61,9 +62,11 @@ function FocusOverviewCard({
   onOpenQuestion: (questionId: string) => void;
 }) {
   const Icon = item.type === "task" ? ListTodo : HelpCircle;
-  const number = item.type === "task" ? item.task.number : item.question.number;
   const title = item.type === "task" ? item.task.title : item.question.title;
-  const marker: "#" | "?" = item.type === "task" ? "#" : "?";
+  const reference =
+    item.type === "task"
+      ? getEntityReferenceLabel("tasks", item.task.number)
+      : getEntityReferenceLabel("questions", item.question.number);
 
   return (
     <button
@@ -80,12 +83,7 @@ function FocusOverviewCard({
     >
       <Icon className="size-4 shrink-0" />
       <div className="flex flex-col flex-1 gap-2 min-w-0">
-        <ItemBody
-          project={item.project}
-          number={number}
-          title={title}
-          type={marker}
-        />
+        <ItemBody project={item.project} reference={reference} title={title} />
         {item.type === "task" ? <TaskFocusBadges task={item.task} /> : null}
       </div>
       {item.type === "task" ? (
@@ -99,23 +97,18 @@ function FocusOverviewCard({
 
 function ItemBody({
   project,
-  number,
+  reference,
   title,
-  type,
 }: {
   project: Project | null | undefined;
-  number: number;
+  reference: string;
   title: string;
-  type: "#" | "?";
 }) {
   return (
     <div className="min-w-0 grow">
       <div className="flex items-center gap-2 min-w-0 text-muted-foreground text-xs">
         <ProjectName project={project} />
-        <span className="font-data shrink-0">
-          {type}
-          {number}
-        </span>
+        <span className="font-data shrink-0">{reference}</span>
       </div>
       <div className="mt-1 font-medium group-hover:text-primary truncate">
         {title}

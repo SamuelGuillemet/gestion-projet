@@ -46,7 +46,12 @@ export function BoardPage() {
           onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
           className="bg-background/80 max-w-md h-9"
         />
-        <Button onClick={handleAddTask} size="sm" className="gap-1.5 h-9">
+        <Button
+          onClick={handleAddTask}
+          size="sm"
+          className="gap-1.5 h-9"
+          disabled={!newTaskTitle.trim()}
+        >
           <Plus className="w-4 h-4" />
           Ajouter
         </Button>

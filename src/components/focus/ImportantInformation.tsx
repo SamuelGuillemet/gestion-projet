@@ -1,6 +1,7 @@
 import { AlertTriangle, Clock3 } from "lucide-react";
 import { StatusBadge } from "@/components/shared/TaskStatusBadge";
 import { STALE_DAYS } from "@/constants/task-options";
+import { getEntityReferenceLabel } from "@/lib/entity-references";
 import { EmptyState, ProjectName, SectionTitle } from "./FocusPrimitives";
 import type { StaleFocusTask } from "./focus-data";
 
@@ -37,7 +38,7 @@ export function ImportantInformation({
               <div className="flex justify-between items-center gap-2">
                 <ProjectName project={project} />
                 <span className="font-data text-[10px] text-muted-foreground shrink-0">
-                  #{task.number}
+                  {getEntityReferenceLabel("tasks", task.number)}
                 </span>
               </div>
               <div className="font-medium group-hover:text-primary truncate">

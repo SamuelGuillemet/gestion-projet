@@ -1,11 +1,13 @@
 import { CheckCircle2, Circle, Trash2 } from "lucide-react";
 import { TagBadge } from "@/components/shared/TagBadge";
+import { TaskFocusBadges } from "@/components/shared/TaskFocusBadges";
 import { StatusBadge } from "@/components/shared/TaskStatusBadge";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { PRIORITY_BY_VALUE } from "@/constants/task-options";
 import { useTags } from "@/hooks/useTags";
 import { useTask, useTaskActions } from "@/hooks/useTasks";
+import { getEntityReferenceLabel } from "@/lib/entity-references";
 import { cn } from "@/lib/utils";
 import { useBacklogUI } from "../backlog-state";
 
@@ -54,7 +56,7 @@ export function TaskRow({
         )}
       </span>
       <span className="font-data text-[10px] text-muted-foreground shrink-0">
-        #{task.number}
+        {getEntityReferenceLabel("tasks", task.number)}
       </span>
       <span
         className={cn("flex-1 text-sm truncate", {
@@ -63,6 +65,7 @@ export function TaskRow({
       >
         {task.title}
       </span>
+      <TaskFocusBadges task={task} compact showMetadata={false} />
       {taskTags.length > 0 && (
         <div className="flex gap-1 shrink-0">
           {taskTags.map((tag) => (

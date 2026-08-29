@@ -29,6 +29,7 @@ export function AddItemRow({
         size="icon"
         className="w-8 h-8 shrink-0"
         onClick={onAdd}
+        disabled={!value.trim()}
       >
         <Plus className="w-4 h-4" />
       </Button>

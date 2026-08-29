@@ -1,5 +1,7 @@
-import { CalendarDays, ListChecks } from "lucide-react";
+import { CalendarDays, ListChecks, ListTree } from "lucide-react";
 import { PRIORITY_OPTIONS, SIZE_OPTIONS } from "@/constants/task-options";
+import { useSubtasks, useTask } from "@/hooks/useTasks";
+import { getEntityReferenceLabel } from "@/lib/entity-references";
 import { cn } from "@/lib/utils";
 import type { Task } from "@/models/task";
 
@@ -16,23 +18,34 @@ const MAX_DUE_DAYS = 30; // Maximum number of days to display for due date
 export function TaskFocusBadges({
   task,
   compact = false,
+  showMetadata = true,
 }: {
   task: Task;
   compact?: boolean;
+  showMetadata?: boolean;
 }) {
-  const openChecks = (task.checks ?? []).filter((check) => !check.done).length;
+  const subtasks = useSubtasks(task.id);
+  const parent = useTask(task.parentTaskId ?? "");
+  const allChecks = task.checks?.length ?? 0;
+  const doneChecks = (task.checks ?? []).filter((check) => check.done).length;
+  const doneSubtasks = subtasks.filter((subtask) => subtask.done).length;
   const dueLabel = getDueLabel(task.dueDate);
   const showSize = !compact && task.size !== "small";
   const showDue =
     task.columnId !== "done" && dueLabel && dueLabel.day <= MAX_DUE_DAYS;
 
-  if (!showDue && !task.priority && !showSize && openChecks === 0) {
+  if (
+    (!showMetadata ||
+      (!showDue && !task.priority && !showSize && doneChecks === 0)) &&
+    !task.parentTaskId &&
+    subtasks.length === 0
+  ) {
     return null;
   }
 
   return (
     <div className="flex flex-wrap items-center gap-1">
-      {showDue ? (
+      {showMetadata && showDue ? (
         <Badge
           tone={dueLabel.overdue ? "red" : "amber"}
           title="Date d'échéance"
@@ -41,20 +54,34 @@ export function TaskFocusBadges({
           {dueLabel.label}
         </Badge>
       ) : null}
-      {task.priority ? (
+      {showMetadata && task.priority ? (
         <Badge color={PRIORITY_BY_VALUE[task.priority].color} title="Priorité">
           {PRIORITY_BY_VALUE[task.priority].label}
         </Badge>
       ) : null}
-      {task.size && showSize ? (
+      {showMetadata && task.size && showSize ? (
         <Badge color={SIZE_BY_VALUE[task.size].color} title="Taille">
           {SIZE_BY_VALUE[task.size].label}
         </Badge>
       ) : null}
-      {openChecks > 0 ? (
+      {showMetadata && allChecks > 0 ? (
         <Badge tone="green" title="Checks ouverts">
           <ListChecks className="size-3" />
-          {openChecks}
+          {doneChecks}/{allChecks}
+        </Badge>
+      ) : null}
+      {task.parentTaskId ? (
+        <Badge tone="blue" title={parent?.title ?? "Tâche parente"}>
+          <ListTree className="size-3" />
+          {parent
+            ? `Sous-tâche de ${getEntityReferenceLabel("tasks", parent.number)}`
+            : "Sous-tâche"}
+        </Badge>
+      ) : null}
+      {subtasks.length > 0 ? (
+        <Badge tone="blue" title="Progression des sous-tâches">
+          <ListTree className="size-3" />
+          {doneSubtasks}/{subtasks.length}
         </Badge>
       ) : null}
     </div>

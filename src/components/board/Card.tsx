@@ -5,6 +5,7 @@ import { TagBadge } from "@/components/shared/TagBadge";
 import { useRelationOfTask } from "@/hooks/useRelations";
 import { useTags } from "@/hooks/useTags";
 import { useTask } from "@/hooks/useTasks";
+import { getEntityReferenceLabel } from "@/lib/entity-references";
 import { cn } from "@/lib/utils";
 import { RelationBadge } from "../shared/RelationBadge";
 import { TaskFocusBadges } from "../shared/TaskFocusBadges";
@@ -44,7 +45,7 @@ function Card({ taskId, isDragging }: CardProps) {
         <div className="flex items-start gap-2">
           <div className="flex flex-col gap-2">
             <span className="font-data text-[14px] text-muted-foreground shrink-0">
-              #{task.number}
+              {getEntityReferenceLabel("tasks", task.number)}
             </span>
             <GripVertical className="opacity-0 group-hover:opacity-100 mt-0.5 w-4 h-4 text-muted-foreground/40 transition-opacity shrink-0" />
           </div>

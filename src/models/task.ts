@@ -17,6 +17,7 @@ export interface Task {
   dueDate?: string;
   size?: TaskSize;
   checks?: CheckItem[];
+  parentTaskId?: string;
   createdAt?: string;
   updatedAt?: string;
 }
