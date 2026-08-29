@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "biome check src/",
-    "format": "biome format --write src/",
+    "format": "biome format --write src/ && biome lint --fix --unsafe src/",
     "check": "biome check --write src/",
     "preview": "vite preview",
     "doctor": "npx react-doctor@latest"
