@@ -11,6 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { escapeMarkdownImageAlt } from "@/lib/markdown-images";
 import { cn } from "@/lib/utils";
 import { saveMarkdownImage } from "@/store/markdown-image.store";
+import { MarkdownToolbar } from "./MarkdownToolbar";
+import { insertUndoableText } from "./markdown-editing";
 
 type Props = Omit<
   TextareaHTMLAttributes<HTMLTextAreaElement>,
@@ -40,31 +42,6 @@ function extractImageFiles(items: Iterable<DataTransferItem>) {
 
 function extractDroppedImageFiles(files: Iterable<File>) {
   return [...files].filter((file) => file.type.startsWith("image/"));
-}
-
-function insertUndoableText(
-  textarea: HTMLTextAreaElement,
-  text: string,
-  selectionStart: number,
-  selectionEnd: number,
-  onChange: (value: string) => void,
-) {
-  textarea.focus();
-  textarea.setSelectionRange(selectionStart, selectionEnd);
-
-  if (document.execCommand("insertText", false, text)) {
-    return;
-  }
-
-  textarea.setRangeText(text, selectionStart, selectionEnd, "end");
-  textarea.dispatchEvent(
-    new InputEvent("input", {
-      bubbles: true,
-      data: text,
-      inputType: "insertText",
-    }),
-  );
-  onChange(textarea.value);
 }
 
 export function MarkdownTextarea({
@@ -159,6 +136,13 @@ export function MarkdownTextarea({
 
   return (
     <div className="relative flex flex-col flex-1 gap-2 min-h-0">
+      <MarkdownToolbar
+        textareaRef={textareaRef}
+        value={value}
+        onChange={onChange}
+        className="top-0 z-10 sticky bg-card"
+      />
+
       <Textarea
         {...props}
         ref={textareaRef}
