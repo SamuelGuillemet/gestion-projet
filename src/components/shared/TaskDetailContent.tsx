@@ -2,6 +2,7 @@ import { CheckCircle2, Circle, Clock, Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { StatusBadge } from "@/components/shared/TaskStatusBadge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +15,7 @@ import { useSubtasks, useTask, useTaskActions } from "@/hooks/useTasks";
 import {
   useTimeActions,
   useTimeEntriesByTaskId,
+  useTimeEntriesByTaskIds,
 } from "@/hooks/useTimeTracking";
 import { getEntityReferenceLabel } from "@/lib/entity-references";
 import { formatMinutes } from "@/lib/time";
@@ -42,13 +44,18 @@ export function TaskDetailContent({
   onDelete,
 }: TaskDetailContentProps) {
   const { tags } = useTags();
+  const subtasks = useSubtasks(task.id);
   const taskTimeEntries = useTimeEntriesByTaskId(task.id);
+  const subtaskTimeEntries = useTimeEntriesByTaskIds(subtasks.map((s) => s.id));
   const { addTimeEntry } = useTimeActions();
 
   const [entryDate, setEntryDate] = useState(getEntryDateString);
   const [entryMinutes, setEntryMinutes] = useState("");
 
-  const totalMinutes = taskTimeEntries.reduce((sum, e) => sum + e.minutes, 0);
+  const totalMinutes = [...taskTimeEntries, ...subtaskTimeEntries].reduce(
+    (sum, e) => sum + e.minutes,
+    0,
+  );
   const taskTagIds = new Set(task.tags);
 
   const handleAddTime = () => {
@@ -462,11 +469,10 @@ function ChecksList({
       <div className="space-y-2 mt-1">
         {checks.map((check) => (
           <div key={check.id} className="flex items-center gap-2">
-            <input
-              type="checkbox"
+            <Checkbox
               aria-label={`Marquer le check "${check.title}" comme ${check.done ? "non fait" : "fait"}`}
               checked={check.done}
-              onChange={(e) => onUpdate(check.id, { done: e.target.checked })}
+              onCheckedChange={(e) => onUpdate(check.id, { done: e })}
               className="size-4 accent-primary shrink-0"
             />
             <Input

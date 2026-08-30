@@ -240,6 +240,93 @@ export function filterTimeEntriesByDates(
   });
 }
 
+export function getWeekStartDate(date: Date): Date {
+  const result = new Date(date);
+  const day = result.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  result.setDate(result.getDate() + diff);
+  return result;
+}
+
+export function addDaysToDate(date: Date, days: number): Date {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
+/** Returns the 7 ISO dates (Monday to Sunday) of the week containing `weekStart`. */
+export function getWeekDates(weekStart: Date): string[] {
+  return Array.from({ length: 7 }, (_, index) =>
+    toIsoDateInput(addDaysToDate(weekStart, index)),
+  );
+}
+
+export function formatWeekRangeLabel(weekDates: string[]): string {
+  const start = weekDates[0];
+  const end = weekDates.at(-1);
+  if (!start || !end) return "";
+  const startLabel = new Date(`${start}T00:00:00`).toLocaleDateString(
+    FR_LOCALE,
+    { day: "2-digit", month: "short" },
+  );
+  const endLabel = new Date(`${end}T00:00:00`).toLocaleDateString(FR_LOCALE, {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+  return `${startLabel} - ${endLabel}`;
+}
+
+export interface DailyTaskEntry {
+  taskId: string;
+  taskNumber: number;
+  taskTitle: string;
+  projectId: string;
+  projectName: string;
+  projectColor: string;
+  minutes: number;
+}
+
+/** Groups time entries per date, then per task (flat, not grouped by project). */
+export function buildDailyTaskEntries(
+  timeEntries: TimeEntry[],
+  tasks: Task[],
+  projects: Project[],
+): Record<string, DailyTaskEntry[]> {
+  const minutesByDateAndTask: Record<string, Record<string, number>> = {};
+
+  for (const entry of timeEntries) {
+    if (!minutesByDateAndTask[entry.date]) {
+      minutesByDateAndTask[entry.date] = {};
+    }
+    const minutesByTask = minutesByDateAndTask[entry.date];
+    minutesByTask[entry.taskId] =
+      (minutesByTask[entry.taskId] ?? 0) + entry.minutes;
+  }
+
+  const result: Record<string, DailyTaskEntry[]> = {};
+  for (const [date, minutesByTask] of Object.entries(minutesByDateAndTask)) {
+    result[date] = Object.entries(minutesByTask)
+      .map(([taskId, minutes]) => {
+        const task = tasks.find((t) => t.id === taskId);
+        const project = task
+          ? projects.find((p) => p.id === task.projectId)
+          : undefined;
+        return {
+          taskId,
+          taskNumber: task?.number ?? -1,
+          taskTitle: task?.title ?? "Tache supprimee",
+          projectId: task?.projectId ?? "",
+          projectName: project?.name ?? "Projet supprime",
+          projectColor: project?.color ?? "#888",
+          minutes,
+        };
+      })
+      .sort((a, b) => b.minutes - a.minutes);
+  }
+  return result;
+}
+
 export interface WeeklyProjectProgress {
   projectId: string;
   projectName: string;

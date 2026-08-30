@@ -68,7 +68,7 @@ export function FocusPage() {
 
           <FocusOverviewColumn
             icon={<CalendarClock className="size-4" />}
-            label="Priorité"
+            label="En priorité"
             countLabel={`${focusData.priorityItems.length} ${pluralize(
               focusData.priorityItems.length,
               "tâche",

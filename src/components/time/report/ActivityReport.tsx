@@ -8,6 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useProjects } from "@/hooks/useProjects";
 import { useTasks } from "@/hooks/useTasks";
 import { useTimeEntries } from "@/hooks/useTimeTracking";
@@ -24,6 +25,7 @@ import {
 } from "@/lib/time";
 import { DailyReport } from "./DailyReport";
 import { RangeSelector } from "./RangeSelector";
+import { WeeklyCalendarReport } from "./WeeklyCalendarReport";
 import { WeeklyProjectList } from "./WeeklyProjectList";
 
 const getPlannedDays = () => {
@@ -72,7 +74,7 @@ export function ActivityReport() {
           <span className="hidden 2xl:inline">Rapport</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-full sm:max-w-4xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="w-full sm:max-w-5xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Rapport d'activité</DialogTitle>
         </DialogHeader>
@@ -98,11 +100,29 @@ export function ActivityReport() {
           </div>
 
           <div className="space-y-4">
-            <div className="text-muted-foreground text-sm">
-              Total général : <strong>{formatMinutes(grandTotal)}</strong>
+            <div className="flex justify-between items-center">
+              <div className="font-medium text-sm">Récapitulatif quotidien</div>
+              <div className="text-muted-foreground text-sm">
+                Total général : <strong>{formatMinutes(grandTotal)}</strong>
+              </div>
             </div>
 
-            <DailyReport report={report} />
+            <Tabs defaultValue="list">
+              <TabsList>
+                <TabsTrigger value="list">Liste</TabsTrigger>
+                <TabsTrigger value="calendar">Calendrier</TabsTrigger>
+              </TabsList>
+              <TabsContent value="list">
+                <DailyReport report={report} />
+              </TabsContent>
+              <TabsContent value="calendar">
+                <WeeklyCalendarReport
+                  timeEntries={timeEntries}
+                  tasks={tasks}
+                  projects={projects}
+                />
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </DialogContent>

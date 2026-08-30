@@ -5,7 +5,6 @@ import {
   Heading1,
   Heading2,
   Heading3,
-  Image as ImageIcon,
   Italic,
   Link as LinkIcon,
   List,
