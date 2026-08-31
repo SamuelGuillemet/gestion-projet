@@ -9,7 +9,6 @@ import {
   Keyboard,
   LayoutDashboard,
   Link2,
-  ListChecks,
   ListTree,
   type LucideIcon,
   Rocket,
