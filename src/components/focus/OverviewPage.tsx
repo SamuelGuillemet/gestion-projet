@@ -16,7 +16,7 @@ import { useFocusProjectVisibility, useFocusSelection } from "./focus-state";
 import { ImportantInformation } from "./ImportantInformation";
 import { ProjectsOverview } from "./ProjectsOverview";
 
-export function FocusPage() {
+export function OverviewPage() {
   const tasks = useTasks();
   const questions = useQuestions();
   const { updateTask, deleteTask } = useTaskActions();

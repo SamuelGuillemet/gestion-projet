@@ -6,6 +6,8 @@ import {
   Hourglass,
 } from "lucide-react";
 import type { ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
+import { useProjects } from "@/hooks/useProjects";
 import { formatMinutes } from "@/lib/time";
 import { cn } from "@/lib/utils";
 import { EmptyState, SectionTitle } from "./FocusPrimitives";
@@ -17,7 +19,7 @@ export function ProjectsOverview({
   summaries: ProjectSummary[];
 }) {
   return (
-    <section className="p-4 rounded-md atelier-card">
+    <section className="p-4 rounded-md atelier-card grow">
       <SectionTitle icon={<CircleDot className="size-4" />} label="Projets" />
       {summaries.length === 0 ? (
         <EmptyState>
@@ -35,8 +37,20 @@ export function ProjectsOverview({
 }
 
 function ProjectOverviewCard({ summary }: { summary: ProjectSummary }) {
+  const navigate = useNavigate();
+  const { setActiveProject } = useProjects();
+
+  const openProject = () => {
+    setActiveProject(summary.project.id);
+    navigate(`/project/${summary.project.id}/board`);
+  };
+
   return (
-    <article className="flex flex-col gap-3 bg-background/60 p-3 border rounded-md min-w-0">
+    <button
+      type="button"
+      onClick={openProject}
+      className="flex flex-col gap-3 bg-background/60 hover:bg-background/90 p-3 border rounded-md min-w-0 text-left transition-colors cursor-pointer"
+    >
       <div className="flex items-start gap-2 min-w-0">
         <span
           className="mt-1 rounded-full size-3 shrink-0"
@@ -110,7 +124,7 @@ function ProjectOverviewCard({ summary }: { summary: ProjectSummary }) {
           <span className="text-muted-foreground text-xs">Rien à signaler</span>
         ) : null}
       </div>
-    </article>
+    </button>
   );
 }
 

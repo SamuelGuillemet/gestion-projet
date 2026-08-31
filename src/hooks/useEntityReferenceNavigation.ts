@@ -37,7 +37,7 @@ const ENTITY_REFERENCE_ADAPTERS: Record<
     open: (note, navigate) => {
       useProjectStore.getState().setActiveProject(note.projectId);
       useNotesUI.getState().setActiveNoteId(note.projectId, note.id);
-      navigate("/notes");
+      navigate(`/project/${note.projectId}/notes`);
     },
   },
   tasks: {
@@ -45,7 +45,7 @@ const ENTITY_REFERENCE_ADAPTERS: Record<
     open: (task, navigate) => {
       useProjectStore.getState().setActiveProject(task.projectId);
       useBacklogUI.getState().select({ type: "tasks", id: task.id });
-      navigate("/backlog");
+      navigate(`/project/${task.projectId}/backlog`);
     },
   },
   questions: {
@@ -53,7 +53,7 @@ const ENTITY_REFERENCE_ADAPTERS: Record<
     open: (question, navigate) => {
       useProjectStore.getState().setActiveProject(question.projectId);
       useBacklogUI.getState().select({ type: "questions", id: question.id });
-      navigate("/backlog");
+      navigate(`/project/${question.projectId}/backlog`);
     },
   },
   deliverables: {
@@ -63,7 +63,7 @@ const ENTITY_REFERENCE_ADAPTERS: Record<
       useBacklogUI
         .getState()
         .select({ type: "deliverables", id: deliverable.id });
-      navigate("/backlog");
+      navigate(`/project/${deliverable.projectId}/backlog`);
     },
   },
 };

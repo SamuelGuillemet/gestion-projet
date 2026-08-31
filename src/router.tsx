@@ -1,6 +1,7 @@
 import { lazy, type ReactNode, Suspense } from "react";
 import { createHashRouter, Navigate, type RouteObject } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { ProjectRouteGuard } from "@/components/layout/ProjectRouteGuard";
 
 const BoardPage = lazy(() =>
   import("@/components/board/BoardPage").then((module) => ({
@@ -8,9 +9,21 @@ const BoardPage = lazy(() =>
   })),
 );
 
-const FocusPage = lazy(() =>
-  import("@/components/focus/FocusPage").then((module) => ({
-    default: module.FocusPage,
+const OverviewPage = lazy(() =>
+  import("@/components/focus/OverviewPage").then((module) => ({
+    default: module.OverviewPage,
+  })),
+);
+
+const ActivityReportPage = lazy(() =>
+  import("@/components/time/report/ActivityReport").then((module) => ({
+    default: module.ActivityReportPage,
+  })),
+);
+
+const SettingsPage = lazy(() =>
+  import("@/components/settings/SettingsPage").then((module) => ({
+    default: module.SettingsPage,
   })),
 );
 
@@ -49,12 +62,31 @@ const routes: RouteObject[] = [
     path: "/",
     element: <AppLayout />,
     children: [
-      { index: true, element: <Navigate to="/focus" replace /> },
-      { path: "focus", element: withRouteSuspense(<FocusPage />) },
-      { path: "board", element: withRouteSuspense(<BoardPage />) },
-      { path: "backlog", element: withRouteSuspense(<BacklogPage />) },
-      { path: "notes", element: withRouteSuspense(<NotesPage />) },
-      { path: "time", element: withRouteSuspense(<TimePage />) },
+      { index: true, element: <Navigate to="/dashboard/overview" replace /> },
+      {
+        path: "dashboard",
+        children: [
+          { index: true, element: <Navigate to="overview" replace /> },
+          { path: "overview", element: withRouteSuspense(<OverviewPage />) },
+          {
+            path: "rapport",
+            element: withRouteSuspense(<ActivityReportPage />),
+          },
+          { path: "gestion", element: withRouteSuspense(<SettingsPage />) },
+        ],
+      },
+      {
+        path: "project/:projectId",
+        element: <ProjectRouteGuard />,
+        children: [
+          { index: true, element: <Navigate to="board" replace /> },
+          { path: "board", element: withRouteSuspense(<BoardPage />) },
+          { path: "backlog", element: withRouteSuspense(<BacklogPage />) },
+          { path: "notes", element: withRouteSuspense(<NotesPage />) },
+          { path: "time", element: withRouteSuspense(<TimePage />) },
+        ],
+      },
+      { path: "*", element: <Navigate to="/dashboard/overview" replace /> },
     ],
   },
 ];

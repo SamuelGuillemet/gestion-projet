@@ -24,13 +24,13 @@ export function HelpDialog() {
           <span className="hidden 2xl:inline">Aide</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="flex flex-col sm:max-w-3xl h-[82vh] overflow-hidden">
+      <DialogContent className="flex flex-col sm:max-w-5xl h-[82vh] overflow-hidden">
         <DialogHeader>
           <DialogTitle>Aide & documentation</DialogTitle>
         </DialogHeader>
 
         <div className="flex flex-1 gap-4 min-h-0">
-          <nav className="flex flex-col gap-1 pr-2 border-r w-44 overflow-y-auto shrink-0">
+          <nav className="flex flex-col gap-1 pr-2 border-r w-60 overflow-y-auto shrink-0">
             {HELP_SECTIONS.map(({ id, title, icon: Icon }) => (
               <button
                 key={id}

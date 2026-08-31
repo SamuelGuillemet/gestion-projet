@@ -1,6 +1,5 @@
 import { Download, Upload } from "lucide-react";
 import { useRef } from "react";
-import { BackupManagerDialog } from "@/components/layout/BackupManagerDialog";
 import { Button } from "@/components/ui/button";
 import { exportData, importData } from "@/store/import-export";
 import { createSnapshot } from "@/store/snapshots";
@@ -41,37 +40,42 @@ const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
   }
 };
 
-export function DataActions() {
+export function ImportExportPanel() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="flex items-center gap-1">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={handleExport}
-        title="Exporter les données"
-      >
-        <Download className="w-4 h-4" />
-        <span className="hidden 2xl:inline">Exporter</span>
-      </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => fileInputRef.current?.click()}
-        title="Importer des données"
-      >
-        <Upload className="w-4 h-4" />
-        <span className="hidden 2xl:inline">Importer</span>
-      </Button>
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".json"
-        className="hidden"
-        onChange={handleImport}
-      />
-      <BackupManagerDialog />
+    <div className="space-y-3 mt-2">
+      <p className="text-muted-foreground text-sm">
+        Exportez toutes les données de l'application dans un fichier JSON, ou
+        importez un fichier précédemment exporté (remplace toutes les données).
+      </p>
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleExport}
+          title="Exporter les données"
+        >
+          <Download className="w-4 h-4" />
+          Exporter
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => fileInputRef.current?.click()}
+          title="Importer des données"
+        >
+          <Upload className="w-4 h-4" />
+          Importer
+        </Button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json"
+          className="hidden"
+          onChange={handleImport}
+        />
+      </div>
     </div>
   );
 }

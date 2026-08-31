@@ -1,5 +1,6 @@
-import { Check, ChevronDown, Plus, Trash2 } from "lucide-react";
+import { Check, ChevronDown, FolderKanban, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,14 @@ import { useProjects } from "@/hooks/useProjects";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/models/project";
 import { useBacklogUI } from "../backlog/backlog-state";
+
+const PROJECT_TAB_SEGMENTS = new Set(["board", "backlog", "notes", "time"]);
+
+function getCurrentProjectTab(pathname: string) {
+  const segments = pathname.split("/");
+  const tab = segments[3];
+  return tab && PROJECT_TAB_SEGMENTS.has(tab) ? tab : "board";
+}
 
 const DEFAULT_PROJECT_COLOR = "#6366f1";
 
@@ -147,7 +156,11 @@ function ProjectDetailsForm({
   );
 }
 
-export function ProjectSelector() {
+export function ProjectSelector({
+  variant = "full",
+}: {
+  variant?: "full" | "switch";
+}) {
   const {
     projects,
     activeProject,
@@ -157,6 +170,8 @@ export function ProjectSelector() {
     updateProject,
     deleteProject,
   } = useProjects();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const { clear } = useBacklogUI();
@@ -171,6 +186,11 @@ export function ProjectSelector() {
     setDraft({ ...currentDraft, ...data });
   };
 
+  const goToProject = (id: string) => {
+    const tab = getCurrentProjectTab(location.pathname);
+    navigate(`/project/${id}/${tab}`);
+  };
+
   const handleDeleteActiveProject = () => {
     if (!activeProject) return;
 
@@ -182,6 +202,11 @@ export function ProjectSelector() {
     clear();
     setIsCreating(fallbackProjectId === null);
     setDraft(fallbackProjectId === null ? createProjectDraft() : null);
+    navigate(
+      fallbackProjectId
+        ? `/project/${fallbackProjectId}/board`
+        : "/dashboard/overview",
+    );
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -201,9 +226,10 @@ export function ProjectSelector() {
     setIsCreating(false);
     setDraft(null);
     setActiveProject(id);
-    if (activeProjectId === id) return;
-    clear();
     setOpen(false);
+    if (activeProjectId === id && variant === "full") return;
+    clear();
+    goToProject(id);
   };
 
   const handleCreate = () => {
@@ -217,6 +243,7 @@ export function ProjectSelector() {
     setActiveProject(id);
     setIsCreating(false);
     setDraft(null);
+    navigate(`/project/${id}/board`);
   };
 
   const handleSave = () => {
@@ -247,27 +274,35 @@ export function ProjectSelector() {
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
-      <div className="group/project relative min-w-68">
+      <div className="group/project relative">
         <PopoverTrigger
           render={
-            <Button
-              variant="ghost"
-              className="justify-start gap-2 px-2 min-w-0 max-w-72 h-9"
-            >
-              <span
-                className="rounded-full ring-2 ring-background size-2.5 shrink-0"
-                style={{
-                  backgroundColor: activeProject?.color ?? "var(--rule-strong)",
-                }}
-              />
-              <span className="font-heading font-semibold text-lg truncate leading-none tracking-normal">
-                {activeProject?.name ?? "Aucun projet"}
-              </span>
-              <ChevronDown className="opacity-55 size-4 shrink-0" />
-            </Button>
+            variant === "switch" ? (
+              <Button variant="outline" size="sm" className="gap-1.5">
+                <FolderKanban className="size-4" />
+                Ouvrir un projet
+              </Button>
+            ) : (
+              <Button
+                variant="ghost"
+                className="flex justify-start items-center gap-2 px-2 w-72 min-w-0 h-9"
+              >
+                <span
+                  className="rounded-full ring-2 ring-background size-2.5 shrink-0"
+                  style={{
+                    backgroundColor:
+                      activeProject?.color ?? "var(--rule-strong)",
+                  }}
+                />
+                <span className="font-heading font-semibold text-lg text-left truncate leading-none tracking-normal grow">
+                  {activeProject?.name ?? "Aucun projet"}
+                </span>
+                <ChevronDown className="opacity-55 size-4 shrink-0" />
+              </Button>
+            )
           }
         />
-        {activeProject?.description && !open ? (
+        {variant === "full" && activeProject?.description && !open ? (
           <div className="top-full left-0 z-40 absolute opacity-0 group-hover/project:opacity-100 mt-1 w-72 transition-opacity pointer-events-none">
             <div className="bg-popover shadow-md p-2 border rounded-md text-popover-foreground text-xs leading-relaxed">
               {activeProject.description}
