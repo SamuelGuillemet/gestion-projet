@@ -18,7 +18,7 @@ import type { TimeEntry } from "@/models/time-entry";
 
 const PX_PER_HOUR = 32;
 const MIN_BLOCK_HEIGHT = 6;
-const MIN_HEIGHT_FOR_LABEL = 20;
+const MIN_HEIGHT_FOR_LABEL = 16;
 const BASELINE_HOURS = 8;
 const HOUR_SCALE_WIDTH = "1.5rem";
 
@@ -194,7 +194,7 @@ function DayTaskBlock({ entry }: { entry: DailyTaskEntry }) {
   return (
     <div
       title={`#${entry.taskNumber} ${entry.taskTitle} — ${formatMinutes(entry.minutes)}`}
-      className="flex items-center px-1 border-l-2 rounded-xs overflow-hidden text-[0.65rem] leading-tight"
+      className="flex items-center px-1 border-l-2 rounded-sm overflow-hidden text-[0.65rem] leading-tight"
       style={{
         height,
         backgroundColor: `${entry.projectColor}50`,
