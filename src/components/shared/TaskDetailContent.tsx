@@ -231,7 +231,7 @@ export function TaskDetailContent({
           <Label className="text-muted-foreground text-xs">Échéance</Label>
           <Input
             type="date"
-            value={task.dueDate}
+            value={task.dueDate ?? ""}
             onChange={(e) => onUpdate({ dueDate: e.target.value })}
             className="mt-1 h-8"
           />
