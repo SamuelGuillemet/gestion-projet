@@ -40,7 +40,12 @@ function Card({ taskId, isDragging }: CardProps) {
           },
         )}
         onClick={() => setDetailOpen(true)}
-        onKeyDown={(e) => e.key === "Enter" && setDetailOpen(true)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setDetailOpen(true);
+          }
+        }}
       >
         <div className="flex items-start gap-2">
           <div className="flex flex-col gap-2">

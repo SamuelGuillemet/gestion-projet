@@ -40,11 +40,19 @@ export function AppSwitcher() {
   const [items, setItems] = useState<SwitcherItem[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const openRef = useRef(false);
   const itemsRef = useRef<SwitcherItem[]>([]);
   const selectedIndexRef = useRef(0);
   const projectsRef = useRef(projects);
   const pathnameRef = useRef(location.pathname);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (open && !dialog.open) dialog.showModal();
+    if (!open && dialog.open) dialog.close();
+  }, [open]);
 
   useEffect(() => {
     projectsRef.current = projects;
@@ -119,45 +127,42 @@ export function AppSwitcher() {
     };
   }, [navigate, setActiveProject]);
 
-  if (!open) return null;
-
   return (
-    <div
-      className="z-50 fixed inset-0 flex justify-center items-center bg-background/60 backdrop-blur-sm p-4"
-      role="dialog"
+    <dialog
+      ref={dialogRef}
+      onClose={() => setOpen(false)}
       aria-label="Changer de vue"
+      className="top-1/2 left-1/2 fixed bg-popover backdrop:bg-background/60 shadow-xl backdrop:backdrop-blur-sm p-2 border rounded-lg w-72 max-w-[calc(100vw-2rem)] text-popover-foreground -translate-x-1/2 -translate-y-1/2 transform"
     >
-      <div className="bg-popover shadow-xl p-2 border rounded-lg w-72 max-w-[calc(100vw-2rem)] text-popover-foreground">
-        <ul className="space-y-1 p-1 max-h-[70vh] overflow-y-auto">
-          {items.map((item, index) => (
-            <li
-              key={item.type === "dashboard" ? "dashboard" : item.id}
-              className={cn(
-                "flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors",
-                index === selectedIndex
-                  ? "bg-primary/15 text-foreground ring-1 ring-primary/40"
-                  : "text-muted-foreground",
-              )}
-            >
-              {item.type === "dashboard" ? (
-                <LayoutDashboard className="size-4 shrink-0" />
-              ) : (
-                <span
-                  className="rounded-full size-2.5 shrink-0"
-                  style={{ backgroundColor: item.color }}
-                />
-              )}
-              <span className="truncate">
-                {item.type === "dashboard" ? "Dashboard" : item.name}
-              </span>
-            </li>
-          ))}
-        </ul>
-        <p className="mt-2 px-1 text-[11px] text-muted-foreground">
-          Alt (maintenu) + A pour parcourir (+ Maj pour l'ordre inverse),
-          relâchez Alt pour valider
-        </p>
-      </div>
-    </div>
+      <ul className="space-y-1 p-1 max-h-[70vh] overflow-y-auto">
+        {items.map((item, index) => (
+          <li
+            key={item.type === "dashboard" ? "dashboard" : item.id}
+            className={cn(
+              "flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors",
+              index === selectedIndex
+                ? "bg-primary/15 text-foreground ring-1 ring-primary/40"
+                : "text-muted-foreground",
+            )}
+          >
+            {item.type === "dashboard" ? (
+              <LayoutDashboard className="size-4 shrink-0" />
+            ) : (
+              <span
+                className="rounded-full size-2.5 shrink-0"
+                style={{ backgroundColor: item.color }}
+              />
+            )}
+            <span className="truncate">
+              {item.type === "dashboard" ? "Dashboard" : item.name}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-2 px-1 text-[11px] text-muted-foreground">
+        Alt (maintenu) + A pour parcourir (+ Maj pour l'ordre inverse), relâchez
+        Alt pour valider
+      </p>
+    </dialog>
   );
 }

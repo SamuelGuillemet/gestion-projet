@@ -29,6 +29,7 @@ export function BackupsPanel() {
   };
 
   useEffect(() => {
+    // react-doctor-disable-next-line react-hooks-js/set-state-in-effect -- initial fetch from IndexedDB, setState runs post-await
     refreshSnapshots();
   }, []);
 

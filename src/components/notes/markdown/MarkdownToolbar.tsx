@@ -61,32 +61,26 @@ export function MarkdownToolbar({
     {
       label: "Gras",
       icon: Bold,
-      onClick: () =>
-        withTextarea((t) =>
-          toggleWrap(t, value, "**", "**", "texte en gras", onChange),
-        ),
+      perform: (t: HTMLTextAreaElement) =>
+        toggleWrap(t, value, "**", "**", "texte en gras", onChange),
     },
     {
       label: "Italique",
       icon: Italic,
-      onClick: () =>
-        withTextarea((t) =>
-          toggleWrap(t, value, "*", "*", "texte en italique", onChange),
-        ),
+      perform: (t: HTMLTextAreaElement) =>
+        toggleWrap(t, value, "*", "*", "texte en italique", onChange),
     },
     {
       label: "Barré",
       icon: Strikethrough,
-      onClick: () =>
-        withTextarea((t) =>
-          toggleWrap(t, value, "~~", "~~", "texte barré", onChange),
-        ),
+      perform: (t: HTMLTextAreaElement) =>
+        toggleWrap(t, value, "~~", "~~", "texte barré", onChange),
     },
     {
       label: "Code",
       icon: Code,
-      onClick: () =>
-        withTextarea((t) => toggleWrap(t, value, "`", "`", "code", onChange)),
+      perform: (t: HTMLTextAreaElement) =>
+        toggleWrap(t, value, "`", "`", "code", onChange),
     },
   ];
 
@@ -94,25 +88,26 @@ export function MarkdownToolbar({
     {
       label: "Liste à puces",
       icon: List,
-      onClick: () =>
-        withTextarea((t) => togglePrefix(t, value, "- ", onChange)),
+      perform: (t: HTMLTextAreaElement) =>
+        togglePrefix(t, value, "- ", onChange),
     },
     {
       label: "Liste numérotée",
       icon: ListOrdered,
-      onClick: () => withTextarea((t) => toggleOrderedList(t, value, onChange)),
+      perform: (t: HTMLTextAreaElement) =>
+        toggleOrderedList(t, value, onChange),
     },
     {
       label: "Liste de tâches",
       icon: ListChecks,
-      onClick: () =>
-        withTextarea((t) => togglePrefix(t, value, "- [ ] ", onChange)),
+      perform: (t: HTMLTextAreaElement) =>
+        togglePrefix(t, value, "- [ ] ", onChange),
     },
     {
       label: "Citation",
       icon: Quote,
-      onClick: () =>
-        withTextarea((t) => togglePrefix(t, value, "> ", onChange)),
+      perform: (t: HTMLTextAreaElement) =>
+        togglePrefix(t, value, "> ", onChange),
     },
   ];
 
@@ -120,24 +115,24 @@ export function MarkdownToolbar({
     {
       label: "Lien",
       icon: LinkIcon,
-      onClick: () => withTextarea((t) => insertLink(t, value, onChange)),
+      perform: (t: HTMLTextAreaElement) => insertLink(t, value, onChange),
     },
     {
       label: "Bloc de code",
       icon: SquareCode,
-      onClick: () => withTextarea((t) => toggleCodeBlock(t, value, onChange)),
+      perform: (t: HTMLTextAreaElement) => toggleCodeBlock(t, value, onChange),
     },
     {
       label: "Tableau",
       icon: TableIcon,
-      onClick: () =>
-        withTextarea((t) => insertBlock(t, value, TABLE_TEMPLATE, onChange)),
+      perform: (t: HTMLTextAreaElement) =>
+        insertBlock(t, value, TABLE_TEMPLATE, onChange),
     },
     {
       label: "Ligne horizontale",
       icon: Minus,
-      onClick: () =>
-        withTextarea((t) => insertBlock(t, value, "---", onChange)),
+      perform: (t: HTMLTextAreaElement) =>
+        insertBlock(t, value, "---", onChange),
     },
   ];
 
@@ -188,13 +183,13 @@ export function MarkdownToolbar({
 
       <div className="mx-1 bg-border w-px h-5" aria-hidden="true" />
 
-      {actions.map(({ label, icon: Icon, onClick }) => (
+      {actions.map(({ label, icon: Icon, perform }) => (
         <Button
           key={label}
           size="icon"
           variant="ghost"
           title={label}
-          onClick={onClick}
+          onClick={() => withTextarea(perform)}
           className="w-8 h-8"
         >
           <Icon className="w-4 h-4" />
@@ -203,13 +198,13 @@ export function MarkdownToolbar({
 
       <div className="mx-1 bg-border w-px h-5" aria-hidden="true" />
 
-      {listActions.map(({ label, icon: Icon, onClick }) => (
+      {listActions.map(({ label, icon: Icon, perform }) => (
         <Button
           key={label}
           size="icon"
           variant="ghost"
           title={label}
-          onClick={onClick}
+          onClick={() => withTextarea(perform)}
           className="w-8 h-8"
         >
           <Icon className="w-4 h-4" />
@@ -218,13 +213,13 @@ export function MarkdownToolbar({
 
       <div className="mx-1 bg-border w-px h-5" aria-hidden="true" />
 
-      {insertActions.map(({ label, icon: Icon, onClick }) => (
+      {insertActions.map(({ label, icon: Icon, perform }) => (
         <Button
           key={label}
           size="icon"
           variant="ghost"
           title={label}
-          onClick={onClick}
+          onClick={() => withTextarea(perform)}
           className="w-8 h-8"
         >
           <Icon className="w-4 h-4" />

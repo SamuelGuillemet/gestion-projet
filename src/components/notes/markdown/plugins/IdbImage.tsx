@@ -29,6 +29,7 @@ function loadCachedImage(src: string) {
         return null;
       }
 
+      // react-doctor-disable-next-line react-doctor/no-create-object-url-without-revoke -- No memory leak because we revoke the object URL when evicting the image from the cache
       const objectUrl = URL.createObjectURL(blob);
       nextCachedImage.objectUrl = objectUrl;
       return objectUrl;

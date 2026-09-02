@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   addDaysToDate,
@@ -37,23 +37,17 @@ export function WeeklyCalendarReport({
     getWeekStartDate(new Date()),
   );
 
-  const weekDates = useMemo(() => getWeekDates(weekStart), [weekStart]);
-  const dailyEntries = useMemo(
-    () => buildDailyTaskEntries(timeEntries, tasks, projects),
-    [timeEntries, tasks, projects],
-  );
+  const weekDates = getWeekDates(weekStart);
+  const dailyEntries = buildDailyTaskEntries(timeEntries, tasks, projects);
 
   const todayKey = toIsoDateInput(new Date());
-  const dayTotalsByDate = useMemo(() => {
-    const totals: Record<string, number> = {};
-    for (const date of weekDates) {
-      totals[date] = (dailyEntries[date] ?? []).reduce(
-        (sum, entry) => sum + entry.minutes,
-        0,
-      );
-    }
-    return totals;
-  }, [weekDates, dailyEntries]);
+  const dayTotalsByDate: Record<string, number> = {};
+  for (const date of weekDates) {
+    dayTotalsByDate[date] = (dailyEntries[date] ?? []).reduce(
+      (sum, entry) => sum + entry.minutes,
+      0,
+    );
+  }
 
   const weekTotal = Object.values(dayTotalsByDate).reduce(
     (sum, minutes) => sum + minutes,

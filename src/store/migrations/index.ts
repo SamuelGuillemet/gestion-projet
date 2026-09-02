@@ -39,6 +39,7 @@ export async function runMigrations(): Promise<void> {
       continue;
     }
     try {
+      // react-doctor-disable-next-line react-doctor/async-await-in-loop -- We need to run migrations sequentially to ensure correct order
       const didWrite = await m.run();
       // advance version even if nothing to do, to mark migration applied
       localStorage.setItem(STORE_VERSION_KEY, String(m.version));

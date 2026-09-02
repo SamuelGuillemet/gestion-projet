@@ -22,7 +22,10 @@ export function useTimeEntriesByTaskId(taskId: string | null) {
 
 export function useTimeEntriesByTaskIds(taskIds: string[]) {
   return useTimeStore(
-    useShallow((s) => s.timeEntries.filter((e) => taskIds.includes(e.taskId))),
+    useShallow((s) => {
+      const taskIdSet = new Set(taskIds);
+      return s.timeEntries.filter((e) => taskIdSet.has(e.taskId));
+    }),
   );
 }
 
@@ -31,11 +34,6 @@ export function useMilestonesByProjectId(projectId: string | null) {
   return useTimeStore(
     useShallow((s) => s.milestones.filter((m) => m.projectId === projectId)),
   );
-}
-
-/** Returns all milestones across projects. */
-export function useMilestones() {
-  return useTimeStore(useShallow((s) => s.milestones));
 }
 
 /** Returns time action functions only (stable references). */

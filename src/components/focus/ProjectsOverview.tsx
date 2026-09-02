@@ -71,7 +71,7 @@ function ProjectOverviewCard({ summary }: { summary: ProjectSummary }) {
 
       <div className="bg-muted/60 border rounded-full h-2 overflow-hidden">
         <div
-          className="rounded-full h-full transition-all"
+          className="rounded-full h-full transition-[width]"
           style={{
             width: `${summary.progress}%`,
             backgroundColor: summary.project.color,

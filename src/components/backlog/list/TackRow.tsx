@@ -44,7 +44,12 @@ export function TaskRow({
           : "border-transparent hover:hover:bg-accent/45",
       )}
       onClick={onSelect}
-      onKeyDown={(e) => e.key === "Enter" && onSelect()}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect();
+        }
+      }}
       role="button"
       tabIndex={0}
     >

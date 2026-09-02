@@ -22,30 +22,28 @@ export function WeeklyProjectList({
   const handlePlannedDaysChange = (projectId: string, value: string) => {
     if (!isValidPlannedDaysInput(value)) return;
 
-    setPlannedDaysInputByProjectId((prev) => {
-      const next = { ...prev, [projectId]: value };
-      onPlannedDaysByProjectIdChange(parsePlannedDaysByProject(next));
-      return next;
-    });
+    const next = { ...plannedDaysInputByProjectId, [projectId]: value };
+    onPlannedDaysByProjectIdChange(parsePlannedDaysByProject(next));
+    setPlannedDaysInputByProjectId(next);
   };
 
   return (
     <div className="border rounded-lg overflow-x-auto">
       <table className="w-full min-w-175 text-sm">
         <thead>
-          <tr className="border-b bg-muted/40">
-            <th className="px-3 py-2 text-left font-medium">Projet</th>
-            <th className="px-3 py-2 text-left font-medium">Jours prevus</th>
-            <th className="px-3 py-2 text-right font-medium">Realise</th>
-            <th className="px-3 py-2 text-right font-medium">%</th>
-            <th className="px-3 py-2 text-right font-medium">Depassement</th>
+          <tr className="bg-muted/40 border-b">
+            <th className="px-3 py-2 font-medium text-left">Projet</th>
+            <th className="px-3 py-2 font-medium text-left">Jours prevus</th>
+            <th className="px-3 py-2 font-medium text-right">Realise</th>
+            <th className="px-3 py-2 font-medium text-right">%</th>
+            <th className="px-3 py-2 font-medium text-right">Depassement</th>
           </tr>
         </thead>
         <tbody>
           {weeklyProgress
             .filter((project) => project.actualMinutes > 0)
             .map((project) => (
-              <tr key={project.projectId} className="border-b last:border-0">
+              <tr key={project.projectId} className="last:border-0 border-b">
                 <td className="px-3 py-2">
                   <div className="flex items-center gap-2 min-w-0">
                     <span
@@ -64,7 +62,7 @@ export function WeeklyProjectList({
                     onChange={(e) =>
                       handlePlannedDaysChange(project.projectId, e.target.value)
                     }
-                    className="h-8 max-w-27.5"
+                    className="max-w-27.5 h-8"
                     aria-label={`Jours prevus pour ${project.projectName}`}
                   />
                 </td>
