@@ -1,9 +1,10 @@
-import { Archive, Import, Tags } from "lucide-react";
+import { Archive, ArrowRightLeft, Import, Tags } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BackupsPanel } from "./BackupsPanel";
 import { ImportExportPanel } from "./ImportExportPanel";
 import { TagsPanel } from "./TagsPanel";
+import { TaskMigrationPanel } from "./TaskMigrationPanel";
 
 export function SettingsPage() {
   return (
@@ -29,6 +30,10 @@ export function SettingsPage() {
             <Import className="size-4" />
             Import / Export
           </TabsTrigger>
+          <TabsTrigger value="migration">
+            <ArrowRightLeft className="size-4" />
+            Migration
+          </TabsTrigger>
         </TabsList>
         <Separator orientation="vertical" className="h-full" />
         <div className="flex-1 min-w-0 h-full overflow-y-auto no-scrollbar">
@@ -40,6 +45,9 @@ export function SettingsPage() {
           </TabsContent>
           <TabsContent value="import-export">
             <ImportExportPanel />
+          </TabsContent>
+          <TabsContent value="migration">
+            <TaskMigrationPanel />
           </TabsContent>
         </div>
       </Tabs>

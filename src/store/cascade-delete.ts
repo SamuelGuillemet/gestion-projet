@@ -44,6 +44,25 @@ export function deleteTaskCascade(taskId: string) {
   removeRelationsByEntityIds(taskIds);
 }
 
+export function moveTasksToProjectCascade(
+  taskIds: string[],
+  targetProjectId: string,
+) {
+  const movedIds = useTaskStore
+    .getState()
+    .moveTasksToProject(taskIds, targetProjectId);
+  if (movedIds.length === 0) return;
+
+  const movedIdSet = new Set(movedIds);
+  useTimeStore.setState((state) => ({
+    timeEntries: state.timeEntries.map((entry) =>
+      movedIdSet.has(entry.taskId)
+        ? { ...entry, projectId: targetProjectId }
+        : entry,
+    ),
+  }));
+}
+
 export function deleteQuestionCascade(questionId: string) {
   useQuestionStore.getState().deleteQuestion(questionId);
   removeRelationsByEntityIds(new Set([questionId]));

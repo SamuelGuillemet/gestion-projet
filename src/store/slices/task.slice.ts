@@ -18,6 +18,7 @@ export interface TaskSlice {
   ) => void;
   deleteTask: (id: string) => void;
   dndTasks: (newState: Record<BoardColumnId, string[]>) => void;
+  moveTasksToProject: (taskIds: string[], targetProjectId: string) => string[];
 }
 
 export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
@@ -122,4 +123,48 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
         };
       }),
     })),
+
+  moveTasksToProject: (taskIds, targetProjectId) => {
+    let movedIds: string[] = [];
+    set((state) => {
+      const idsToMove = new Set(taskIds);
+      // moving a parent task brings its subtasks along
+      for (const task of state.tasks) {
+        if (task.parentTaskId && idsToMove.has(task.parentTaskId)) {
+          idsToMove.add(task.id);
+        }
+      }
+      if (idsToMove.size === 0) return state;
+      movedIds = Array.from(idsToMove);
+
+      const now = new Date().toISOString();
+      const columnOrderCounts: Record<string, number> = {};
+      for (const task of state.tasks) {
+        if (task.projectId === targetProjectId && !idsToMove.has(task.id)) {
+          columnOrderCounts[task.columnId] =
+            (columnOrderCounts[task.columnId] ?? 0) + 1;
+        }
+      }
+      let nextNumber = getNextProjectScopedNumber(state.tasks, targetProjectId);
+
+      return {
+        tasks: state.tasks.map((task) => {
+          if (!idsToMove.has(task.id)) return task;
+          const keepsParent =
+            !!task.parentTaskId && idsToMove.has(task.parentTaskId);
+          const order = columnOrderCounts[task.columnId] ?? 0;
+          columnOrderCounts[task.columnId] = order + 1;
+          return {
+            ...task,
+            projectId: targetProjectId,
+            parentTaskId: keepsParent ? task.parentTaskId : undefined,
+            number: nextNumber++,
+            order,
+            updatedAt: now,
+          };
+        }),
+      };
+    });
+    return movedIds;
+  },
 });
