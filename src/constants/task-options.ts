@@ -1,4 +1,4 @@
-import type { Task, TaskPriority } from "@/models/task";
+import type { TaskPriority, TaskSize } from "@/models/task";
 
 interface PriorityOption {
   value: TaskPriority;
@@ -17,7 +17,7 @@ export const PRIORITY_BY_VALUE = Object.fromEntries(
 );
 
 interface SizeOption {
-  value: Task["size"];
+  value: TaskSize;
   label: string;
   color: string;
 }

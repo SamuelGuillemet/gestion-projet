@@ -3,14 +3,15 @@ import { useDroppable } from "@dnd-kit/react";
 import { useRef } from "react";
 import { BOARD_COLUMNS, type BoardColumnId } from "@/constants/board-columns";
 import { cn } from "@/lib/utils";
-import { SortableCard } from "./Card";
+import { Card, SortableCard } from "./Card";
 
 interface ColumnProps {
   columnId: BoardColumnId;
   taskIds: string[];
+  dragEnabled: boolean;
 }
 
-export function Column({ columnId, taskIds }: ColumnProps) {
+export function Column({ columnId, taskIds, dragEnabled }: ColumnProps) {
   const droppableRef = useRef<HTMLDivElement>(null);
   const droppable = useDroppable({
     id: columnId,
@@ -18,6 +19,7 @@ export function Column({ columnId, taskIds }: ColumnProps) {
     accept: "item",
     collisionPriority: CollisionPriority.Low,
     element: droppableRef,
+    disabled: !dragEnabled,
   });
 
   const column = BOARD_COLUMNS.find((col) => col.id === columnId);
@@ -48,14 +50,18 @@ export function Column({ columnId, taskIds }: ColumnProps) {
       </div>
 
       <div className="flex-1 space-y-2.5 p-3 overflow-y-auto no-scrollbar">
-        {taskIds.map((id, index) => (
-          <SortableCard
-            key={id}
-            taskId={id}
-            index={index}
-            columnId={column.id}
-          />
-        ))}
+        {taskIds.map((id, index) =>
+          dragEnabled ? (
+            <SortableCard
+              key={id}
+              taskId={id}
+              index={index}
+              columnId={column.id}
+            />
+          ) : (
+            <Card key={id} taskId={id} />
+          ),
+        )}
         {taskIds.length === 0 && (
           <div className="py-10 border border-border/70 border-dashed rounded-md font-data text-muted-foreground/60 text-xs text-center">
             Glissez des tâches ici

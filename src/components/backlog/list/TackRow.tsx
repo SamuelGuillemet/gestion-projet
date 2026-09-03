@@ -11,13 +11,7 @@ import { getEntityReferenceLabel } from "@/lib/entity-references";
 import { cn } from "@/lib/utils";
 import { useBacklogUI } from "../backlog-state";
 
-export function TaskRow({
-  taskId,
-  filterTag,
-}: {
-  taskId: string;
-  filterTag: string | null;
-}) {
+export function TaskRow({ taskId }: { taskId: string }) {
   const task = useTask(taskId);
   const { deleteTask } = useTaskActions();
   const { tags } = useTags();
@@ -27,9 +21,6 @@ export function TaskRow({
 
   if (!task) return null;
   const taskTagIds = new Set(task.tags);
-  // Apply tag filter
-  if (filterTag && !taskTagIds.has(filterTag)) return null;
-
   const taskTags = tags.filter((t) => taskTagIds.has(t.id));
   const priority = task.priority ? PRIORITY_BY_VALUE[task.priority] : null;
 

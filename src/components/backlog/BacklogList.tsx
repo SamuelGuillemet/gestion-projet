@@ -1,16 +1,21 @@
 import { useState } from "react";
+import { TaskFilterBar } from "@/components/task-filters/TaskFilterDrawer";
+import {
+  useFilteredTaskIds,
+  useTaskFilters,
+} from "@/components/task-filters/task-filters";
 import {
   useDeliverableActions,
   useDeliverableIds,
 } from "@/hooks/useDeliverables";
 import { useQuestionActions, useQuestionIds } from "@/hooks/useQuestions";
+import { useTags } from "@/hooks/useTags";
 import { useTaskActions, useTaskIds } from "@/hooks/useTasks";
 import { type Section, useBacklogUI } from "./backlog-state";
 import {
   AddItemRow,
   DeliverableRow,
   QuestionRow,
-  TagFilter,
   TaskRow,
   TreeSection,
 } from "./list";
@@ -20,7 +25,13 @@ interface BacklogListProps {
 }
 
 export function BacklogList({ activeProjectId }: BacklogListProps) {
-  const taskIds = useTaskIds(activeProjectId);
+  const baseTaskIds = useTaskIds(activeProjectId);
+  const { tags } = useTags();
+  const { filters, updateFilters, clearFilters } = useTaskFilters(
+    activeProjectId,
+    tags,
+  );
+  const taskIds = useFilteredTaskIds(baseTaskIds, filters);
   const questionIds = useQuestionIds(activeProjectId);
   const deliverableIds = useDeliverableIds(activeProjectId);
   const { addTask } = useTaskActions();
@@ -40,8 +51,6 @@ export function BacklogList({ activeProjectId }: BacklogListProps) {
     questions: "",
     deliverables: "",
   });
-
-  const [filterTag, setFilterTag] = useState<string | null>(null);
 
   const toggle = (section: Section) =>
     setExpanded((prev) => ({ ...prev, [section]: !prev[section] }));
@@ -64,7 +73,14 @@ export function BacklogList({ activeProjectId }: BacklogListProps) {
 
   return (
     <div className="flex-1 space-y-3 min-w-0">
-      <TagFilter selectedTag={filterTag} onSelectTag={setFilterTag} />
+      <div className="top-0 z-10 sticky flex flex-wrap justify-end items-center gap-2 bg-background/90 backdrop-blur-sm mb-1 p-2 border rounded-md">
+        <TaskFilterBar
+          filters={filters}
+          tags={tags}
+          updateFilters={updateFilters}
+          clearFilters={clearFilters}
+        />
+      </div>
 
       <TreeSection
         title={`Tâches (${taskIds.length})`}
@@ -73,7 +89,7 @@ export function BacklogList({ activeProjectId }: BacklogListProps) {
         accentColor="var(--entity-task)"
       >
         {taskIds.map((id) => (
-          <TaskRow key={id} taskId={id} filterTag={filterTag} />
+          <TaskRow key={id} taskId={id} />
         ))}
         <AddItemRow
           value={newItems.tasks}

@@ -48,8 +48,7 @@ export function useTask(id: string) {
 export function useSubtasks(parentTaskId: string) {
   return useTaskStore(
     useShallow((s) =>
-      s.tasks
-        .filter((task) => task.parentTaskId === parentTaskId)
+      s.tasks.filter((task) => task.parentTaskId === parentTaskId),
     ),
   );
 }

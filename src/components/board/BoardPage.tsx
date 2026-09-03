@@ -3,17 +3,30 @@ import { move } from "@dnd-kit/helpers";
 import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
 import { Plus } from "lucide-react";
 import { useRef, useState } from "react";
+import { TaskFilterBar } from "@/components/task-filters/TaskFilterDrawer";
+import {
+  countActiveFilters,
+  useFilteredTaskIds,
+  useTaskFilters,
+} from "@/components/task-filters/task-filters";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { getEmptyRecordOfColumns } from "@/constants/board-columns";
 import { useProjects } from "@/hooks/useProjects";
+import { useTags } from "@/hooks/useTags";
 import { useTaskActions, useTaskColumnRecord } from "@/hooks/useTasks";
 import { Column } from "./Column";
 
 export function BoardPage() {
   const { activeProjectId } = useProjects();
-  const tasks = useTaskColumnRecord(activeProjectId);
+  const allTaskColumns = useTaskColumnRecord(activeProjectId);
+  const { tags } = useTags();
   const { addTask, moveTask } = useTaskActions();
   const [newTaskTitle, setNewTaskTitle] = useState("");
+  const { filters, updateFilters, clearFilters } = useTaskFilters(
+    activeProjectId ?? "",
+    tags,
+  );
 
   if (!activeProjectId) {
     return (
@@ -28,17 +41,29 @@ export function BoardPage() {
     );
   }
 
+  const visibleTaskIds = new Set(
+    useFilteredTaskIds(Object.values(allTaskColumns).flat(), filters),
+  );
+  const taskColumns = getEmptyRecordOfColumns();
+  for (const [columnId, taskIds] of Object.entries(allTaskColumns)) {
+    taskColumns[columnId] = taskIds.filter((taskId) =>
+      visibleTaskIds.has(taskId),
+    );
+  }
+  const filtersActive = countActiveFilters(filters) > 0;
+
   const handleAddTask = () => {
     if (!newTaskTitle.trim()) return;
     addTask(activeProjectId, newTaskTitle.trim());
     setNewTaskTitle("");
   };
 
-  const handleDragEnd = (event: DragEndEvent) => moveTask(move(tasks, event));
+  const handleDragEnd = (event: DragEndEvent) =>
+    moveTask(move(allTaskColumns, event));
 
   return (
     <div className="flex flex-col gap-4 h-full">
-      <div className="flex flex-wrap items-center gap-2 p-3 rounded-md atelier-card">
+      <div className="flex flex-wrap justify-between items-center gap-2 p-3 rounded-md atelier-card">
         <Input
           placeholder="Ajouter une tâche..."
           value={newTaskTitle}
@@ -55,13 +80,25 @@ export function BoardPage() {
           <Plus className="w-4 h-4" />
           Ajouter
         </Button>
+        <div className="flex-1"></div>
+        <TaskFilterBar
+          filters={filters}
+          tags={tags}
+          updateFilters={updateFilters}
+          clearFilters={clearFilters}
+        />
       </div>
 
       <DragAndDropWrapper onDragEnd={handleDragEnd}>
         <div className="flex flex-1 gap-3 pb-2 overflow-x-hidden">
-          {Object.entries(tasks).map(([columnId, taskIds]) => {
+          {Object.entries(taskColumns).map(([columnId, taskIds]) => {
             return (
-              <Column key={columnId} columnId={columnId} taskIds={taskIds} />
+              <Column
+                key={columnId}
+                columnId={columnId}
+                taskIds={taskIds}
+                dragEnabled={!filtersActive}
+              />
             );
           })}
         </div>

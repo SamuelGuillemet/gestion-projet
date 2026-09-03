@@ -16,7 +16,7 @@ interface CardProps {
   isDragging?: boolean;
 }
 
-function Card({ taskId, isDragging }: CardProps) {
+export function Card({ taskId, isDragging }: CardProps) {
   const task = useTask(taskId);
   const { tags } = useTags();
   const relationStatuses = useRelationOfTask(taskId);
