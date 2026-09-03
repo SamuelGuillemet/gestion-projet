@@ -1,4 +1,10 @@
-import { Check, ChevronDown, FolderKanban, Plus, Trash2 } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  LayoutDashboard,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -156,11 +162,7 @@ function ProjectDetailsForm({
   );
 }
 
-export function ProjectSelector({
-  variant = "full",
-}: {
-  variant?: "full" | "switch";
-}) {
+export function ProjectSelector() {
   const {
     projects,
     activeProject,
@@ -177,6 +179,8 @@ export function ProjectSelector({
   const { clear } = useBacklogUI();
 
   const [draft, setDraft] = useState<ProjectDraft | null>(null);
+  const isDashboard = location.pathname.startsWith("/dashboard");
+  const showProjectDetails = !isDashboard || isCreating;
 
   const baseDraft = getBaseProjectDraft(isCreating, activeProject);
   const currentDraft =
@@ -194,19 +198,12 @@ export function ProjectSelector({
   const handleDeleteActiveProject = () => {
     if (!activeProject) return;
 
-    const fallbackProjectId =
-      projects.find((project) => project.id !== activeProject.id)?.id ?? null;
-
     deleteProject(activeProject.id);
-    setActiveProject(fallbackProjectId);
+    setActiveProject(null);
+    setDraft(createProjectDraft());
+    setIsCreating(true);
     clear();
-    setIsCreating(fallbackProjectId === null);
-    setDraft(fallbackProjectId === null ? createProjectDraft() : null);
-    navigate(
-      fallbackProjectId
-        ? `/project/${fallbackProjectId}/board`
-        : "/dashboard/overview",
-    );
+    navigate("/dashboard/overview");
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -226,10 +223,16 @@ export function ProjectSelector({
     setIsCreating(false);
     setDraft(null);
     setActiveProject(id);
-    setOpen(false);
-    if (activeProjectId === id && variant === "full") return;
+    if (activeProjectId === id && !isDashboard) return;
     clear();
     goToProject(id);
+  };
+
+  const handleSelectDashboard = () => {
+    setIsCreating(false);
+    setDraft(null);
+    clear();
+    navigate("/dashboard/overview");
   };
 
   const handleCreate = () => {
@@ -277,16 +280,13 @@ export function ProjectSelector({
       <div className="group/project relative">
         <PopoverTrigger
           render={
-            variant === "switch" ? (
-              <Button variant="outline" size="sm" className="gap-1.5">
-                <FolderKanban className="size-4" />
-                Ouvrir un projet
-              </Button>
-            ) : (
-              <Button
-                variant="ghost"
-                className="flex justify-start items-center gap-2 px-2 w-72 min-w-0 h-9"
-              >
+            <Button
+              variant="ghost"
+              className="flex justify-start items-center gap-2 px-2 w-72 min-w-0 h-9"
+            >
+              {isDashboard ? (
+                <LayoutDashboard className="size-4 text-primary shrink-0" />
+              ) : (
                 <span
                   className="rounded-full ring-2 ring-background size-2.5 shrink-0"
                   style={{
@@ -294,15 +294,17 @@ export function ProjectSelector({
                       activeProject?.color ?? "var(--rule-strong)",
                   }}
                 />
-                <span className="font-heading font-semibold text-lg text-left truncate leading-none tracking-normal grow">
-                  {activeProject?.name ?? "Aucun projet"}
-                </span>
-                <ChevronDown className="opacity-55 size-4 shrink-0" />
-              </Button>
-            )
+              )}
+              <span className="font-heading font-semibold text-lg text-left truncate leading-none tracking-normal grow">
+                {isDashboard
+                  ? "Dashboard"
+                  : (activeProject?.name ?? "Aucun projet")}
+              </span>
+              <ChevronDown className="opacity-55 size-4 shrink-0" />
+            </Button>
           }
         />
-        {variant === "full" && activeProject?.description && !open ? (
+        {!isDashboard && activeProject?.description && !open ? (
           <div className="top-full left-0 z-40 absolute opacity-0 group-hover/project:opacity-100 mt-1 w-72 transition-opacity pointer-events-none">
             <div className="bg-popover shadow-md p-2 border rounded-md text-popover-foreground text-xs leading-relaxed">
               {activeProject.description}
@@ -316,27 +318,25 @@ export function ProjectSelector({
         side="bottom"
         className="p-3 w-180 max-w-[calc(100vw-2rem)]"
       >
-        <div className="gap-3 grid sm:grid-cols-[minmax(0,15rem)_minmax(0,1fr)]">
+        <div className="gap-3 grid grid-cols-[minmax(0,15rem)_minmax(0,1fr)]">
           <div className="min-w-0">
             <div className="mb-2 text-muted-foreground atelier-section-title">
               Projets
             </div>
-            <div className="space-y-1 pr-1 max-h-64 overflow-y-auto">
-              <button
-                type="button"
-                onClick={handleStartCreate}
-                className={cn(
-                  "flex items-center gap-2 px-2 py-1.5 border border-dashed rounded-md w-full text-left transition-colors",
-                  isCreating
-                    ? "border-primary/35 bg-primary/8"
-                    : "border-muted-foreground/30 hover:bg-accent/55",
-                )}
-              >
-                <Plus className="size-4 text-muted-foreground shrink-0" />
-                <span className="font-medium text-sm truncate">
-                  Nouveau projet
-                </span>
-              </button>
+            <button
+              type="button"
+              onClick={handleSelectDashboard}
+              className={cn(
+                "flex items-center gap-2 mb-1 px-2 py-1.5 border rounded-md w-full text-left transition-colors shrink-0",
+                isDashboard && !isCreating
+                  ? "border-primary/35 bg-primary/8"
+                  : "border-transparent hover:bg-accent/55",
+              )}
+            >
+              <LayoutDashboard className="size-4 text-primary shrink-0" />
+              <span className="font-medium text-sm truncate">Dashboard</span>
+            </button>
+            <div className="flex-1 space-y-1 pr-1 h-66 overflow-y-auto">
               {projects.map((project) => (
                 <button
                   key={project.id}
@@ -344,7 +344,9 @@ export function ProjectSelector({
                   onClick={() => handleSelectProject(project.id)}
                   className={cn(
                     "flex items-start gap-2 px-2 py-1.5 border rounded-md w-full text-left transition-colors",
-                    !isCreating && activeProjectId === project.id
+                    !isDashboard &&
+                      !isCreating &&
+                      activeProjectId === project.id
                       ? "border-primary/25 bg-primary/8"
                       : "border-transparent hover:bg-accent/55",
                   )}
@@ -371,9 +373,29 @@ export function ProjectSelector({
                 </p>
               ) : null}
             </div>
+            <button
+              type="button"
+              onClick={handleStartCreate}
+              className={cn(
+                "flex items-center gap-2 mt-1 px-2 py-1.5 border border-dashed rounded-md w-full text-left transition-colors shrink-0",
+                isCreating
+                  ? "border-primary/35 bg-primary/8"
+                  : "border-muted-foreground/30 hover:bg-accent/55",
+              )}
+            >
+              <Plus className="size-4 text-muted-foreground shrink-0" />
+              <span className="font-medium text-sm truncate">
+                Nouveau projet
+              </span>
+            </button>
           </div>
 
-          <div className="space-y-3 pt-3 sm:pt-0 sm:pl-3 border-t sm:border-t-0 sm:border-l min-w-0">
+          <div
+            className={cn(
+              "space-y-3 pt-3 sm:pt-0 sm:pl-3 border-t sm:border-t-0 sm:border-l min-w-0",
+              showProjectDetails ? "visible" : "invisible",
+            )}
+          >
             <div className="text-muted-foreground atelier-section-title">
               {isCreating ? "Nouveau projet" : "Détails"}
             </div>

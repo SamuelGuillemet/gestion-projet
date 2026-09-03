@@ -3,14 +3,12 @@ import {
   Clock,
   FileText,
   KanbanSquare,
-  LayoutDashboard,
   List,
   Settings,
   Target,
 } from "lucide-react";
 import { useEffect } from "react";
 import { matchPath, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   flushPendingIdbStorageWrites,
@@ -116,7 +114,8 @@ export function AppLayout() {
   return (
     <div className="flex md:flex-row flex-col bg-background h-screen overflow-hidden text-foreground atelier-shell">
       <div className="flex flex-col flex-1 min-w-0">
-        <header className="z-10 items-center gap-2 grid grid-cols-[1fr_0.5fr_1fr] bg-card px-4 py-1 border-border/70 border-b h-12 shrink-0">
+        <header className="z-10 items-center gap-2 grid grid-cols-[18rem_1fr_minmax(12rem,0.5fr)_auto] bg-card px-4 py-1 border-border/70 border-b h-12 shrink-0">
+          <ProjectSelector />
           <nav className="flex gap-1 pb-2 md:pb-0 md:overflow-visible overflow-x-auto">
             {tabs.map(
               ({ value, label, icon: Icon, to, active, prefetcher }) => (
@@ -155,21 +154,7 @@ export function AppLayout() {
             <div className="flex items-center gap-1 bg-muted/55 p-0.5 rounded-md">
               <ThemeToggle />
               <HelpDialog />
-              {projectId ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate("/dashboard/overview")}
-                  title="Vue Dashboard"
-                >
-                  <LayoutDashboard className="size-4" />
-                  <span className="hidden 2xl:inline">Dashboard</span>
-                </Button>
-              ) : (
-                <ProjectSelector variant="switch" />
-              )}
             </div>
-            {projectId && <ProjectSelector />}
           </div>
         </header>
 
