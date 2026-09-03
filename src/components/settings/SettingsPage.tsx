@@ -1,7 +1,14 @@
-import { Archive, ArrowRightLeft, Import, Tags } from "lucide-react";
+import {
+  Archive,
+  ArrowRightLeft,
+  Import,
+  MessageSquare,
+  Tags,
+} from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BackupsPanel } from "./BackupsPanel";
+import { ChatRoomPanel } from "./ChatRoomPanel";
 import { ImportExportPanel } from "./ImportExportPanel";
 import { TagsPanel } from "./TagsPanel";
 import { TaskMigrationPanel } from "./TaskMigrationPanel";
@@ -34,6 +41,10 @@ export function SettingsPage() {
             <ArrowRightLeft className="size-4" />
             Migration
           </TabsTrigger>
+          <TabsTrigger value="p2p">
+            <MessageSquare className="size-4" />
+            Chat P2P (test)
+          </TabsTrigger>
         </TabsList>
         <Separator orientation="vertical" className="h-full" />
         <div className="flex-1 min-w-0 h-full overflow-y-auto no-scrollbar">
@@ -48,6 +59,9 @@ export function SettingsPage() {
           </TabsContent>
           <TabsContent value="migration">
             <TaskMigrationPanel />
+          </TabsContent>
+          <TabsContent value="p2p">
+            <ChatRoomPanel />
           </TabsContent>
         </div>
       </Tabs>
