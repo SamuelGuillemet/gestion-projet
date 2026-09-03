@@ -50,7 +50,6 @@ export function useSubtasks(parentTaskId: string) {
     useShallow((s) =>
       s.tasks
         .filter((task) => task.parentTaskId === parentTaskId)
-        .sort((a, b) => a.order - b.order),
     ),
   );
 }
