@@ -1,6 +1,7 @@
 import { LayoutDashboard } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { matchPath, useLocation, useNavigate } from "react-router-dom";
+import { matchPath, useLocation } from "react-router-dom";
+import { useProjectNavigation } from "@/hooks/useProjectNavigation";
 import { useProjects } from "@/hooks/useProjects";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/models/project";
@@ -32,9 +33,9 @@ function getCurrentIndex(items: SwitcherItem[], pathname: string): number {
 }
 
 export function AppSwitcher() {
-  const { projects, setActiveProject } = useProjects();
-  const navigate = useNavigate();
+  const { projects } = useProjects();
   const location = useLocation();
+  const { switchProject, switchToDashboard } = useProjectNavigation();
 
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState<SwitcherItem[]>([]);
@@ -67,10 +68,9 @@ export function AppSwitcher() {
       const item = itemsRef.current[selectedIndexRef.current];
       if (!item) return;
       if (item.type === "project") {
-        setActiveProject(item.id);
-        navigate(`/project/${item.id}/board`);
+        switchProject(item.id);
       } else {
-        navigate("/dashboard/overview");
+        switchToDashboard();
       }
     };
 
@@ -125,7 +125,7 @@ export function AppSwitcher() {
       window.removeEventListener("keyup", handleKeyUp);
       window.removeEventListener("blur", handleBlur);
     };
-  }, [navigate, setActiveProject]);
+  }, [switchProject, switchToDashboard]);
 
   return (
     <dialog
@@ -136,26 +136,37 @@ export function AppSwitcher() {
     >
       <ul className="space-y-1 p-1 max-h-[70vh] overflow-y-auto">
         {items.map((item, index) => (
-          <li
-            key={item.type === "dashboard" ? "dashboard" : item.id}
-            className={cn(
-              "flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors",
-              index === selectedIndex
-                ? "bg-primary/15 text-foreground ring-1 ring-primary/40"
-                : "text-muted-foreground",
-            )}
-          >
-            {item.type === "dashboard" ? (
-              <LayoutDashboard className="size-4 shrink-0" />
-            ) : (
-              <span
-                className="rounded-full size-2.5 shrink-0"
-                style={{ backgroundColor: item.color }}
-              />
-            )}
-            <span className="truncate">
-              {item.type === "dashboard" ? "Dashboard" : item.name}
-            </span>
+          <li key={item.type === "dashboard" ? "dashboard" : item.id}>
+            <button
+              type="button"
+              onClick={() => {
+                openRef.current = false;
+                setOpen(false);
+                if (item.type === "project") {
+                  switchProject(item.id);
+                } else {
+                  switchToDashboard();
+                }
+              }}
+              className={cn(
+                "flex items-center gap-2 px-3 py-2 rounded-md w-full text-sm text-left transition-colors",
+                index === selectedIndex
+                  ? "bg-primary/15 text-foreground ring-1 ring-primary/40"
+                  : "text-muted-foreground hover:bg-accent/55",
+              )}
+            >
+              {item.type === "dashboard" ? (
+                <LayoutDashboard className="size-4 shrink-0" />
+              ) : (
+                <span
+                  className="rounded-full size-2.5 shrink-0"
+                  style={{ backgroundColor: item.color }}
+                />
+              )}
+              <span className="truncate">
+                {item.type === "dashboard" ? "Dashboard" : item.name}
+              </span>
+            </button>
           </li>
         ))}
       </ul>

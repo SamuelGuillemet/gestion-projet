@@ -6,8 +6,7 @@ import {
   Hourglass,
 } from "lucide-react";
 import type { ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
-import { useProjects } from "@/hooks/useProjects";
+import { useProjectNavigation } from "@/hooks/useProjectNavigation";
 import { formatMinutes } from "@/lib/time";
 import { cn } from "@/lib/utils";
 import { EmptyState, SectionTitle } from "./FocusPrimitives";
@@ -37,12 +36,10 @@ export function ProjectsOverview({
 }
 
 function ProjectOverviewCard({ summary }: { summary: ProjectSummary }) {
-  const navigate = useNavigate();
-  const { setActiveProject } = useProjects();
+  const { switchProject } = useProjectNavigation();
 
   const openProject = () => {
-    setActiveProject(summary.project.id);
-    navigate(`/project/${summary.project.id}/board`);
+    switchProject(summary.project.id, false);
   };
 
   return (

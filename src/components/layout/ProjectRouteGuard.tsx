@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate, Outlet, useParams } from "react-router-dom";
+import { useBacklogUI } from "@/components/backlog/backlog-state";
 import { useProjectStore } from "@/store";
 
 // IndexedDB rehydration is async, so `projects` starts empty on refresh; wait for it
@@ -24,13 +25,24 @@ export function ProjectRouteGuard() {
   const projectExists = useProjectStore((s) =>
     s.projects.some((p) => p.id === projectId),
   );
+  const activeProjectId = useProjectStore((s) => s.activeProjectId);
   const setActiveProject = useProjectStore((s) => s.setActiveProject);
+  const clearBacklogSelection = useBacklogUI((s) => s.clear);
 
   useEffect(() => {
     if (projectId && projectExists) {
+      if (activeProjectId !== projectId) {
+        clearBacklogSelection();
+      }
       setActiveProject(projectId);
     }
-  }, [projectId, projectExists, setActiveProject]);
+  }, [
+    activeProjectId,
+    clearBacklogSelection,
+    projectId,
+    projectExists,
+    setActiveProject,
+  ]);
 
   if (!hydrated) {
     return (

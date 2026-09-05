@@ -6,7 +6,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
@@ -17,18 +17,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
+import { useProjectNavigation } from "@/hooks/useProjectNavigation";
 import { useProjects } from "@/hooks/useProjects";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/models/project";
-import { useBacklogUI } from "../backlog/backlog-state";
-
-const PROJECT_TAB_SEGMENTS = new Set(["board", "backlog", "notes", "time"]);
-
-function getCurrentProjectTab(pathname: string) {
-  const segments = pathname.split("/");
-  const tab = segments[3];
-  return tab && PROJECT_TAB_SEGMENTS.has(tab) ? tab : "board";
-}
 
 const DEFAULT_PROJECT_COLOR = "#6366f1";
 
@@ -172,11 +164,10 @@ export function ProjectSelector() {
     updateProject,
     deleteProject,
   } = useProjects();
-  const navigate = useNavigate();
   const location = useLocation();
+  const { switchProject, switchToDashboard } = useProjectNavigation();
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
-  const { clear } = useBacklogUI();
 
   const [draft, setDraft] = useState<ProjectDraft | null>(null);
   const isDashboard = location.pathname.startsWith("/dashboard");
@@ -190,11 +181,6 @@ export function ProjectSelector() {
     setDraft({ ...currentDraft, ...data });
   };
 
-  const goToProject = (id: string) => {
-    const tab = getCurrentProjectTab(location.pathname);
-    navigate(`/project/${id}/${tab}`);
-  };
-
   const handleDeleteActiveProject = () => {
     if (!activeProject) return;
 
@@ -202,8 +188,7 @@ export function ProjectSelector() {
     setActiveProject(null);
     setDraft(createProjectDraft());
     setIsCreating(true);
-    clear();
-    navigate("/dashboard/overview");
+    switchToDashboard();
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -222,17 +207,14 @@ export function ProjectSelector() {
   const handleSelectProject = (id: string) => {
     setIsCreating(false);
     setDraft(null);
-    setActiveProject(id);
     if (activeProjectId === id && !isDashboard) return;
-    clear();
-    goToProject(id);
+    switchProject(id);
   };
 
   const handleSelectDashboard = () => {
     setIsCreating(false);
     setDraft(null);
-    clear();
-    navigate("/dashboard/overview");
+    switchToDashboard();
   };
 
   const handleCreate = () => {
@@ -243,10 +225,9 @@ export function ProjectSelector() {
       currentDraft.color,
       currentDraft.description.trim() || undefined,
     );
-    setActiveProject(id);
     setIsCreating(false);
     setDraft(null);
-    navigate(`/project/${id}/board`);
+    switchProject(id, false);
   };
 
   const handleSave = () => {
