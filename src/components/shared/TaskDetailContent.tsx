@@ -7,7 +7,6 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Textarea } from "@/components/ui/textarea";
 import { BOARD_COLUMNS } from "@/constants/board-columns";
 import { PRIORITY_OPTIONS, SIZE_OPTIONS } from "@/constants/task-options";
 import { useEntityNavigation } from "@/hooks/useEntityReferenceNavigation";
@@ -24,8 +23,8 @@ import { cn, generateId } from "@/lib/utils";
 import type { CheckItem } from "@/models/shared";
 import type { Task } from "@/models/task";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group";
-import { HighlightLinks } from "./HighlightLinks";
 import { RelationManager } from "./RelationManager";
+import { TaskDescriptionEditor } from "./task-description/TaskDescriptionEditor";
 
 interface TaskDetailContentProps {
   task: Task;
@@ -96,16 +95,10 @@ export function TaskDetailContent({ task, onUpdate, onDelete }: TaskDetailConten
 
         <div>
           <Label className="text-xs text-muted-foreground">Description</Label>
-          <Textarea
+          <TaskDescriptionEditor
             value={task.description}
-            onChange={(e) => onUpdate({ description: e.target.value })}
-            className="mt-1 field-sizing-content min-h-24"
-            placeholder="Ajouter une description..."
-          />
-          <HighlightLinks
-            text={task.description}
             projectId={task.projectId}
-            className="mt-1 text-xs leading-relaxed whitespace-pre-wrap text-muted-foreground"
+            onChange={(description) => onUpdate({ description })}
           />
         </div>
 

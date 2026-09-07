@@ -20,6 +20,7 @@
     "@dnd-kit/react": "^0.5.0",
     "@fontsource-variable/fraunces": "^5.3.0",
     "@fontsource-variable/outfit": "^5.3.0",
+    "@mdxeditor/editor": "^4.2.3",
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.3.3",
     "class-variance-authority": "^0.7.1",

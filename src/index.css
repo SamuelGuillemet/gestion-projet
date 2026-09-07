@@ -9,6 +9,7 @@
 @import "remark-github-alerts/styles/github-colors-dark-class.css";
 @import "remark-github-alerts/styles/github-base.css";
 @import "highlight.js/styles/atom-one-light.css";
+@import "@mdxeditor/editor/style.css";
 
 @plugin "@tailwindcss/typography";
 
@@ -269,4 +270,64 @@ body > div[id^="dmarkdown-mermaid-"] {
   top: 0;
   z-index: -1;
   visibility: hidden;
+}
+
+.task-description-editor [class*="_rootContentEditableWrapper_"] {
+  min-height: 6rem;
+}
+
+.task-description-editor [class*="_toolbarRoot_"] {
+  gap: 0.125rem;
+  padding: 0.25rem;
+  color: var(--foreground);
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-bottom: 0;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.task-description-editor .mdxeditor {
+  color: var(--foreground);
+  background: var(--background);
+  border-radius: var(--radius-md);
+}
+
+.task-description-editor .task-description-content {
+  min-height: 6rem;
+  padding: 0.5rem 0.75rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.625;
+  color: var(--foreground);
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+.task-description-editor .task-description-content p {
+  margin-block: 0.25rem;
+}
+
+.task-description-editor .task-description-content ul {
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+
+.task-description-editor .task-description-content ol {
+  padding-left: 1.25rem;
+  list-style: decimal;
+}
+
+.task-description-editor [data-entity-reference],
+.task-description-editor a[href^="entity:"] {
+  display: inline-flex;
+  padding-inline: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  background: color-mix(in srgb, var(--primary), transparent 90%);
+  border-radius: var(--radius-sm);
 }

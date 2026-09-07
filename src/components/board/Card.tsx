@@ -16,6 +16,17 @@ interface CardProps {
   isDragging?: boolean;
 }
 
+function markdownToPlainText(markdown: string) {
+  return markdown
+    .replace(/!\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/^\s*(?:[-+*]|\d+\.)\s+/gm, "")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/\*\*|__|~~|`/g, "")
+    .replace(/(^|[^*])\*([^*]|$)/g, "$1$2")
+    .replace(/(^|[^_])_([^_]|$)/g, "$1$2");
+}
+
 export function Card({ taskId, isDragging }: CardProps) {
   const task = useTask(taskId);
   const { tags } = useTags();
@@ -66,7 +77,7 @@ export function Card({ taskId, isDragging }: CardProps) {
               </span>
               {task.description && (
                 <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
-                  {task.description}
+                  {markdownToPlainText(task.description)}
                 </p>
               )}
               <TaskFocusBadges task={task} compact />
