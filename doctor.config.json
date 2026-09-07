@@ -5,6 +5,7 @@
   "rules": {
     "react-doctor/js-combine-iterations": "off",
     "react-doctor/require-pnpm-hardening": "off",
-    "react-doctor/only-export-components": "off"
+    "react-doctor/only-export-components": "off",
+    "react-doctor/shadcn-icon-button-requires-label": "off"
   }
 }

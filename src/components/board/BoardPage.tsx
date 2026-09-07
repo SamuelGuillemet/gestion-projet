@@ -19,11 +19,19 @@ import { Column } from "./Column";
 
 export function BoardPage() {
   const { activeProjectId } = useProjects();
-  const allTaskColumns = useTaskColumnRecord(activeProjectId);
   const { tags } = useTags();
   const { addTask, moveTask } = useTaskActions();
   const [newTaskTitle, setNewTaskTitle] = useState("");
+
   const { filters, updateFilters, clearFilters } = useTaskFilters(activeProjectId ?? "", tags);
+  const filtersActive = countActiveFilters(filters) > 0;
+
+  const allTaskColumns = useTaskColumnRecord(activeProjectId);
+  const visibleTaskIds = new Set(useFilteredTaskIds(Object.values(allTaskColumns).flat(), filters));
+  const taskColumns = getEmptyRecordOfColumns();
+  for (const [columnId, taskIds] of Object.entries(allTaskColumns)) {
+    taskColumns[columnId] = taskIds.filter((taskId) => visibleTaskIds.has(taskId));
+  }
 
   if (!activeProjectId) {
     return (
@@ -35,13 +43,6 @@ export function BoardPage() {
       </div>
     );
   }
-
-  const visibleTaskIds = new Set(useFilteredTaskIds(Object.values(allTaskColumns).flat(), filters));
-  const taskColumns = getEmptyRecordOfColumns();
-  for (const [columnId, taskIds] of Object.entries(allTaskColumns)) {
-    taskColumns[columnId] = taskIds.filter((taskId) => visibleTaskIds.has(taskId));
-  }
-  const filtersActive = countActiveFilters(filters) > 0;
 
   const handleAddTask = () => {
     if (!newTaskTitle.trim()) return;

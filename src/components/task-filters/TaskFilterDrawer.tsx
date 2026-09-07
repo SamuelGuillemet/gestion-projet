@@ -18,8 +18,10 @@ import type { Tag } from "@/models/tag";
 import type { DueDateStatus, TaskCompletionStatus, TaskFilters } from "./task-filters";
 import { countActiveFilters } from "./task-filters";
 
-function toggleValue<T>(values: T[], value: T) {
-  return values.includes(value) ? values.filter((item) => item !== value) : [...values, value];
+function toggleValue<T>(values: Set<T>, value: T) {
+  return values.has(value)
+    ? new Set([...values].filter((item) => item !== value))
+    : new Set([...values, value]);
 }
 
 function FilterOption<T extends string>({
@@ -101,7 +103,7 @@ export function TaskFilterDrawer({
             {tags.map((tag) => (
               <FilterOption
                 key={tag.id}
-                checked={filters.tagIds.includes(tag.id)}
+                checked={filters.tagIds.has(tag.id)}
                 label={tag.name}
                 value={tag.id}
                 color={tag.color}
@@ -115,7 +117,7 @@ export function TaskFilterDrawer({
             {PRIORITY_OPTIONS.map((option) => (
               <FilterOption
                 key={option.value}
-                checked={filters.priorities.includes(option.value)}
+                checked={filters.priorities.has(option.value)}
                 label={option.label}
                 value={option.value}
                 onCheckedChange={(value) =>
@@ -130,7 +132,7 @@ export function TaskFilterDrawer({
             {SIZE_OPTIONS.map((option) => (
               <FilterOption
                 key={option.value}
-                checked={filters.sizes.includes(option.value)}
+                checked={filters.sizes.has(option.value)}
                 label={option.label}
                 value={option.value}
                 onCheckedChange={(value) =>
@@ -143,7 +145,7 @@ export function TaskFilterDrawer({
             {DUE_DATE_OPTIONS.map((option) => (
               <FilterOption
                 key={option.value}
-                checked={filters.dueDateStatuses.includes(option.value)}
+                checked={filters.dueDateStatuses.has(option.value)}
                 label={option.label}
                 value={option.value}
                 onCheckedChange={(value) =>
@@ -158,7 +160,7 @@ export function TaskFilterDrawer({
             {COMPLETION_OPTIONS.map((option) => (
               <FilterOption
                 key={option.value}
-                checked={filters.completionStatuses.includes(option.value)}
+                checked={filters.completionStatuses.has(option.value)}
                 label={option.label}
                 value={option.value}
                 onCheckedChange={(value) =>
@@ -195,11 +197,11 @@ export function TaskFilterBar({
   const activeFilterCount = countActiveFilters(filters);
   const summary = [
     filters.query.trim() && "Recherche",
-    filters.tagIds.length > 0 && `${filters.tagIds.length} etiquette(s)`,
-    filters.priorities.length > 0 && "Priorite",
-    filters.sizes.length > 0 && "Taille",
-    filters.dueDateStatuses.length > 0 && "Echeance",
-    filters.completionStatuses.length > 0 && "Etat",
+    filters.tagIds.size > 0 && `${filters.tagIds.size} etiquette(s)`,
+    filters.priorities.size > 0 && "Priorite",
+    filters.sizes.size > 0 && "Taille",
+    filters.dueDateStatuses.size > 0 && "Echeance",
+    filters.completionStatuses.size > 0 && "Etat",
   ].filter(Boolean);
 
   return (
