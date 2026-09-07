@@ -48,9 +48,7 @@ export async function run(): Promise<boolean> {
   }
 }
 
-export function transform(
-  legacy: Record<string, unknown>,
-): Record<string, unknown> {
+export function transform(legacy: Record<string, unknown>): Record<string, unknown> {
   const notesStore = legacy["gp-notes"] as GPNotesStore["state"];
 
   return {

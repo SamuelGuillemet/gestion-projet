@@ -42,15 +42,9 @@ type Props = {
   className?: string;
 };
 
-const TABLE_TEMPLATE =
-  "| Colonne 1 | Colonne 2 |\n| --- | --- |\n| Valeur 1 | Valeur 2 |";
+const TABLE_TEMPLATE = "| Colonne 1 | Colonne 2 |\n| --- | --- |\n| Valeur 1 | Valeur 2 |";
 
-export function MarkdownToolbar({
-  textareaRef,
-  value,
-  onChange,
-  className,
-}: Props) {
+export function MarkdownToolbar({ textareaRef, value, onChange, className }: Props) {
   const withTextarea = (action: (textarea: HTMLTextAreaElement) => void) => {
     const textarea = textareaRef.current;
     if (!textarea) return;
@@ -79,8 +73,7 @@ export function MarkdownToolbar({
     {
       label: "Code",
       icon: Code,
-      perform: (t: HTMLTextAreaElement) =>
-        toggleWrap(t, value, "`", "`", "code", onChange),
+      perform: (t: HTMLTextAreaElement) => toggleWrap(t, value, "`", "`", "code", onChange),
     },
   ];
 
@@ -88,26 +81,22 @@ export function MarkdownToolbar({
     {
       label: "Liste à puces",
       icon: List,
-      perform: (t: HTMLTextAreaElement) =>
-        togglePrefix(t, value, "- ", onChange),
+      perform: (t: HTMLTextAreaElement) => togglePrefix(t, value, "- ", onChange),
     },
     {
       label: "Liste numérotée",
       icon: ListOrdered,
-      perform: (t: HTMLTextAreaElement) =>
-        toggleOrderedList(t, value, onChange),
+      perform: (t: HTMLTextAreaElement) => toggleOrderedList(t, value, onChange),
     },
     {
       label: "Liste de tâches",
       icon: ListChecks,
-      perform: (t: HTMLTextAreaElement) =>
-        togglePrefix(t, value, "- [ ] ", onChange),
+      perform: (t: HTMLTextAreaElement) => togglePrefix(t, value, "- [ ] ", onChange),
     },
     {
       label: "Citation",
       icon: Quote,
-      perform: (t: HTMLTextAreaElement) =>
-        togglePrefix(t, value, "> ", onChange),
+      perform: (t: HTMLTextAreaElement) => togglePrefix(t, value, "> ", onChange),
     },
   ];
 
@@ -125,14 +114,12 @@ export function MarkdownToolbar({
     {
       label: "Tableau",
       icon: TableIcon,
-      perform: (t: HTMLTextAreaElement) =>
-        insertBlock(t, value, TABLE_TEMPLATE, onChange),
+      perform: (t: HTMLTextAreaElement) => insertBlock(t, value, TABLE_TEMPLATE, onChange),
     },
     {
       label: "Ligne horizontale",
       icon: Minus,
-      perform: (t: HTMLTextAreaElement) =>
-        insertBlock(t, value, "---", onChange),
+      perform: (t: HTMLTextAreaElement) => insertBlock(t, value, "---", onChange),
     },
   ];
 
@@ -147,22 +134,14 @@ export function MarkdownToolbar({
     <div
       role="toolbar"
       aria-label="Mise en forme Markdown"
-      className={cn(
-        "flex flex-wrap items-center gap-0.5 bg-card p-1 border rounded-md",
-        className,
-      )}
+      className={cn("flex flex-wrap items-center gap-0.5 rounded-md border bg-card p-1", className)}
     >
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
-            <Button
-              variant="ghost"
-              size="sm"
-              title="Titre"
-              className="gap-0.5 px-1.5 h-8"
-            >
-              <Heading2 className="w-4 h-4" />
-              <ChevronDown className="opacity-60 w-3 h-3" />
+            <Button variant="ghost" size="sm" title="Titre" className="h-8 gap-0.5 px-1.5">
+              <Heading2 className="h-4 w-4" />
+              <ChevronDown className="h-3 w-3 opacity-60" />
             </Button>
           }
         />
@@ -170,18 +149,16 @@ export function MarkdownToolbar({
           {headingLevels.map(({ level, icon: Icon, label }) => (
             <DropdownMenuItem
               key={level}
-              onClick={() =>
-                withTextarea((t) => toggleHeading(t, value, level, onChange))
-              }
+              onClick={() => withTextarea((t) => toggleHeading(t, value, level, onChange))}
             >
-              <Icon className="mr-2 w-4 h-4" />
+              <Icon className="mr-2 h-4 w-4" />
               {label}
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <div className="mx-1 bg-border w-px h-5" aria-hidden="true" />
+      <div className="mx-1 h-5 w-px bg-border" aria-hidden="true" />
 
       {actions.map(({ label, icon: Icon, perform }) => (
         <Button
@@ -190,13 +167,13 @@ export function MarkdownToolbar({
           variant="ghost"
           title={label}
           onClick={() => withTextarea(perform)}
-          className="w-8 h-8"
+          className="h-8 w-8"
         >
-          <Icon className="w-4 h-4" />
+          <Icon className="h-4 w-4" />
         </Button>
       ))}
 
-      <div className="mx-1 bg-border w-px h-5" aria-hidden="true" />
+      <div className="mx-1 h-5 w-px bg-border" aria-hidden="true" />
 
       {listActions.map(({ label, icon: Icon, perform }) => (
         <Button
@@ -205,13 +182,13 @@ export function MarkdownToolbar({
           variant="ghost"
           title={label}
           onClick={() => withTextarea(perform)}
-          className="w-8 h-8"
+          className="h-8 w-8"
         >
-          <Icon className="w-4 h-4" />
+          <Icon className="h-4 w-4" />
         </Button>
       ))}
 
-      <div className="mx-1 bg-border w-px h-5" aria-hidden="true" />
+      <div className="mx-1 h-5 w-px bg-border" aria-hidden="true" />
 
       {insertActions.map(({ label, icon: Icon, perform }) => (
         <Button
@@ -220,9 +197,9 @@ export function MarkdownToolbar({
           variant="ghost"
           title={label}
           onClick={() => withTextarea(perform)}
-          className="w-8 h-8"
+          className="h-8 w-8"
         >
-          <Icon className="w-4 h-4" />
+          <Icon className="h-4 w-4" />
         </Button>
       ))}
     </div>

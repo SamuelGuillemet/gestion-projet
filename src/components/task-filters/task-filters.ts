@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTasks } from "@/hooks/useTasks";
 import { toIsoDateInput } from "@/lib/time";
 import type { Tag } from "@/models/tag";
@@ -32,9 +32,7 @@ function storageKey(projectId: string) {
 }
 
 function isStringArray(value: unknown): value is string[] {
-  return (
-    Array.isArray(value) && value.every((item) => typeof item === "string")
-  );
+  return Array.isArray(value) && value.every((item) => typeof item === "string");
 }
 
 function parseFilters(value: string | null, tagIds: Set<string>): TaskFilters {
@@ -48,9 +46,7 @@ function parseFilters(value: string | null, tagIds: Set<string>): TaskFilters {
 
     return {
       query: typeof data.query === "string" ? data.query : "",
-      tagIds: isStringArray(data.tagIds)
-        ? data.tagIds.filter((id) => tagIds.has(id))
-        : [],
+      tagIds: isStringArray(data.tagIds) ? data.tagIds.filter((id) => tagIds.has(id)) : [],
       priorities: isStringArray(data.priorities)
         ? data.priorities.filter(
             (value): value is TaskPriority =>
@@ -66,19 +62,23 @@ function parseFilters(value: string | null, tagIds: Set<string>): TaskFilters {
       dueDateStatuses: isStringArray(data.dueDateStatuses)
         ? data.dueDateStatuses.filter(
             (value): value is DueDateStatus =>
-              value === "overdue" ||
-              value === "today" ||
-              value === "upcoming" ||
-              value === "none",
+              value === "overdue" || value === "today" || value === "upcoming" || value === "none",
           )
         : [],
       completionStatuses: isStringArray(data.completionStatuses)
         ? data.completionStatuses.filter(
-            (value): value is TaskCompletionStatus =>
-              value === "open" || value === "completed",
+            (value): value is TaskCompletionStatus => value === "open" || value === "completed",
           )
         : [],
     };
+  } catch {
+    return DEFAULT_FILTERS;
+  }
+}
+
+function loadFilters(projectId: string, tagIds: Set<string>) {
+  try {
+    return parseFilters(localStorage.getItem(storageKey(projectId)), tagIds);
   } catch {
     return DEFAULT_FILTERS;
   }
@@ -114,26 +114,17 @@ function dueDateStatus(task: Task, today: string): DueDateStatus {
   return "upcoming";
 }
 
-export function filterTasks(
-  tasks: Task[],
-  filters: TaskFilters,
-  today: string,
-) {
+export function filterTasks(tasks: Task[], filters: TaskFilters, today: string) {
   const query = filters.query.trim().toLocaleLowerCase();
 
   return tasks.filter((task) => {
     if (
       query &&
-      !`${task.title} ${task.description} #${task.number}`
-        .toLocaleLowerCase()
-        .includes(query)
+      !`${task.title} ${task.description} #${task.number}`.toLocaleLowerCase().includes(query)
     ) {
       return false;
     }
-    if (
-      filters.tagIds.length > 0 &&
-      !task.tags.some((tagId) => filters.tagIds.includes(tagId))
-    ) {
+    if (filters.tagIds.length > 0 && !task.tags.some((tagId) => filters.tagIds.includes(tagId))) {
       return false;
     }
     if (
@@ -142,10 +133,7 @@ export function filterTasks(
     ) {
       return false;
     }
-    if (
-      filters.sizes.length > 0 &&
-      (!task.size || !filters.sizes.includes(task.size))
-    ) {
+    if (filters.sizes.length > 0 && (!task.size || !filters.sizes.includes(task.size))) {
       return false;
     }
     if (
@@ -164,9 +152,7 @@ export function filterTasks(
 export function useFilteredTaskIds(taskIds: string[], filters: TaskFilters) {
   const tasks = useTasks();
   const visibleTaskIds = new Set(
-    filterTasks(tasks, filters, toIsoDateInput(new Date())).map(
-      (task) => task.id,
-    ),
+    filterTasks(tasks, filters, toIsoDateInput(new Date())).map((task) => task.id),
   );
 
   return taskIds.filter((taskId) => visibleTaskIds.has(taskId));
@@ -174,34 +160,27 @@ export function useFilteredTaskIds(taskIds: string[], filters: TaskFilters) {
 
 export function useTaskFilters(projectId: string, tags: Tag[]) {
   const tagIds = new Set(tags.map((tag) => tag.id));
-  const [filters, setFilters] = useState<TaskFilters>(() => {
-    try {
-      return parseFilters(localStorage.getItem(storageKey(projectId)), tagIds);
-    } catch {
-      return DEFAULT_FILTERS;
-    }
-  });
+  const [storedFilters, setStoredFilters] = useState(() => ({
+    projectId,
+    value: loadFilters(projectId, tagIds),
+  }));
 
-  useEffect(() => {
-    try {
-      setFilters(
-        parseFilters(localStorage.getItem(storageKey(projectId)), tagIds),
-      );
-    } catch {
-      setFilters(DEFAULT_FILTERS);
-    }
-  }, [projectId, tags]);
+  const filters =
+    storedFilters.projectId === projectId
+      ? parseFilters(
+          JSON.stringify({ version: FILTER_SCHEMA_VERSION, ...storedFilters.value }),
+          tagIds,
+        )
+      : loadFilters(projectId, tagIds);
 
   const updateFilters = (update: Partial<TaskFilters>) => {
-    setFilters((current) => {
-      const next = { ...current, ...update };
-      saveFilters(projectId, next);
-      return next;
-    });
+    const next = { ...filters, ...update };
+    setStoredFilters({ projectId, value: next });
+    saveFilters(projectId, next);
   };
 
   const clearFilters = () => {
-    setFilters(DEFAULT_FILTERS);
+    setStoredFilters({ projectId, value: DEFAULT_FILTERS });
     saveFilters(projectId, DEFAULT_FILTERS);
   };
 

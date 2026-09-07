@@ -158,17 +158,8 @@
     background:
       linear-gradient(rgba(24, 32, 33, 0.045) 1px, transparent 1px),
       linear-gradient(90deg, rgba(24, 33, 33, 0.045) 1px, transparent 1px),
-      radial-gradient(
-        circle at 20% 12%,
-        rgb(23 105 170 / 0.08),
-        transparent 28rem
-      ),
-      radial-gradient(
-        circle at 92% 18%,
-        rgba(115, 125, 79, 0.09),
-        transparent 24rem
-      ),
-      var(--paper);
+      radial-gradient(circle at 20% 12%, rgb(23 105 170 / 0.08), transparent 28rem),
+      radial-gradient(circle at 92% 18%, rgba(115, 125, 79, 0.09), transparent 24rem), var(--paper);
     background-size:
       34px 34px,
       34px 34px,
@@ -189,9 +180,7 @@
   }
 
   .atelier-shell {
-    background:
-      linear-gradient(90deg, rgba(24, 32, 33, 0.04), transparent 19rem),
-      transparent;
+    background: linear-gradient(90deg, rgba(24, 32, 33, 0.04), transparent 19rem), transparent;
   }
 
   .atelier-card {
@@ -261,10 +250,8 @@ input[type="color"]::-webkit-color-swatch-wrapper {
   box-decoration-break: clone;
 }
 
-.prose
-  :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)):before,
-.prose
-  :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)):after {
+.prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)):before,
+.prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)):after {
   content: none;
 }
 

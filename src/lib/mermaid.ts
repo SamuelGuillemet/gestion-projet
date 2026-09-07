@@ -18,9 +18,6 @@ async function ensureMermaidInitialized() {
 
 export async function renderMermaid(definition: string) {
   const mermaid = await ensureMermaidInitialized();
-  const { svg } = await mermaid.render(
-    `markdown-mermaid-${crypto.randomUUID()}`,
-    definition,
-  );
+  const { svg } = await mermaid.render(`markdown-mermaid-${crypto.randomUUID()}`, definition);
   return svg;
 }

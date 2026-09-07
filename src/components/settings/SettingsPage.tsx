@@ -8,16 +8,9 @@ import { TaskMigrationPanel } from "./TaskMigrationPanel";
 
 export function SettingsPage() {
   return (
-    <div className="bg-card p-4 border border-border rounded-lg h-full overflow-y-auto no-scrollbar">
-      <Tabs
-        defaultValue="tags"
-        orientation="vertical"
-        className="items-start gap-6 h-full"
-      >
-        <TabsList
-          variant="line"
-          className="items-stretch gap-1 w-48 h-fit shrink-0"
-        >
+    <div className="no-scrollbar h-full overflow-y-auto rounded-lg border border-border bg-card p-4">
+      <Tabs defaultValue="tags" orientation="vertical" className="h-full items-start gap-6">
+        <TabsList variant="line" className="h-fit w-48 shrink-0 items-stretch gap-1">
           <TabsTrigger value="tags">
             <Tags className="size-4" />
             Tags
@@ -36,7 +29,7 @@ export function SettingsPage() {
           </TabsTrigger>
         </TabsList>
         <Separator orientation="vertical" className="h-full" />
-        <div className="flex-1 min-w-0 h-full overflow-y-auto no-scrollbar">
+        <div className="no-scrollbar h-full min-w-0 flex-1 overflow-y-auto">
           <TabsContent value="tags">
             <TagsPanel />
           </TabsContent>

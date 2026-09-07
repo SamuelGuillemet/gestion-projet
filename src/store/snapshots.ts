@@ -54,9 +54,7 @@ function parseSnapshotRecord(value: unknown): SnapshotRecord | null {
   };
 }
 
-export async function createSnapshot(options: {
-  label: string;
-}): Promise<SnapshotMetadata> {
+export async function createSnapshot(options: { label: string }): Promise<SnapshotMetadata> {
   const data = await exportData();
   return persistSnapshot(data, options.label);
 }
@@ -84,10 +82,7 @@ function setLastAutoBackupState(atMs: number, key: string) {
   globalThis.localStorage.setItem(AUTO_BACKUP_LAST_KEY, key);
 }
 
-async function persistSnapshot(
-  data: ExportPayload,
-  label: string,
-): Promise<SnapshotMetadata> {
+async function persistSnapshot(data: ExportPayload, label: string): Promise<SnapshotMetadata> {
   const createdAt = new Date().toISOString();
   const id = crypto.randomUUID().toLowerCase();
 
@@ -107,10 +102,7 @@ export async function createAutoSnapshotIfNeeded(): Promise<AutoSnapshotResult> 
   const nowMs = Date.now();
   const lastAutoBackupAt = getLastAutoBackupAt();
 
-  if (
-    typeof lastAutoBackupAt === "number" &&
-    nowMs - lastAutoBackupAt < AUTO_BACKUP_INTERVAL_MS
-  ) {
+  if (typeof lastAutoBackupAt === "number" && nowMs - lastAutoBackupAt < AUTO_BACKUP_INTERVAL_MS) {
     console.log("[auto-backup] Interval not reached, skipping");
     return { created: false, reason: "interval-not-reached" };
   }

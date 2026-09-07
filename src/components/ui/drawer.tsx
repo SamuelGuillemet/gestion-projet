@@ -1,6 +1,5 @@
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
 import * as React from "react";
-
 import { cn } from "@/lib/utils";
 
 type DrawerContextProps = {
@@ -62,10 +61,7 @@ function DrawerClose({ ...props }: DrawerPrimitive.Close.Props) {
   return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />;
 }
 
-function DrawerOverlay({
-  className,
-  ...props
-}: DrawerPrimitive.Backdrop.Props) {
+function DrawerOverlay({ className, ...props }: DrawerPrimitive.Backdrop.Props) {
   return (
     <DrawerPrimitive.Backdrop
       data-slot="drawer-overlay"
@@ -78,10 +74,7 @@ function DrawerOverlay({
   );
 }
 
-function DrawerSwipeHandle({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function DrawerSwipeHandle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="drawer-swipe-handle"
@@ -95,20 +88,13 @@ function DrawerSwipeHandle({
   );
 }
 
-function DrawerContent({
-  className,
-  children,
-  ...props
-}: DrawerPrimitive.Popup.Props) {
+function DrawerContent({ className, children, ...props }: DrawerPrimitive.Popup.Props) {
   const { hasSnapPoints, modal, showSwipeHandle, swipeDirection } = useDrawer();
-  const swipeAxis =
-    swipeDirection === "down" || swipeDirection === "up" ? "y" : "x";
+  const swipeAxis = swipeDirection === "down" || swipeDirection === "up" ? "y" : "x";
 
   return (
     <DrawerPortal data-slot="drawer-portal">
-      {modal === true && (
-        <DrawerOverlay data-snap-points={hasSnapPoints ? "" : undefined} />
-      )}
+      {modal === true && <DrawerOverlay data-snap-points={hasSnapPoints ? "" : undefined} />}
       <DrawerPrimitive.Viewport
         data-slot="drawer-viewport"
         data-modal={modal}
@@ -189,19 +175,13 @@ function DrawerTitle({ className, ...props }: DrawerPrimitive.Title.Props) {
   return (
     <DrawerPrimitive.Title
       data-slot="drawer-title"
-      className={cn(
-        "font-heading text-base font-medium text-foreground",
-        className,
-      )}
+      className={cn("font-heading text-base font-medium text-foreground", className)}
       {...props}
     />
   );
 }
 
-function DrawerDescription({
-  className,
-  ...props
-}: DrawerPrimitive.Description.Props) {
+function DrawerDescription({ className, ...props }: DrawerPrimitive.Description.Props) {
   return (
     <DrawerPrimitive.Description
       data-slot="drawer-description"

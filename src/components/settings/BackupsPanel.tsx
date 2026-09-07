@@ -30,6 +30,8 @@ export function BackupsPanel() {
 
   useEffect(() => {
     // react-doctor-disable-next-line react-hooks-js/set-state-in-effect -- initial fetch from IndexedDB, setState runs post-await
+    // Initial synchronization with the external IndexedDB snapshot store.
+    // oxlint-disable-next-line react/set-state-in-effect
     refreshSnapshots();
   }, []);
 
@@ -68,15 +70,14 @@ export function BackupsPanel() {
   const recommendedSnapshot = snapshots[0] ?? null;
 
   return (
-    <div className="space-y-3 mt-2">
-      <p className="text-muted-foreground text-sm">
-        Créez un snapshot, puis appliquez un backup pour revenir à un état
-        précédent.
+    <div className="mt-2 space-y-3">
+      <p className="text-sm text-muted-foreground">
+        Créez un snapshot, puis appliquez un backup pour revenir à un état précédent.
       </p>
 
       <div className="flex flex-wrap items-center gap-2">
         <Button variant="outline" size="sm" onClick={handleSnapshot}>
-          <Archive className="w-4 h-4" />
+          <Archive className="h-4 w-4" />
           Créer un snapshot
         </Button>
         <Button variant="ghost" size="sm" onClick={() => refreshSnapshots()}>
@@ -85,9 +86,9 @@ export function BackupsPanel() {
       </div>
 
       {recommendedSnapshot ? (
-        <div className="bg-accent/45 p-3 border rounded-md">
-          <p className="font-medium text-sm">Backup recommandé</p>
-          <p className="mt-1 text-muted-foreground text-xs">
+        <div className="rounded-md border bg-accent/45 p-3">
+          <p className="text-sm font-medium">Backup recommandé</p>
+          <p className="mt-1 text-xs text-muted-foreground">
             Le plus récent: {formatSnapshotDate(recommendedSnapshot.createdAt)}
             {recommendedSnapshot.label ? ` (${recommendedSnapshot.label})` : ""}
           </p>
@@ -96,7 +97,7 @@ export function BackupsPanel() {
               triggerClassName="inline-flex"
               trigger={
                 <Button variant="outline" size="sm">
-                  <RotateCcw className="w-4 h-4" />
+                  <RotateCcw className="h-4 w-4" />
                   Appliquer ce backup
                 </Button>
               }
@@ -112,18 +113,16 @@ export function BackupsPanel() {
       ) : null}
 
       <div className="space-y-2">
-        <p className="font-medium text-sm">Historique des snapshots</p>
+        <p className="text-sm font-medium">Historique des snapshots</p>
         <div className="space-y-2">
           {snapshots?.map((snapshot) => (
             <div
               key={snapshot.id}
-              className="flex sm:flex-row flex-col sm:items-center gap-2 bg-card/65 p-2 border rounded-md"
+              className="flex flex-col gap-2 rounded-md border bg-card/65 p-2 sm:flex-row sm:items-center"
             >
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-xs">
-                  {formatSnapshotDate(snapshot.createdAt)}
-                </p>
-                <p className="text-muted-foreground text-xs truncate">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-medium">{formatSnapshotDate(snapshot.createdAt)}</p>
+                <p className="truncate text-xs text-muted-foreground">
                   {snapshot.label ?? "sans libellé"}
                 </p>
               </div>
@@ -131,7 +130,7 @@ export function BackupsPanel() {
                 triggerClassName="inline-flex"
                 trigger={
                   <Button variant="outline" size="sm">
-                    <RotateCcw className="w-4 h-4" />
+                    <RotateCcw className="h-4 w-4" />
                     Appliquer
                   </Button>
                 }
@@ -146,7 +145,7 @@ export function BackupsPanel() {
                 triggerClassName="inline-flex"
                 trigger={
                   <Button variant="destructive" size="sm">
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="h-4 w-4" />
                     Supprimer
                   </Button>
                 }

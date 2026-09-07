@@ -34,24 +34,22 @@ export function TimeEntryForm({ projectId }: TimeEntryFormProps) {
   };
 
   return (
-    <div className="p-4 rounded-md atelier-card">
-      <h3 className="mb-3 text-foreground atelier-section-title">
-        Saisir du temps
-      </h3>
+    <div className="atelier-card rounded-md p-4">
+      <h3 className="atelier-section-title mb-3 text-foreground">Saisir du temps</h3>
       <div className="flex flex-wrap items-end gap-3">
         <div className="flex-1">
-          <Label className="block mb-1 text-xs">Tâche</Label>
+          <Label className="mb-1 block text-xs">Tâche</Label>
           <DropdownMenu>
             <DropdownMenuTrigger
               render={
                 <Button
                   variant="outline"
-                  className="justify-between bg-background/80 w-full font-normal"
+                  className="w-full justify-between bg-background/80 font-normal"
                 >
                   <span className="truncate">
                     {selectedTask?.title ?? "Sélectionner une tâche"}
                   </span>
-                  <ChevronDown className="opacity-50 w-4 h-4 shrink-0" />
+                  <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               }
             />
@@ -61,22 +59,16 @@ export function TimeEntryForm({ projectId }: TimeEntryFormProps) {
                   <span className="truncate">{t.title}</span>
                 </DropdownMenuItem>
               ))}
-              {tasks.length === 0 && (
-                <DropdownMenuItem disabled>Aucune tâche</DropdownMenuItem>
-              )}
+              {tasks.length === 0 && <DropdownMenuItem disabled>Aucune tâche</DropdownMenuItem>}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
         <div>
-          <Label className="block mb-1 text-xs">Date</Label>
-          <Input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
+          <Label className="mb-1 block text-xs">Date</Label>
+          <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
         </div>
         <div className="w-24">
-          <Label className="block mb-1 text-xs">Minutes</Label>
+          <Label className="mb-1 block text-xs">Minutes</Label>
           <Input
             type="number"
             min={0}

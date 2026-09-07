@@ -83,9 +83,7 @@ export async function run(): Promise<boolean> {
   }
 }
 
-export function transform(
-  legacy: Record<string, unknown>,
-): Record<string, unknown> {
+export function transform(legacy: Record<string, unknown>): Record<string, unknown> {
   return {
     "gp-projects": {
       projects: legacy.projects ?? [],

@@ -4,20 +4,11 @@ import type { Relation, RelationType } from "@/models/relation";
 
 export interface RelationSlice {
   relations: Relation[];
-  addRelation: (
-    sourceId: string,
-    targetId: string,
-    type: RelationType,
-  ) => string;
+  addRelation: (sourceId: string, targetId: string, type: RelationType) => string;
   deleteRelation: (id: string) => void;
 }
 
-export const createRelationSlice: StateCreator<
-  RelationSlice,
-  [],
-  [],
-  RelationSlice
-> = (set) => ({
+export const createRelationSlice: StateCreator<RelationSlice, [], [], RelationSlice> = (set) => ({
   relations: [],
 
   addRelation: (sourceId, targetId, type) => {

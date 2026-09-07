@@ -20,9 +20,7 @@ export function useProjectNavigation() {
     (projectId: string, preserveCurrentTab = true) => {
       setActiveProject(projectId);
       clearBacklogSelection();
-      const tab = preserveCurrentTab
-        ? getCurrentProjectTab(location.pathname)
-        : "board";
+      const tab = preserveCurrentTab ? getCurrentProjectTab(location.pathname) : "board";
       navigate(`/project/${projectId}/${tab}`);
     },
     [clearBacklogSelection, location.pathname, navigate, setActiveProject],

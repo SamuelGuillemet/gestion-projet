@@ -4,9 +4,7 @@ import { deleteQuestionCascade } from "@/store/cascade-delete";
 
 export function useQuestionIds(projectId: string | null) {
   return useQuestionStore(
-    useShallow((s) =>
-      s.questions.filter((q) => q.projectId === projectId).map((q) => q.id),
-    ),
+    useShallow((s) => s.questions.filter((q) => q.projectId === projectId).map((q) => q.id)),
   );
 }
 

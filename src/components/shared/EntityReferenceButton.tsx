@@ -24,17 +24,14 @@ export function EntityReferenceButton({
 }: EntityReferenceButtonProps) {
   const label = reference?.label ?? referenceLabel ?? "";
   const openReference = useEntityReferenceNavigation(projectId);
-  const resolvedReference = useResolvedEntityReference(
-    reference ?? label,
-    projectId,
-  );
+  const resolvedReference = useResolvedEntityReference(reference ?? label, projectId);
 
   if (!resolvedReference) {
     return (
       <span
         {...props}
         className={cn(
-          "inline-flex items-center gap-1.5 max-w-full text-muted-foreground",
+          "inline-flex max-w-full items-center gap-1.5 text-muted-foreground",
           className,
         )}
       >
@@ -50,7 +47,7 @@ export function EntityReferenceButton({
       {...props}
       type="button"
       className={cn(
-        "inline-flex items-center gap-1.5 hover:opacity-80 max-w-full text-primary underline underline-offset-2",
+        "inline-flex max-w-full items-center gap-1.5 text-primary underline underline-offset-2 hover:opacity-80",
         className,
       )}
       data-entity-reference={resolvedReference.reference.label}
@@ -61,9 +58,7 @@ export function EntityReferenceButton({
       <span>
         {resolvedReference.title}
         {" ("}
-        <span className="font-data text-[0.9em] shrink-0">
-          {resolvedReference.reference.label}
-        </span>
+        <span className="font-data shrink-0 text-[0.9em]">{resolvedReference.reference.label}</span>
         {")"}
       </span>
     </button>

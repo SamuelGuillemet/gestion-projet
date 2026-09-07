@@ -5,10 +5,7 @@ import remarkGithubAlerts from "remark-github-alerts";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
-import {
-  resolveImageSourceAsDataUrl,
-  svgStringToPngDataUrl,
-} from "@/lib/blob-utils";
+import { resolveImageSourceAsDataUrl, svgStringToPngDataUrl } from "@/lib/blob-utils";
 import { renderMermaid } from "@/lib/mermaid";
 import { rehypeEntityReferences } from "./plugins/rehype-entity-references";
 import { rehypeIdbImages } from "./plugins/rehype-idb-images";
@@ -41,9 +38,7 @@ function rehypeCustomAssets() {
     }
 
     try {
-      const pngDataUrl = await svgStringToPngDataUrl(
-        await renderMermaid(definition.trim()),
-      );
+      const pngDataUrl = await svgStringToPngDataUrl(await renderMermaid(definition.trim()));
       node.tagName = "img";
       node.properties = {
         src: pngDataUrl,
@@ -84,10 +79,7 @@ function rehypeCustomAssets() {
     }
 
     const className = node.properties?.class;
-    if (
-      typeof className !== "string" ||
-      !className.includes("markdown-alert")
-    ) {
+    if (typeof className !== "string" || !className.includes("markdown-alert")) {
       return;
     }
 
@@ -99,8 +91,7 @@ function rehypeCustomAssets() {
       child.properties?.class === "markdown-alert-title";
     const title = node.children?.find(titleNodeFinder)?.children?.[1]?.value;
 
-    const rest =
-      node.children?.filter((child) => !titleNodeFinder(child)) ?? [];
+    const rest = node.children?.filter((child) => !titleNodeFinder(child)) ?? [];
 
     const newChildren = [];
     if (title && typeof title === "string") {

@@ -15,8 +15,7 @@ function removeRelationsByEntityIds(entityIds: Set<string>) {
 
   useRelationStore.setState((state) => ({
     relations: state.relations.filter(
-      (relation) =>
-        !entityIds.has(relation.sourceId) && !entityIds.has(relation.targetId),
+      (relation) => !entityIds.has(relation.sourceId) && !entityIds.has(relation.targetId),
     ),
   }));
 }
@@ -25,9 +24,7 @@ export function deleteTaskCascade(taskId: string) {
   const taskIds = new Set(
     useTaskStore
       .getState()
-      .tasks.filter(
-        (task) => task.id === taskId || task.parentTaskId === taskId,
-      )
+      .tasks.filter((task) => task.id === taskId || task.parentTaskId === taskId)
       .map((task) => task.id),
   );
 
@@ -36,29 +33,20 @@ export function deleteTaskCascade(taskId: string) {
   }));
 
   useTimeStore.setState((state) => ({
-    timeEntries: state.timeEntries.filter(
-      (entry) => !taskIds.has(entry.taskId),
-    ),
+    timeEntries: state.timeEntries.filter((entry) => !taskIds.has(entry.taskId)),
   }));
 
   removeRelationsByEntityIds(taskIds);
 }
 
-export function moveTasksToProjectCascade(
-  taskIds: string[],
-  targetProjectId: string,
-) {
-  const movedIds = useTaskStore
-    .getState()
-    .moveTasksToProject(taskIds, targetProjectId);
+export function moveTasksToProjectCascade(taskIds: string[], targetProjectId: string) {
+  const movedIds = useTaskStore.getState().moveTasksToProject(taskIds, targetProjectId);
   if (movedIds.length === 0) return;
 
   const movedIdSet = new Set(movedIds);
   useTimeStore.setState((state) => ({
     timeEntries: state.timeEntries.map((entry) =>
-      movedIdSet.has(entry.taskId)
-        ? { ...entry, projectId: targetProjectId }
-        : entry,
+      movedIdSet.has(entry.taskId) ? { ...entry, projectId: targetProjectId } : entry,
     ),
   }));
 }
@@ -91,9 +79,7 @@ export function deleteTagCascade(tagId: string) {
 export function deleteNoteCascade(noteId: string) {
   useNoteStore.getState().deleteNote(noteId);
 
-  const remainingContents = useNoteStore
-    .getState()
-    .notes.map((note) => note.content);
+  const remainingContents = useNoteStore.getState().notes.map((note) => note.content);
   void cleanupMarkdownImages(remainingContents);
 }
 
@@ -124,11 +110,7 @@ export function deleteProjectCascade(projectId: string) {
       .map((note) => note.id),
   );
 
-  const relatedEntityIds = new Set<string>([
-    ...taskIds,
-    ...questionIds,
-    ...deliverableIds,
-  ]);
+  const relatedEntityIds = new Set<string>([...taskIds, ...questionIds, ...deliverableIds]);
 
   useProjectStore.getState().deleteProject(projectId);
 
@@ -137,15 +119,11 @@ export function deleteProjectCascade(projectId: string) {
   }));
 
   useQuestionStore.setState((state) => ({
-    questions: state.questions.filter(
-      (question) => question.projectId !== projectId,
-    ),
+    questions: state.questions.filter((question) => question.projectId !== projectId),
   }));
 
   useDeliverableStore.setState((state) => ({
-    deliverables: state.deliverables.filter(
-      (deliverable) => deliverable.projectId !== projectId,
-    ),
+    deliverables: state.deliverables.filter((deliverable) => deliverable.projectId !== projectId),
   }));
 
   useNoteStore.setState((state) => ({
@@ -153,20 +131,14 @@ export function deleteProjectCascade(projectId: string) {
   }));
 
   useTimeStore.setState((state) => ({
-    timeEntries: state.timeEntries.filter(
-      (entry) => entry.projectId !== projectId,
-    ),
-    milestones: state.milestones.filter(
-      (milestone) => milestone.projectId !== projectId,
-    ),
+    timeEntries: state.timeEntries.filter((entry) => entry.projectId !== projectId),
+    milestones: state.milestones.filter((milestone) => milestone.projectId !== projectId),
   }));
 
   removeRelationsByEntityIds(relatedEntityIds);
 
   if (noteIds.size > 0) {
-    const remainingContents = useNoteStore
-      .getState()
-      .notes.map((note) => note.content);
+    const remainingContents = useNoteStore.getState().notes.map((note) => note.content);
     void cleanupMarkdownImages(remainingContents);
   }
 }

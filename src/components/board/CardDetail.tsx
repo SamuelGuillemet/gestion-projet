@@ -1,10 +1,5 @@
 import { TaskDetailContent } from "@/components/shared/TaskDetailContent";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useTask, useTaskActions } from "@/hooks/useTasks";
 
 interface CardDetailProps {
@@ -21,7 +16,7 @@ export function CardDetail({ taskId, open, onOpenChange }: CardDetailProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full sm:max-w-5xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] w-full overflow-y-auto sm:max-w-5xl">
         <DialogHeader>
           <DialogTitle>Détail de la tâche</DialogTitle>
         </DialogHeader>

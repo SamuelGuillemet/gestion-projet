@@ -1,18 +1,13 @@
 import { CalendarClock, Clipboard, Hourglass } from "lucide-react";
 import { QuestionDetailContent } from "@/components/shared/QuestionDetailContent";
 import { TaskDetailContent } from "@/components/shared/TaskDetailContent";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useQuestionActions, useQuestions } from "@/hooks/useQuestions";
 import { useTaskActions, useTasks } from "@/hooks/useTasks";
-import { FocusHeader } from "./FocusHeader";
-import { FocusOverviewColumn } from "./FocusOverviewColumn";
 import { useFocusDashboardData } from "./focus-data";
 import { useFocusProjectVisibility, useFocusSelection } from "./focus-state";
+import { FocusHeader } from "./FocusHeader";
+import { FocusOverviewColumn } from "./FocusOverviewColumn";
 import { ImportantInformation } from "./ImportantInformation";
 import { ProjectsOverview } from "./ProjectsOverview";
 
@@ -21,16 +16,12 @@ export function OverviewPage() {
   const questions = useQuestions();
   const { updateTask, deleteTask } = useTaskActions();
   const { updateQuestion, deleteQuestion } = useQuestionActions();
-  const { selectedDetail, selectTask, selectQuestion, clearSelection } =
-    useFocusSelection();
-  const { hiddenProjectIds, setProjectVisible, showAllProjects } =
-    useFocusProjectVisibility();
+  const { selectedDetail, selectTask, selectQuestion, clearSelection } = useFocusSelection();
+  const { hiddenProjectIds, setProjectVisible, showAllProjects } = useFocusProjectVisibility();
   const focusData = useFocusDashboardData(hiddenProjectIds);
 
   const selectedTask =
-    selectedDetail?.type === "task"
-      ? tasks.find((task) => task.id === selectedDetail.id)
-      : null;
+    selectedDetail?.type === "task" ? tasks.find((task) => task.id === selectedDetail.id) : null;
   const selectedQuestion =
     selectedDetail?.type === "question"
       ? questions.find((question) => question.id === selectedDetail.id)
@@ -38,8 +29,8 @@ export function OverviewPage() {
   const dialogOpen = Boolean(selectedTask || selectedQuestion);
 
   return (
-    <div className="h-full overflow-y-auto no-scrollbar">
-      <div className="flex flex-col gap-4 pb-6 min-h-full">
+    <div className="no-scrollbar h-full overflow-y-auto">
+      <div className="flex min-h-full flex-col gap-4 pb-6">
         <FocusHeader
           dateLabel={focusData.dateLabel}
           projectCount={focusData.projectSummaries.length}
@@ -55,7 +46,7 @@ export function OverviewPage() {
 
         <ProjectsOverview summaries={focusData.projectSummaries} />
 
-        <div className="gap-4 grid grid-cols-3" id="focus-overview">
+        <div className="grid grid-cols-3 gap-4" id="focus-overview">
           <FocusOverviewColumn
             icon={<Clipboard className="size-4" />}
             label="À démarrer"
@@ -95,10 +86,7 @@ export function OverviewPage() {
           />
         </div>
 
-        <ImportantInformation
-          staleTasks={focusData.staleTasks}
-          onOpenTask={selectTask}
-        />
+        <ImportantInformation staleTasks={focusData.staleTasks} onOpenTask={selectTask} />
       </div>
 
       <Dialog
@@ -107,7 +95,7 @@ export function OverviewPage() {
           if (!open) clearSelection();
         }}
       >
-        <DialogContent className="w-full sm:max-w-5xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-h-[90vh] w-full overflow-y-auto sm:max-w-5xl">
           <DialogHeader>
             <DialogTitle>
               {selectedTask ? "Détail de la tâche" : "Détail de la question"}

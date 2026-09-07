@@ -1,7 +1,4 @@
-import {
-  type EntityReference,
-  getEntityReferenceTypeLabel,
-} from "@/lib/entity-references";
+import { type EntityReference, getEntityReferenceTypeLabel } from "@/lib/entity-references";
 import { RELATION_STYLES } from "@/lib/relations";
 import { cn } from "@/lib/utils";
 import { RELATION_LABELS, type RelationType } from "@/models/relation";
@@ -22,7 +19,7 @@ export function RelationBadge({ type, reference, title }: RelationBadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 px-1.5 py-0.5 border rounded font-medium text-[10px]",
+        "inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-medium",
         style.className,
       )}
       title={tooltip}

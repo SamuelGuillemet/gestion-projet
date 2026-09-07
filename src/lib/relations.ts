@@ -1,10 +1,4 @@
-import {
-  ArrowRightLeft,
-  Ban,
-  Copy,
-  type LucideIcon,
-  ShieldAlert,
-} from "lucide-react";
+import { ArrowRightLeft, Ban, Copy, type LucideIcon, ShieldAlert } from "lucide-react";
 import type { RelationType } from "@/models/relation";
 
 export const RELATION_STYLES: Record<

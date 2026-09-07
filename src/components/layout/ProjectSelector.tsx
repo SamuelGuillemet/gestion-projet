@@ -1,21 +1,11 @@
-import {
-  Check,
-  ChevronDown,
-  LayoutDashboard,
-  Plus,
-  Trash2,
-} from "lucide-react";
+import { Check, ChevronDown, LayoutDashboard, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { useProjectNavigation } from "@/hooks/useProjectNavigation";
 import { useProjects } from "@/hooks/useProjects";
@@ -40,10 +30,7 @@ const createProjectDraft = (): ProjectDraft => ({
   description: "",
 });
 
-const getBaseProjectDraft = (
-  isCreating: boolean,
-  activeProject: Project | null,
-): ProjectDraft => {
+const getBaseProjectDraft = (isCreating: boolean, activeProject: Project | null): ProjectDraft => {
   if (isCreating || !activeProject) {
     return createProjectDraft();
   }
@@ -77,7 +64,7 @@ function ProjectDetailsForm({
 }: ProjectDetailsFormProps) {
   if (!activeProject && !isCreating) {
     return (
-      <p className="py-6 text-muted-foreground text-sm text-center">
+      <p className="py-6 text-center text-sm text-muted-foreground">
         Sélectionnez ou créez un projet.
       </p>
     );
@@ -123,14 +110,12 @@ function ProjectDetailsForm({
           aria-label="Project color"
           value={currentDraft.color}
           onChange={(event) => updateDraft({ color: event.target.value })}
-          className={cn(
-            "block bg-background mt-2 border rounded-full size-7 cursor-pointer",
-          )}
+          className={cn("mt-2 block size-7 cursor-pointer rounded-full border bg-background")}
         />
       </div>
       <Button
         size="sm"
-        className="gap-1.5 w-full"
+        className="w-full gap-1.5"
         disabled={!currentDraft.name.trim() || (!isCreating && !hasChanges)}
         onClick={onSubmit}
       >
@@ -141,7 +126,7 @@ function ProjectDetailsForm({
         <ConfirmDialog
           trigger={
             <Button variant="destructive" size="sm" className="w-full">
-              <Trash2 className="mr-1 w-3 h-3" />
+              <Trash2 className="mr-1 h-3 w-3" />
               Supprimer le projet
             </Button>
           }
@@ -174,8 +159,7 @@ export function ProjectSelector() {
   const showProjectDetails = !isDashboard || isCreating;
 
   const baseDraft = getBaseProjectDraft(isCreating, activeProject);
-  const currentDraft =
-    draft?.projectId === baseDraft.projectId ? draft : baseDraft;
+  const currentDraft = draft?.projectId === baseDraft.projectId ? draft : baseDraft;
 
   const updateDraft = (data: ProjectDraftUpdate) => {
     setDraft({ ...currentDraft, ...data });
@@ -263,85 +247,72 @@ export function ProjectSelector() {
           render={
             <Button
               variant="ghost"
-              className="flex justify-start items-center gap-2 px-2 w-72 min-w-0 h-9"
+              className="flex h-9 w-72 min-w-0 items-center justify-start gap-2 px-2"
             >
               {isDashboard ? (
-                <LayoutDashboard className="size-4 text-primary shrink-0" />
+                <LayoutDashboard className="size-4 shrink-0 text-primary" />
               ) : (
                 <span
-                  className="rounded-full ring-2 ring-background size-2.5 shrink-0"
+                  className="size-2.5 shrink-0 rounded-full ring-2 ring-background"
                   style={{
-                    backgroundColor:
-                      activeProject?.color ?? "var(--rule-strong)",
+                    backgroundColor: activeProject?.color ?? "var(--rule-strong)",
                   }}
                 />
               )}
-              <span className="font-heading font-semibold text-lg text-left truncate leading-none tracking-normal grow">
-                {isDashboard
-                  ? "Dashboard"
-                  : (activeProject?.name ?? "Aucun projet")}
+              <span className="grow truncate text-left font-heading text-lg leading-none font-semibold tracking-normal">
+                {isDashboard ? "Dashboard" : (activeProject?.name ?? "Aucun projet")}
               </span>
-              <ChevronDown className="opacity-55 size-4 shrink-0" />
+              <ChevronDown className="size-4 shrink-0 opacity-55" />
             </Button>
           }
         />
         {!isDashboard && activeProject?.description && !open ? (
-          <div className="top-full left-0 z-40 absolute opacity-0 group-hover/project:opacity-100 mt-1 w-72 transition-opacity pointer-events-none">
-            <div className="bg-popover shadow-md p-2 border rounded-md text-popover-foreground text-xs leading-relaxed">
+          <div className="pointer-events-none absolute top-full left-0 z-40 mt-1 w-72 opacity-0 transition-opacity group-hover/project:opacity-100">
+            <div className="rounded-md border bg-popover p-2 text-xs leading-relaxed text-popover-foreground shadow-md">
               {activeProject.description}
             </div>
           </div>
         ) : null}
       </div>
 
-      <PopoverContent
-        align="start"
-        side="bottom"
-        className="p-3 w-180 max-w-[calc(100vw-2rem)]"
-      >
-        <div className="gap-3 grid grid-cols-[minmax(0,15rem)_minmax(0,1fr)]">
+      <PopoverContent align="start" side="bottom" className="w-180 max-w-[calc(100vw-2rem)] p-3">
+        <div className="grid grid-cols-[minmax(0,15rem)_minmax(0,1fr)] gap-3">
           <div className="min-w-0">
-            <div className="mb-2 text-muted-foreground atelier-section-title">
-              Projets
-            </div>
+            <div className="atelier-section-title mb-2 text-muted-foreground">Projets</div>
             <button
               type="button"
               onClick={handleSelectDashboard}
               className={cn(
-                "flex items-center gap-2 mb-1 px-2 py-1.5 border rounded-md w-full text-left transition-colors shrink-0",
+                "mb-1 flex w-full shrink-0 items-center gap-2 rounded-md border px-2 py-1.5 text-left transition-colors",
                 isDashboard && !isCreating
                   ? "border-primary/35 bg-primary/8"
                   : "border-transparent hover:bg-accent/55",
               )}
             >
-              <LayoutDashboard className="size-4 text-primary shrink-0" />
-              <span className="font-medium text-sm truncate">Dashboard</span>
+              <LayoutDashboard className="size-4 shrink-0 text-primary" />
+              <span className="truncate text-sm font-medium">Dashboard</span>
             </button>
-            <div className="flex-1 space-y-1 pr-1 h-66 overflow-y-auto">
+            <div className="h-66 flex-1 space-y-1 overflow-y-auto pr-1">
               {projects.map((project) => (
                 <button
                   key={project.id}
                   type="button"
                   onClick={() => handleSelectProject(project.id)}
                   className={cn(
-                    "flex items-start gap-2 px-2 py-1.5 border rounded-md w-full text-left transition-colors",
-                    !isDashboard &&
-                      !isCreating &&
-                      activeProjectId === project.id
+                    "flex w-full items-start gap-2 rounded-md border px-2 py-1.5 text-left transition-colors",
+                    !isDashboard && !isCreating && activeProjectId === project.id
                       ? "border-primary/25 bg-primary/8"
                       : "border-transparent hover:bg-accent/55",
                   )}
                 >
                   <span
-                    className="mt-1 rounded-full size-2.5 shrink-0"
+                    className="mt-1 size-2.5 shrink-0 rounded-full"
                     style={{ backgroundColor: project.color }}
                   />
-                  <span className="flex-1 min-w-0">
-                    <span className="block font-medium text-sm truncate">
-                      {project.name}
-                    </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-medium">{project.name}</span>
                     {project.description ? (
-                      <span className="block text-muted-foreground text-xs truncate">
+                      <span className="block truncate text-xs text-muted-foreground">
                         {project.description}
                       </span>
                     ) : null}
@@ -349,35 +320,31 @@ export function ProjectSelector() {
                 </button>
               ))}
               {projects.length === 0 ? (
-                <p className="py-3 text-muted-foreground text-xs text-center">
-                  Aucun projet.
-                </p>
+                <p className="py-3 text-center text-xs text-muted-foreground">Aucun projet.</p>
               ) : null}
             </div>
             <button
               type="button"
               onClick={handleStartCreate}
               className={cn(
-                "flex items-center gap-2 mt-1 px-2 py-1.5 border border-dashed rounded-md w-full text-left transition-colors shrink-0",
+                "mt-1 flex w-full shrink-0 items-center gap-2 rounded-md border border-dashed px-2 py-1.5 text-left transition-colors",
                 isCreating
                   ? "border-primary/35 bg-primary/8"
                   : "border-muted-foreground/30 hover:bg-accent/55",
               )}
             >
-              <Plus className="size-4 text-muted-foreground shrink-0" />
-              <span className="font-medium text-sm truncate">
-                Nouveau projet
-              </span>
+              <Plus className="size-4 shrink-0 text-muted-foreground" />
+              <span className="truncate text-sm font-medium">Nouveau projet</span>
             </button>
           </div>
 
           <div
             className={cn(
-              "space-y-3 pt-3 sm:pt-0 sm:pl-3 border-t sm:border-t-0 sm:border-l min-w-0",
+              "min-w-0 space-y-3 border-t pt-3 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-3",
               showProjectDetails ? "visible" : "invisible",
             )}
           >
-            <div className="text-muted-foreground atelier-section-title">
+            <div className="atelier-section-title text-muted-foreground">
               {isCreating ? "Nouveau projet" : "Détails"}
             </div>
             <ProjectDetailsForm

@@ -1,26 +1,13 @@
 import { get, set } from "idb-keyval";
-import {
-  IDB_STORES_NAMES,
-  type IdbStoresName,
-  STORE_VERSION,
-} from "./constants";
+import { IDB_STORES_NAMES, type IdbStoresName, STORE_VERSION } from "./constants";
 import {
   type ExportedMarkdownImageAsset,
   exportMarkdownImageAssets,
   importMarkdownImageAssets,
 } from "./markdown-image.store";
-import {
-  transform as v1Transform,
-  version as v1Version,
-} from "./migrations/001_v1_to_v2";
-import {
-  transform as v2Transform,
-  version as v2Version,
-} from "./migrations/002_v2_to_v3";
-import {
-  transform as v3Transform,
-  version as v3Version,
-} from "./migrations/003_v3_to_v4";
+import { transform as v1Transform, version as v1Version } from "./migrations/001_v1_to_v2";
+import { transform as v2Transform, version as v2Version } from "./migrations/002_v2_to_v3";
+import { transform as v3Transform, version as v3Version } from "./migrations/003_v3_to_v4";
 
 export interface ExportPayload {
   version: number;
@@ -45,8 +32,7 @@ function parseImportedMarkdownImageAssets(data: Record<string, unknown>) {
   const assetsRaw = data.assets;
   if (!assetsRaw || typeof assetsRaw !== "object") return [];
 
-  const markdownImagesRaw =
-    (assetsRaw as { markdownImages?: unknown }).markdownImages ?? [];
+  const markdownImagesRaw = (assetsRaw as { markdownImages?: unknown }).markdownImages ?? [];
   if (!Array.isArray(markdownImagesRaw)) return [];
 
   return markdownImagesRaw.flatMap((asset): ExportedMarkdownImageAsset[] => {
@@ -54,11 +40,7 @@ function parseImportedMarkdownImageAssets(data: Record<string, unknown>) {
 
     const { id, mimeType, base64 } = asset;
 
-    if (
-      typeof id !== "string" ||
-      typeof mimeType !== "string" ||
-      typeof base64 !== "string"
-    ) {
+    if (typeof id !== "string" || typeof mimeType !== "string" || typeof base64 !== "string") {
       return [];
     }
 
@@ -69,9 +51,7 @@ function parseImportedMarkdownImageAssets(data: Record<string, unknown>) {
 export async function exportData(): Promise<ExportPayload> {
   const [entries, markdownImageAssets] = await Promise.all([
     Promise.all(
-      IDB_STORES_NAMES.map(
-        async (storeName) => [storeName, (await get(storeName)).state] as const,
-      ),
+      IDB_STORES_NAMES.map(async (storeName) => [storeName, (await get(storeName)).state] as const),
     ),
     exportMarkdownImageAssets(),
   ]);
@@ -99,9 +79,7 @@ export async function importData(data: Record<string, unknown>) {
     throw new Error("Invalid data: missing or invalid state");
   }
 
-  const migrationsToApply = TRANSFORMATIONS.toSorted(
-    (a, b) => a.version - b.version,
-  ).filter(
+  const migrationsToApply = TRANSFORMATIONS.toSorted((a, b) => a.version - b.version).filter(
     ({ version }) => version > importedVersion && version <= STORE_VERSION,
   );
 

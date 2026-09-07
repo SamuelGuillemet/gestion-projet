@@ -14,13 +14,7 @@ type Props = {
   onDelete: () => void;
 };
 
-export function NoteFileItem({
-  noteId,
-  active,
-  onSelect,
-  onRename,
-  onDelete,
-}: Props) {
+export function NoteFileItem({ noteId, active, onSelect, onRename, onDelete }: Props) {
   const note = useNote(noteId);
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState(note?.title ?? "");
@@ -36,17 +30,16 @@ export function NoteFileItem({
   return (
     <div
       className={cn(
-        "group flex items-center gap-2 px-2 py-2 border border-l-2 rounded-md transition-colors",
+        "group flex items-center gap-2 rounded-md border border-l-2 px-2 py-2 transition-colors",
         {
-          "border-primary/25 border-l-(--entity-task) bg-primary/8 text-primary":
-            active,
+          "border-primary/25 border-l-(--entity-task) bg-primary/8 text-primary": active,
           "border-transparent hover:bg-accent/50": !active,
         },
       )}
     >
       {editing ? (
-        <div className="flex flex-1 items-center gap-2 min-w-0">
-          <FileText className="opacity-70 w-3.5 h-3.5 shrink-0" />
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <FileText className="h-3.5 w-3.5 shrink-0 opacity-70" />
           <Input
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}
@@ -55,14 +48,14 @@ export function NoteFileItem({
               if (e.key === "Enter") handleSubmit();
               if (e.key === "Escape") setEditing(false);
             }}
-            className="px-1 py-0 h-6 text-xs"
+            className="h-6 px-1 py-0 text-xs"
             autoFocus
           />
         </div>
       ) : (
         <button
           type="button"
-          className="flex flex-1 items-center gap-2 min-w-0 text-left cursor-pointer"
+          className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 text-left"
           onClick={onSelect}
           onDoubleClick={(e) => {
             e.stopPropagation();
@@ -70,8 +63,8 @@ export function NoteFileItem({
             setEditing(true);
           }}
         >
-          <FileText className="opacity-70 w-3.5 h-3.5 shrink-0" />
-          <span className="flex-1 text-xs truncate leading-snug">
+          <FileText className="h-3.5 w-3.5 shrink-0 opacity-70" />
+          <span className="flex-1 truncate text-xs leading-snug">
             {"("}
             <span className="font-data text-[10px]">%{note.number}</span>
             {") "}
@@ -86,7 +79,7 @@ export function NoteFileItem({
           <Button
             variant="destructive"
             size="icon"
-            className="opacity-0 group-hover:opacity-100 size-5 transition-opacity"
+            className="size-5 opacity-0 transition-opacity group-hover:opacity-100"
           >
             <Trash2 className="size-3" />
           </Button>

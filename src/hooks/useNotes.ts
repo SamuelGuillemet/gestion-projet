@@ -4,9 +4,7 @@ import { deleteNoteCascade } from "@/store/cascade-delete";
 
 export function useNoteIds(projectId: string | null) {
   return useNoteStore(
-    useShallow((s) =>
-      s.notes.filter((n) => n.projectId === projectId).map((n) => n.id),
-    ),
+    useShallow((s) => s.notes.filter((n) => n.projectId === projectId).map((n) => n.id)),
   );
 }
 

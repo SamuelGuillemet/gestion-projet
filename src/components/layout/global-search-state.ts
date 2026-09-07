@@ -155,9 +155,7 @@ export function buildGlobalSearchResults(query: string): GlobalSearchResult[] {
     }
   }
 
-  return results.sort(
-    (a, b) => b.score - a.score || a.title.localeCompare(b.title),
-  );
+  return results.sort((a, b) => b.score - a.score || a.title.localeCompare(b.title));
 }
 
 export const useGlobalSearchState = create<GlobalSearchState>()((set) => ({

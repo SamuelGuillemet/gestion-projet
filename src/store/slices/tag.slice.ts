@@ -9,9 +9,7 @@ export interface TagSlice {
   deleteTag: (id: string) => void;
 }
 
-export const createTagSlice: StateCreator<TagSlice, [], [], TagSlice> = (
-  set,
-) => ({
+export const createTagSlice: StateCreator<TagSlice, [], [], TagSlice> = (set) => ({
   tags: [],
 
   addTag: (name, color) =>

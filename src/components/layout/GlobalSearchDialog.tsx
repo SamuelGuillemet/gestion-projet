@@ -1,18 +1,10 @@
 import { Search } from "lucide-react";
 import { type KeyboardEvent, useEffect, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useEntityNavigation } from "@/hooks/useEntityReferenceNavigation";
-import {
-  getEntityReferenceIcon,
-  getEntityReferenceTypeLabel,
-} from "@/lib/entity-references";
+import { getEntityReferenceIcon, getEntityReferenceTypeLabel } from "@/lib/entity-references";
 import { cn } from "@/lib/utils";
 import {
   buildGlobalSearchResults,
@@ -29,9 +21,7 @@ export function GlobalSearchDialog() {
   const highlightedIndex = useGlobalSearchState((s) => s.highlightedIndex);
   const setOpen = useGlobalSearchState((s) => s.setOpen);
   const setQuery = useGlobalSearchState((s) => s.setQuery);
-  const setHighlightedIndex = useGlobalSearchState(
-    (s) => s.setHighlightedIndex,
-  );
+  const setHighlightedIndex = useGlobalSearchState((s) => s.setHighlightedIndex);
 
   const results = buildGlobalSearchResults(query);
 
@@ -74,17 +64,14 @@ export function GlobalSearchDialog() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent
-        className="p-0 w-full sm:max-w-3xl"
-        showCloseButton={false}
-      >
+      <DialogContent className="w-full p-0 sm:max-w-3xl" showCloseButton={false}>
         <DialogHeader className="px-4 pt-4 pb-0">
           <DialogTitle>Recherche globale</DialogTitle>
         </DialogHeader>
 
         <div className="px-4 py-3">
           <div className="relative">
-            <Search className="top-1/2 left-2.5 absolute w-4 h-4 text-muted-foreground -translate-y-1/2" />
+            <Search className="absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               ref={inputRef}
               value={query}
@@ -98,7 +85,7 @@ export function GlobalSearchDialog() {
 
         <div className="max-h-[60vh] overflow-y-auto">
           {results.length === 0 ? (
-            <div className="px-4 py-8 text-muted-foreground text-sm text-center">
+            <div className="px-4 py-8 text-center text-sm text-muted-foreground">
               {query.trim()
                 ? "Aucun resultat trouve"
                 : "Commencez a taper pour rechercher dans tous les projets"}
@@ -114,26 +101,22 @@ export function GlobalSearchDialog() {
                       type="button"
                       onClick={() => openResult(result)}
                       className={cn(
-                        "items-start gap-3 grid grid-cols-[auto_1fr_auto] px-4 py-3 w-full text-left transition-colors",
+                        "grid w-full grid-cols-[auto_1fr_auto] items-start gap-3 px-4 py-3 text-left transition-colors",
                         isActive ? "bg-muted" : "hover:bg-muted/60",
                       )}
                     >
-                      <Icon className="mt-0.5 w-4 h-4 text-muted-foreground" />
+                      <Icon className="mt-0.5 h-4 w-4 text-muted-foreground" />
                       <div className="min-w-0">
-                        <div className="font-medium text-sm truncate">
-                          {result.title}
-                        </div>
-                        <div className="mt-1 text-muted-foreground text-xs line-clamp-2">
+                        <div className="truncate text-sm font-medium">{result.title}</div>
+                        <div className="mt-1 line-clamp-2 text-xs text-muted-foreground">
                           {result.snippet || "Sans contenu"}
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-1">
-                        <Badge variant="outline">
-                          {getEntityReferenceTypeLabel(result.type)}
-                        </Badge>
-                        <span className="inline-flex items-center gap-1.5 max-w-44 text-muted-foreground text-xs truncate">
+                        <Badge variant="outline">{getEntityReferenceTypeLabel(result.type)}</Badge>
+                        <span className="inline-flex max-w-44 items-center gap-1.5 truncate text-xs text-muted-foreground">
                           <span
-                            className="rounded-full w-2 h-2 shrink-0"
+                            className="h-2 w-2 shrink-0 rounded-full"
                             style={{ backgroundColor: result.projectColor }}
                             aria-hidden="true"
                           />

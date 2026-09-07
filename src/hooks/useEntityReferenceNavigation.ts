@@ -19,19 +19,14 @@ import {
 
 type Navigate = (to: string) => void;
 
-export type EntityNavigationTarget =
-  | { type: "notes"; id: string }
-  | { type: Section; id: string };
+export type EntityNavigationTarget = { type: "notes"; id: string } | { type: Section; id: string };
 
 type EntityReferenceAdapter = {
   getItems: () => EntityReferenceRecord[];
   open: (item: EntityReferenceRecord, navigate: Navigate) => void;
 };
 
-const ENTITY_REFERENCE_ADAPTERS: Record<
-  EntityReferenceType,
-  EntityReferenceAdapter
-> = {
+const ENTITY_REFERENCE_ADAPTERS: Record<EntityReferenceType, EntityReferenceAdapter> = {
   notes: {
     getItems: () => useNoteStore.getState().notes,
     open: (note, navigate) => {
@@ -60,36 +55,23 @@ const ENTITY_REFERENCE_ADAPTERS: Record<
     getItems: () => useDeliverableStore.getState().deliverables,
     open: (deliverable, navigate) => {
       useProjectStore.getState().setActiveProject(deliverable.projectId);
-      useBacklogUI
-        .getState()
-        .select({ type: "deliverables", id: deliverable.id });
+      useBacklogUI.getState().select({ type: "deliverables", id: deliverable.id });
       navigate(`/project/${deliverable.projectId}/backlog`);
     },
   },
 };
 
 function findEntityById(type: EntityReferenceType, id: string) {
-  return ENTITY_REFERENCE_ADAPTERS[type]
-    .getItems()
-    .find((item) => item.id === id);
+  return ENTITY_REFERENCE_ADAPTERS[type].getItems().find((item) => item.id === id);
 }
 
-export function findEntityByReference(
-  reference: EntityReference,
-  projectId: string,
-) {
+export function findEntityByReference(reference: EntityReference, projectId: string) {
   return ENTITY_REFERENCE_ADAPTERS[reference.type]
     .getItems()
-    .find(
-      (item) =>
-        item.projectId === projectId && item.number === reference.number,
-    );
+    .find((item) => item.projectId === projectId && item.number === reference.number);
 }
 
-export function openEntityTarget(
-  target: EntityNavigationTarget,
-  navigate: Navigate,
-) {
+export function openEntityTarget(target: EntityNavigationTarget, navigate: Navigate) {
   const item = findEntityById(target.type, target.id);
   if (!item) return false;
 
@@ -135,8 +117,7 @@ export function useResolvedEntityReference(
   value: string | EntityReference,
   projectId?: string | null,
 ): ResolvedEntityReference | null {
-  const reference =
-    typeof value === "string" ? parseEntityReference(value) : value;
+  const reference = typeof value === "string" ? parseEntityReference(value) : value;
   const activeProjectId = useProjectStore((state) => state.activeProjectId);
   const tasks = useTaskStore((state) => state.tasks);
   const questions = useQuestionStore((state) => state.questions);
@@ -154,8 +135,7 @@ export function useResolvedEntityReference(
     notes,
   };
   const target = itemsByType[reference.type].find(
-    (item) =>
-      item.projectId === targetProjectId && item.number === reference.number,
+    (item) => item.projectId === targetProjectId && item.number === reference.number,
   );
   if (!target) return null;
 

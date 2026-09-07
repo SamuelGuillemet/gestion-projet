@@ -6,9 +6,7 @@ import { useProjectStore } from "@/store";
 // IndexedDB rehydration is async, so `projects` starts empty on refresh; wait for it
 // before deciding a project is missing, otherwise a valid project gets redirected away.
 function useProjectsHydrated() {
-  const [hydrated, setHydrated] = useState(() =>
-    useProjectStore.persist.hasHydrated(),
-  );
+  const [hydrated, setHydrated] = useState(() => useProjectStore.persist.hasHydrated());
 
   useEffect(() => {
     if (hydrated) return;
@@ -22,9 +20,7 @@ function useProjectsHydrated() {
 export function ProjectRouteGuard() {
   const { projectId } = useParams<{ projectId: string }>();
   const hydrated = useProjectsHydrated();
-  const projectExists = useProjectStore((s) =>
-    s.projects.some((p) => p.id === projectId),
-  );
+  const projectExists = useProjectStore((s) => s.projects.some((p) => p.id === projectId));
   const activeProjectId = useProjectStore((s) => s.activeProjectId);
   const setActiveProject = useProjectStore((s) => s.setActiveProject);
   const clearBacklogSelection = useBacklogUI((s) => s.clear);
@@ -36,17 +32,11 @@ export function ProjectRouteGuard() {
       }
       setActiveProject(projectId);
     }
-  }, [
-    activeProjectId,
-    clearBacklogSelection,
-    projectId,
-    projectExists,
-    setActiveProject,
-  ]);
+  }, [activeProjectId, clearBacklogSelection, projectId, projectExists, setActiveProject]);
 
   if (!hydrated) {
     return (
-      <div className="flex justify-center items-center h-full text-muted-foreground text-sm">
+      <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
         Chargement...
       </div>
     );

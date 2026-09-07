@@ -13,11 +13,7 @@ interface HighlightLinksProps {
   projectId?: string | null;
 }
 
-export function HighlightLinks({
-  text,
-  className,
-  projectId,
-}: HighlightLinksProps) {
+export function HighlightLinks({ text, className, projectId }: HighlightLinksProps) {
   if (!text?.trim()) {
     return null;
   }
@@ -39,7 +35,7 @@ export function HighlightLinks({
                     href={part}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 hover:opacity-80 text-primary underline underline-offset-2 break-all"
+                    className="flex items-center gap-1.5 break-all text-primary underline underline-offset-2 hover:opacity-80"
                   >
                     <ExternalLink className="size-3.5 shrink-0" />
                     {part}

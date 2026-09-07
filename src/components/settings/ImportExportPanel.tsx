@@ -44,19 +44,14 @@ export function ImportExportPanel() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="space-y-3 mt-2">
-      <p className="text-muted-foreground text-sm">
-        Exportez toutes les données de l'application dans un fichier JSON, ou
-        importez un fichier précédemment exporté (remplace toutes les données).
+    <div className="mt-2 space-y-3">
+      <p className="text-sm text-muted-foreground">
+        Exportez toutes les données de l'application dans un fichier JSON, ou importez un fichier
+        précédemment exporté (remplace toutes les données).
       </p>
       <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleExport}
-          title="Exporter les données"
-        >
-          <Download className="w-4 h-4" />
+        <Button variant="outline" size="sm" onClick={handleExport} title="Exporter les données">
+          <Download className="h-4 w-4" />
           Exporter
         </Button>
         <Button
@@ -65,7 +60,7 @@ export function ImportExportPanel() {
           onClick={() => fileInputRef.current?.click()}
           title="Importer des données"
         >
-          <Upload className="w-4 h-4" />
+          <Upload className="h-4 w-4" />
           Importer
         </Button>
         <input

@@ -14,8 +14,8 @@ export function TagFilter({
   if (!tags) return null;
 
   return (
-    <div className="top-0 z-10 sticky flex flex-wrap items-center gap-2 bg-background/90 backdrop-blur-sm mb-1 p-2 border rounded-md">
-      <span className="font-data font-semibold text-[0.62rem] text-muted-foreground uppercase tracking-[0.12em]">
+    <div className="sticky top-0 z-10 mb-1 flex flex-wrap items-center gap-2 rounded-md border bg-background/90 p-2 backdrop-blur-sm">
+      <span className="font-data text-[0.62rem] font-semibold tracking-[0.12em] text-muted-foreground uppercase">
         Filtrer :
       </span>
       {tags.map((tag) => (
@@ -24,18 +24,14 @@ export function TagFilter({
           type="button"
           onClick={() => onSelectTag(selectedTag === tag.id ? null : tag.id)}
           className={cn(
-            "inline-flex items-center gap-1 px-2 py-0.5 border rounded-sm text-xs transition-colors",
+            "inline-flex items-center gap-1 rounded-sm border px-2 py-0.5 text-xs transition-colors",
             {
-              "border-primary bg-primary/10 text-primary":
-                selectedTag === tag.id,
+              "border-primary bg-primary/10 text-primary": selectedTag === tag.id,
               "bg-card/60 hover:border-primary/50": selectedTag !== tag.id,
             },
           )}
         >
-          <span
-            className="rounded-full w-2 h-2"
-            style={{ backgroundColor: tag.color }}
-          />
+          <span className="h-2 w-2 rounded-full" style={{ backgroundColor: tag.color }} />
           {tag.name}
         </button>
       ))}
@@ -44,9 +40,9 @@ export function TagFilter({
           type="button"
           aria-label="Clear tag filter"
           onClick={() => onSelectTag(null)}
-          className="text-muted-foreground hover:text-foreground text-xs"
+          className="text-xs text-muted-foreground hover:text-foreground"
         >
-          <X className="w-3 h-3" />
+          <X className="h-3 w-3" />
         </button>
       )}
     </div>

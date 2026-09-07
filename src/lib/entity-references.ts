@@ -1,16 +1,6 @@
-import {
-  FileText,
-  HelpCircle,
-  type LucideIcon,
-  Package,
-  SquareCheckBig,
-} from "lucide-react";
+import { FileText, HelpCircle, type LucideIcon, Package, SquareCheckBig } from "lucide-react";
 
-export type EntityReferenceType =
-  | "tasks"
-  | "questions"
-  | "deliverables"
-  | "notes";
+export type EntityReferenceType = "tasks" | "questions" | "deliverables" | "notes";
 export type BacklogEntityReferenceType = Exclude<EntityReferenceType, "notes">;
 export type RelationEntityType = "task" | "question" | "deliverable";
 
@@ -48,38 +38,36 @@ export const BACKLOG_ENTITY_REFERENCE_TYPES: BacklogEntityReferenceType[] = [
   "deliverables",
 ];
 
-export const ENTITY_REFERENCE_DEFINITIONS: Record<
-  EntityReferenceType,
-  EntityReferenceDefinition
-> = {
-  tasks: {
-    prefix: "#",
-    label: "Tâche",
-    pluralLabel: "Tâches",
-    icon: SquareCheckBig,
-    relationType: "task",
-  },
-  questions: {
-    prefix: "?",
-    label: "Question",
-    pluralLabel: "Questions",
-    icon: HelpCircle,
-    relationType: "question",
-  },
-  deliverables: {
-    prefix: "!",
-    label: "Livrable",
-    pluralLabel: "Livrables",
-    icon: Package,
-    relationType: "deliverable",
-  },
-  notes: {
-    prefix: "%",
-    label: "Note",
-    pluralLabel: "Notes",
-    icon: FileText,
-  },
-};
+export const ENTITY_REFERENCE_DEFINITIONS: Record<EntityReferenceType, EntityReferenceDefinition> =
+  {
+    tasks: {
+      prefix: "#",
+      label: "Tâche",
+      pluralLabel: "Tâches",
+      icon: SquareCheckBig,
+      relationType: "task",
+    },
+    questions: {
+      prefix: "?",
+      label: "Question",
+      pluralLabel: "Questions",
+      icon: HelpCircle,
+      relationType: "question",
+    },
+    deliverables: {
+      prefix: "!",
+      label: "Livrable",
+      pluralLabel: "Livrables",
+      icon: Package,
+      relationType: "deliverable",
+    },
+    notes: {
+      prefix: "%",
+      label: "Note",
+      pluralLabel: "Notes",
+      icon: FileText,
+    },
+  };
 
 function escapeRegExp(value: string) {
   return value.replace(/[\\^$.*+?()[\]{}|]/g, String.raw`\$&`);
@@ -104,9 +92,8 @@ export type EntityReferenceToken =
 
 export function getEntityReferenceTypeFromPrefix(prefix: string) {
   return (
-    ENTITY_REFERENCE_TYPES.find(
-      (type) => ENTITY_REFERENCE_DEFINITIONS[type].prefix === prefix,
-    ) ?? null
+    ENTITY_REFERENCE_TYPES.find((type) => ENTITY_REFERENCE_DEFINITIONS[type].prefix === prefix) ??
+    null
   );
 }
 
@@ -133,16 +120,11 @@ export function parseEntityReference(value: string): EntityReference | null {
   return { type, number, label: value };
 }
 
-export function getEntityReferenceLabel(
-  type: EntityReferenceType,
-  number: number,
-) {
+export function getEntityReferenceLabel(type: EntityReferenceType, number: number) {
   return `${ENTITY_REFERENCE_DEFINITIONS[type].prefix}${number}`;
 }
 
-export function splitEntityReferenceText(
-  value: string,
-): EntityReferenceToken[] {
+export function splitEntityReferenceText(value: string): EntityReferenceToken[] {
   const regex = new RegExp(ENTITY_REFERENCE_REGEX.source, "g");
   const tokens: EntityReferenceToken[] = [];
   let lastIndex = 0;

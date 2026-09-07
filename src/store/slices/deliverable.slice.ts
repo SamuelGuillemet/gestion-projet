@@ -8,19 +8,14 @@ export interface DeliverableSlice {
   addDeliverable: (projectId: string, title: string) => string;
   updateDeliverable: (
     id: string,
-    data: Partial<
-      Pick<Deliverable, "title" | "type" | "description" | "version" | "done">
-    >,
+    data: Partial<Pick<Deliverable, "title" | "type" | "description" | "version" | "done">>,
   ) => void;
   deleteDeliverable: (id: string) => void;
 }
 
-export const createDeliverableSlice: StateCreator<
-  DeliverableSlice,
-  [],
-  [],
-  DeliverableSlice
-> = (set) => ({
+export const createDeliverableSlice: StateCreator<DeliverableSlice, [], [], DeliverableSlice> = (
+  set,
+) => ({
   deliverables: [],
 
   addDeliverable: (projectId, title) => {
@@ -42,9 +37,7 @@ export const createDeliverableSlice: StateCreator<
 
   updateDeliverable: (id, data) =>
     set((state) => ({
-      deliverables: state.deliverables.map((d) =>
-        d.id === id ? { ...d, ...data } : d,
-      ),
+      deliverables: state.deliverables.map((d) => (d.id === id ? { ...d, ...data } : d)),
     })),
 
   deleteDeliverable: (id) =>

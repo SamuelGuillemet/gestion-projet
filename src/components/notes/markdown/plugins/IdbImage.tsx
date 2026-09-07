@@ -57,8 +57,7 @@ export function IdbImage({
     objectUrl: string | null;
   } | null>(null);
   const resolvedSrc =
-    getCachedObjectUrl(src) ??
-    (loadedImage?.src === src ? loadedImage.objectUrl : null);
+    getCachedObjectUrl(src) ?? (loadedImage?.src === src ? loadedImage.objectUrl : null);
 
   useEffect(() => {
     let isDisposed = false;
@@ -78,7 +77,7 @@ export function IdbImage({
 
   if (!resolvedSrc) {
     return (
-      <span className="inline-flex justify-center px-3 py-2 border border-dashed rounded-md w-full text-muted-foreground text-sm">
+      <span className="inline-flex w-full justify-center rounded-md border border-dashed px-3 py-2 text-sm text-muted-foreground">
         Image indisponible {src}
       </span>
     );
@@ -89,7 +88,7 @@ export function IdbImage({
       {...props}
       src={resolvedSrc}
       alt={alt}
-      className={cn("my-2 border rounded-xl object-contain", className)}
+      className={cn("my-2 rounded-xl border object-contain", className)}
     />
   );
 }

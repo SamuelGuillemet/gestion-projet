@@ -15,17 +15,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { PRIORITY_OPTIONS, SIZE_OPTIONS } from "@/constants/task-options";
 import type { Tag } from "@/models/tag";
-import type {
-  DueDateStatus,
-  TaskCompletionStatus,
-  TaskFilters,
-} from "./task-filters";
+import type { DueDateStatus, TaskCompletionStatus, TaskFilters } from "./task-filters";
 import { countActiveFilters } from "./task-filters";
 
 function toggleValue<T>(values: T[], value: T) {
-  return values.includes(value)
-    ? values.filter((item) => item !== value)
-    : [...values, value];
+  return values.includes(value) ? values.filter((item) => item !== value) : [...values, value];
 }
 
 function FilterOption<T extends string>({
@@ -42,18 +36,10 @@ function FilterOption<T extends string>({
   color?: string;
 }) {
   return (
-    <label className="flex items-center gap-3 hover:bg-accent/60 px-2 py-1.5 rounded-md cursor-pointer">
-      <Checkbox
-        checked={checked}
-        onCheckedChange={() => onCheckedChange(value)}
-      />
-      {color && (
-        <span
-          className="rounded-full size-2"
-          style={{ backgroundColor: color }}
-        ></span>
-      )}
-      <span className="text-sm truncate" title={label}>
+    <label className="flex cursor-pointer items-center gap-3 rounded-md px-2 py-1.5 hover:bg-accent/60">
+      <Checkbox checked={checked} onCheckedChange={() => onCheckedChange(value)} />
+      {color && <span className="size-2 rounded-full" style={{ backgroundColor: color }}></span>}
+      <span className="truncate text-sm" title={label}>
         {label}
       </span>
     </label>
@@ -95,22 +81,16 @@ export function TaskFilterDrawer({
       </DrawerTrigger>
       <DrawerContent className="w-lg">
         <DrawerHeader className="border-b">
-          <div className="flex justify-between items-center gap-2">
+          <div className="flex items-center justify-between gap-2">
             <DrawerTitle>Filtrer les taches</DrawerTitle>
             <DrawerClose
-              render={
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  aria-label="Fermer les filtres"
-                />
-              }
+              render={<Button variant="ghost" size="icon" aria-label="Fermer les filtres" />}
             >
               <X className="size-4" />
             </DrawerClose>
           </div>
         </DrawerHeader>
-        <div className="flex-1 space-y-5 p-4 overflow-y-auto">
+        <div className="flex-1 space-y-5 overflow-y-auto p-4">
           <Input
             aria-label="Rechercher des taches"
             placeholder="Titre, description ou #reference"
@@ -168,10 +148,7 @@ export function TaskFilterDrawer({
                 value={option.value}
                 onCheckedChange={(value) =>
                   updateFilters({
-                    dueDateStatuses: toggleValue(
-                      filters.dueDateStatuses,
-                      value,
-                    ),
+                    dueDateStatuses: toggleValue(filters.dueDateStatuses, value),
                   })
                 }
               />
@@ -186,10 +163,7 @@ export function TaskFilterDrawer({
                 value={option.value}
                 onCheckedChange={(value) =>
                   updateFilters({
-                    completionStatuses: toggleValue(
-                      filters.completionStatuses,
-                      value,
-                    ),
+                    completionStatuses: toggleValue(filters.completionStatuses, value),
                   })
                 }
               />
@@ -232,7 +206,7 @@ export function TaskFilterBar({
     <div className="flex flex-wrap items-center gap-2">
       {activeFilterCount > 0 && (
         <>
-          <span className="max-w-80 text-muted-foreground text-xs truncate">
+          <span className="max-w-80 truncate text-xs text-muted-foreground">
             {summary.join(" - ")}
           </span>
           <Button variant="ghost" size="sm" onClick={clearFilters}>
@@ -251,19 +225,13 @@ export function TaskFilterBar({
   );
 }
 
-function FilterGroup({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
+function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h3 className="mb-1 font-data font-semibold text-muted-foreground text-xs uppercase tracking-[0.12em]">
+      <h3 className="font-data mb-1 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">
         {title}
       </h3>
-      <div className="gap-x-2 grid grid-cols-3">{children}</div>
+      <div className="grid grid-cols-3 gap-x-2">{children}</div>
     </section>
   );
 }

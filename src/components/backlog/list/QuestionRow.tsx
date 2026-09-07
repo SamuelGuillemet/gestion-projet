@@ -20,7 +20,7 @@ export function QuestionRow({ questionId }: { questionId: string }) {
   return (
     <div
       className={cn(
-        "group flex items-center gap-2 py-2 pr-2 pl-3 border border-l-2 border-l-(--entity-question)! rounded-md transition-colors",
+        "group flex items-center gap-2 rounded-md border border-l-2 border-l-(--entity-question)! py-2 pr-2 pl-3 transition-colors",
         {
           "border-primary/25 bg-primary/7": selected,
           "border-transparent hover:hover:bg-accent/45": !selected,
@@ -29,29 +29,28 @@ export function QuestionRow({ questionId }: { questionId: string }) {
     >
       <button
         type="button"
-        className="flex flex-1 items-center gap-2 min-w-0 text-left cursor-pointer"
+        className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 text-left"
         onClick={onSelect}
       >
         <HelpCircle
-          className={cn("w-4 h-4 shrink-0", {
+          className={cn("h-4 w-4 shrink-0", {
             "text-amber-500": question.status === "pending",
             "text-green-500": question.status === "resolved",
             "text-muted-foreground": question.status === "to-ask",
           })}
         />
-        <span className="font-data text-[10px] text-muted-foreground shrink-0">
+        <span className="font-data shrink-0 text-[10px] text-muted-foreground">
           ?{question.number}
         </span>
         <span
-          className={cn("flex-1 text-sm truncate", {
-            "line-through text-muted-foreground":
-              question.status === "resolved",
+          className={cn("flex-1 truncate text-sm", {
+            "text-muted-foreground line-through": question.status === "resolved",
           })}
         >
           {question.title}
         </span>
         {question.recipient && (
-          <span className="bg-background/70 px-1.5 py-0.5 border rounded-sm max-w-48 text-[10px] text-muted-foreground truncate">
+          <span className="max-w-48 truncate rounded-sm border bg-background/70 px-1.5 py-0.5 text-[10px] text-muted-foreground">
             → {question.recipient}
           </span>
         )}
@@ -64,9 +63,9 @@ export function QuestionRow({ questionId }: { questionId: string }) {
           <Button
             variant="ghost"
             size="icon"
-            className="opacity-0 group-hover:opacity-100 w-6 h-6 transition-opacity shrink-0"
+            className="h-6 w-6 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
           >
-            <Trash2 className="w-3 h-3" />
+            <Trash2 className="h-3 w-3" />
           </Button>
         }
         title="Supprimer la question"

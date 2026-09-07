@@ -1,9 +1,5 @@
 import type { StateCreator } from "zustand";
-import {
-  BOARD_COLUMNS,
-  type BoardColumnId,
-  DONE_COLUMN_ID,
-} from "@/constants/board-columns";
+import { BOARD_COLUMNS, type BoardColumnId, DONE_COLUMN_ID } from "@/constants/board-columns";
 import { generateId } from "@/lib/utils";
 import type { Task } from "@/models/task";
 import { getNextProjectScopedNumber } from "./utils";
@@ -12,19 +8,14 @@ export interface TaskSlice {
   tasks: Task[];
   addTask: (projectId: string, title: string) => string;
   addSubtask: (parentTaskId: string, title: string) => string | null;
-  updateTask: (
-    id: string,
-    data: Partial<Omit<Task, "id" | "projectId" | "parentTaskId">>,
-  ) => void;
+  updateTask: (id: string, data: Partial<Omit<Task, "id" | "projectId" | "parentTaskId">>) => void;
   setTaskParent: (id: string, parentTaskId?: string) => boolean;
   deleteTask: (id: string) => void;
   dndTasks: (newState: Record<BoardColumnId, string[]>) => void;
   moveTasksToProject: (taskIds: string[], targetProjectId: string) => string[];
 }
 
-export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
-  set,
-) => ({
+export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (set) => ({
   tasks: [],
 
   addTask: (projectId, title) => {
@@ -77,8 +68,7 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
             columnId: BOARD_COLUMNS[0].id,
             order: state.tasks.filter(
               (task) =>
-                task.projectId === parent.projectId &&
-                task.columnId === BOARD_COLUMNS[0].id,
+                task.projectId === parent.projectId && task.columnId === BOARD_COLUMNS[0].id,
             ).length,
             tags: [],
             done: false,
@@ -95,9 +85,7 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
   updateTask: (id, data) =>
     set((state) => ({
       tasks: state.tasks.map((t) =>
-        t.id === id
-          ? { ...t, ...data, updatedAt: new Date().toISOString() }
-          : t,
+        t.id === id ? { ...t, ...data, updatedAt: new Date().toISOString() } : t,
       ),
     })),
 
@@ -109,9 +97,7 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
 
       if (parentTaskId) {
         const parent = state.tasks.find((item) => item.id === parentTaskId);
-        const hasSubtasks = state.tasks.some(
-          (item) => item.parentTaskId === id,
-        );
+        const hasSubtasks = state.tasks.some((item) => item.parentTaskId === id);
         if (
           !parent ||
           parent.id === id ||
@@ -142,9 +128,7 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
   dndTasks: (newState) =>
     set((state) => ({
       tasks: state.tasks.map((t) => {
-        const columnId = Object.keys(newState).find((colId) =>
-          newState[colId].includes(t.id),
-        );
+        const columnId = Object.keys(newState).find((colId) => newState[colId].includes(t.id));
         if (!columnId) return t;
         const newOrder = newState[columnId].indexOf(t.id);
         const changed = columnId !== t.columnId || newOrder !== t.order;
@@ -175,8 +159,7 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
       const columnOrderCounts: Record<string, number> = {};
       for (const task of state.tasks) {
         if (task.projectId === targetProjectId && !idsToMove.has(task.id)) {
-          columnOrderCounts[task.columnId] =
-            (columnOrderCounts[task.columnId] ?? 0) + 1;
+          columnOrderCounts[task.columnId] = (columnOrderCounts[task.columnId] ?? 0) + 1;
         }
       }
       let nextNumber = getNextProjectScopedNumber(state.tasks, targetProjectId);
@@ -184,8 +167,7 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
       return {
         tasks: state.tasks.map((task) => {
           if (!idsToMove.has(task.id)) return task;
-          const keepsParent =
-            !!task.parentTaskId && idsToMove.has(task.parentTaskId);
+          const keepsParent = !!task.parentTaskId && idsToMove.has(task.parentTaskId);
           const order = columnOrderCounts[task.columnId] ?? 0;
           columnOrderCounts[task.columnId] = order + 1;
           return {

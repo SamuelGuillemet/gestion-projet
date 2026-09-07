@@ -9,12 +9,7 @@ interface AddItemRowProps {
   placeholder: string;
 }
 
-export function AddItemRow({
-  value,
-  onChange,
-  onAdd,
-  placeholder,
-}: AddItemRowProps) {
+export function AddItemRow({ value, onChange, onAdd, placeholder }: AddItemRowProps) {
   return (
     <div className="flex items-center gap-2 pt-2 pl-4">
       <Input
@@ -22,16 +17,16 @@ export function AddItemRow({
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && onAdd()}
         placeholder={placeholder}
-        className="bg-background/70 h-8 text-sm"
+        className="h-8 bg-background/70 text-sm"
       />
       <Button
         variant="ghost"
         size="icon"
-        className="w-8 h-8 shrink-0"
+        className="h-8 w-8 shrink-0"
         onClick={onAdd}
         disabled={!value.trim()}
       >
-        <Plus className="w-4 h-4" />
+        <Plus className="h-4 w-4" />
       </Button>
     </div>
   );
