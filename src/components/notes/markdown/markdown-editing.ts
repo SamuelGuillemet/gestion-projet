@@ -1,5 +1,7 @@
 /** Low-level helpers shared by the markdown textarea and its formatting toolbar. */
 
+import type { TextColor } from "./plugins/rehype-text-color";
+
 export function insertUndoableText(
   textarea: HTMLTextAreaElement,
   text: string,
@@ -191,4 +193,43 @@ export function insertBlock(
   insertUndoableText(textarea, text, start, end, onChange);
   const cursor = start + text.length;
   textarea.setSelectionRange(cursor, cursor);
+}
+
+/** Sets the text color for the selected text using a custom markdown directive. */
+export function setTextColor(
+  textarea: HTMLTextAreaElement,
+  value: string,
+  color: TextColor | null,
+  onChange: (value: string) => void,
+) {
+  const { start, end, selected } = getSelection(textarea, value);
+  const directive = /^:color\[([\s\S]*)\]\{color="[a-z]+"\}$/;
+  const selectedDirective = directive.exec(selected);
+
+  if (selectedDirective) {
+    const text = selectedDirective[1];
+    const replacement = color ? `:color[${text}]{color="${color}"}` : text;
+    insertUndoableText(textarea, replacement, start, end, onChange);
+    const textStart = start + (color ? 7 : 0);
+    textarea.setSelectionRange(textStart, textStart + text.length);
+    return;
+  }
+
+  const prefix = /:color\[$/.exec(value.slice(0, start));
+  const suffix = /^\]\{color="[a-z]+"\}/.exec(value.slice(end));
+
+  if (prefix && suffix) {
+    const replacement = color ? `:color[${selected}]{color="${color}"}` : selected;
+    const rangeStart = start - prefix[0].length;
+    insertUndoableText(textarea, replacement, rangeStart, end + suffix[0].length, onChange);
+    const textStart = rangeStart + (color ? 7 : 0);
+    textarea.setSelectionRange(textStart, textStart + selected.length);
+    return;
+  }
+
+  const text = selected || "texte coloré";
+  const replacement = color ? `:color[${text}]{color="${color}"}` : text;
+  insertUndoableText(textarea, replacement, start, end, onChange);
+  const textStart = start + (color ? 7 : 0);
+  textarea.setSelectionRange(textStart, textStart + text.length);
 }

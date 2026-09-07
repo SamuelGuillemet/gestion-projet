@@ -18,11 +18,11 @@ function getTextContent(node: HastNode): string {
 function hasMermaidLanguage(node: HastNode) {
   const className = node.properties?.className;
   if (Array.isArray(className)) {
-    return className.some((value) => value === "language-mermaid");
+    return className.includes("language-mermaid");
   }
 
   if (typeof className === "string") {
-    return className.split(/\s+/).some((value) => value === "language-mermaid");
+    return className.split(/\s+/).includes("language-mermaid");
   }
 
   return false;

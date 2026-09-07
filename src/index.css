@@ -108,6 +108,13 @@
   --entity-deliverable: var(--moss);
   --entity-time: var(--signal);
 
+  --markdown-text-red: #c83226;
+  --markdown-text-orange: #c45116;
+  --markdown-text-amber: #946200;
+  --markdown-text-green: #23853b;
+  --markdown-text-blue: #3169bd;
+  --markdown-text-purple: #7c4391;
+
   --workspace-shadow: 0 18px 50px rgb(24 33 29 / 0.08);
 }
 
@@ -130,6 +137,12 @@
   --sidebar: #191f21;
   --sidebar-primary-foreground: #0b0f10;
   --sidebar-accent: #232a2d;
+  --markdown-text-red: #ff7566;
+  --markdown-text-orange: #ff9b63;
+  --markdown-text-amber: #f0b429;
+  --markdown-text-green: #59d47d;
+  --markdown-text-blue: #78adff;
+  --markdown-text-purple: #cf91e2;
   --workspace-shadow: 0 18px 50px rgb(0 0 0 / 0.35);
 }
 
@@ -172,6 +185,42 @@
     color: var(--primary-foreground);
     background: var(--primary);
   }
+}
+
+.markdown-text-color-red {
+  color: var(--markdown-text-red);
+}
+
+.markdown-text-color-orange {
+  color: var(--markdown-text-orange);
+}
+
+.markdown-text-color-amber {
+  color: var(--markdown-text-amber);
+}
+
+.markdown-text-color-green {
+  color: var(--markdown-text-green);
+}
+
+.markdown-text-color-blue {
+  color: var(--markdown-text-blue);
+}
+
+.markdown-text-color-purple {
+  color: var(--markdown-text-purple);
+}
+
+:is(
+    .markdown-text-color-red,
+    .markdown-text-color-orange,
+    .markdown-text-color-amber,
+    .markdown-text-color-green,
+    .markdown-text-color-blue,
+    .markdown-text-color-purple
+  )
+  * {
+  color: inherit;
 }
 
 @layer utilities {

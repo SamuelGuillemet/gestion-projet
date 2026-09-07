@@ -1,5 +1,6 @@
 import rehypeStringify from "rehype-stringify";
 import remarkBreaks from "remark-breaks";
+import remarkDirective from "remark-directive";
 import remarkGfm from "remark-gfm";
 import remarkGithubAlerts from "remark-github-alerts";
 import remarkParse from "remark-parse";
@@ -10,6 +11,7 @@ import { renderMermaid } from "@/lib/mermaid";
 import { rehypeEntityReferences } from "./plugins/rehype-entity-references";
 import { rehypeIdbImages } from "./plugins/rehype-idb-images";
 import { rehypeMermaid } from "./plugins/rehype-mermaid";
+import { remarkTextColor, WORD_TEXT_COLOR_STYLES } from "./plugins/rehype-text-color";
 
 type HastNode = {
   type?: string;
@@ -19,7 +21,13 @@ type HastNode = {
   value?: unknown;
 };
 
-const REMARK_PLUGINS = [remarkGfm, remarkBreaks, remarkGithubAlerts] as const;
+const REMARK_PLUGINS = [
+  remarkGfm,
+  remarkBreaks,
+  remarkGithubAlerts,
+  remarkDirective,
+  remarkTextColor,
+] as const;
 
 const REHYPE_PLUGINS = [
   rehypeEntityReferences,
@@ -156,6 +164,7 @@ function buildWordHtmlDocument(bodyHtml: string) {
       p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
       p { text-wrap: pretty; }
       h1, h2, h3, h4, h5, h6 { page-break-after: avoid; text-wrap: balance;}
+      ${WORD_TEXT_COLOR_STYLES}
     </style>
   </head>
   <body>${bodyHtml}</body>

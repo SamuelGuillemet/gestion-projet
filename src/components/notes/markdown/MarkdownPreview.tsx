@@ -4,6 +4,7 @@ import type { ComponentPropsWithoutRef } from "react";
 import Markdown from "react-markdown";
 import rehypeHighlightRaw from "rehype-highlight";
 import remarkBreaks from "remark-breaks";
+import remarkDirective from "remark-directive";
 import remarkGfm from "remark-gfm";
 import remarkGithubAlerts from "remark-github-alerts";
 import { EntityReferenceButton } from "@/components/shared/EntityReferenceButton";
@@ -13,10 +14,17 @@ import { Mermaid } from "./plugins/Mermaid";
 import { rehypeEntityReferences } from "./plugins/rehype-entity-references";
 import { rehypeIdbImages } from "./plugins/rehype-idb-images";
 import { rehypeMermaid } from "./plugins/rehype-mermaid";
+import { remarkTextColor } from "./plugins/rehype-text-color";
 
 const rehypeHighlight = () => rehypeHighlightRaw({ languages: { ...common, powershell } });
 
-const remarkPlugins = [remarkGfm, remarkBreaks, remarkGithubAlerts];
+const remarkPlugins = [
+  remarkGfm,
+  remarkBreaks,
+  remarkGithubAlerts,
+  remarkDirective,
+  remarkTextColor,
+];
 const rehypePlugins = [rehypeEntityReferences, rehypeIdbImages, rehypeMermaid, rehypeHighlight];
 
 const components = {

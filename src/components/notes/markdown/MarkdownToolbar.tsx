@@ -11,6 +11,7 @@ import {
   ListChecks,
   ListOrdered,
   Minus,
+  Palette,
   Quote,
   SquareCode,
   Strikethrough,
@@ -22,18 +23,21 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import {
   insertBlock,
   insertLink,
+  setTextColor,
   toggleCodeBlock,
   toggleHeading,
   toggleOrderedList,
   togglePrefix,
   toggleWrap,
 } from "./markdown-editing";
+import { getTextColorClassName, TEXT_COLORS } from "./plugins/rehype-text-color";
 
 type Props = {
   textareaRef: RefObject<HTMLTextAreaElement | null>;
@@ -172,6 +176,47 @@ export function MarkdownToolbar({ textareaRef, value, onChange, className }: Pro
           <Icon className="h-4 w-4" />
         </Button>
       ))}
+
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="ghost"
+              size="sm"
+              title="Couleur du texte"
+              className="h-8 gap-0.5 px-1.5"
+            >
+              <Palette className="h-4 w-4" />
+              <ChevronDown className="h-3 w-3 opacity-60" />
+            </Button>
+          }
+        />
+        <DropdownMenuContent align="start" className="min-w-36">
+          {TEXT_COLORS.map((color) => (
+            <DropdownMenuItem
+              key={color.id}
+              onClick={() =>
+                withTextarea((textarea) => setTextColor(textarea, value, color.id, onChange))
+              }
+            >
+              <span
+                aria-hidden="true"
+                className={cn("size-3 rounded-full bg-current", getTextColorClassName(color.id))}
+              />
+              <span>{color.label}</span>
+            </DropdownMenuItem>
+          ))}
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() =>
+              withTextarea((textarea) => setTextColor(textarea, value, null, onChange))
+            }
+          >
+            <span aria-hidden="true" className="size-3 rounded-full border border-foreground/50" />
+            <span>Sans couleur</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       <div className="mx-1 h-5 w-px bg-border" aria-hidden="true" />
 
