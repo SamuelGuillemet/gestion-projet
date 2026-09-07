@@ -1,4 +1,14 @@
-import { CheckCircle2, Circle, Clock, Plus, Trash2, X } from "lucide-react";
+import {
+  CheckCircle2,
+  Circle,
+  Clock,
+  Link2,
+  Plus,
+  Search,
+  Trash2,
+  Unlink,
+  X,
+} from "lucide-react";
 import { useState } from "react";
 import { StatusBadge } from "@/components/shared/TaskStatusBadge";
 import { Button } from "@/components/ui/button";
@@ -6,12 +16,22 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { BOARD_COLUMNS } from "@/constants/board-columns";
 import { PRIORITY_OPTIONS, SIZE_OPTIONS } from "@/constants/task-options";
 import { useEntityNavigation } from "@/hooks/useEntityReferenceNavigation";
 import { useTags } from "@/hooks/useTags";
-import { useSubtasks, useTask, useTaskActions } from "@/hooks/useTasks";
+import {
+  useSubtasks,
+  useTask,
+  useTaskActions,
+  useTasksByProjectId,
+} from "@/hooks/useTasks";
 import {
   useTimeActions,
   useTimeEntriesByTaskId,
@@ -316,40 +336,75 @@ export function TaskDetailContent({
 function SubtasksSection({ task }: { task: Task }) {
   const subtasks = useSubtasks(task.id);
   const parent = useTask(task.parentTaskId ?? "");
-  const { addSubtask, deleteTask } = useTaskActions();
+  const projectTasks = useTasksByProjectId(task.projectId);
+  const { addSubtask, deleteTask, setTaskParent } = useTaskActions();
   const openEntity = useEntityNavigation();
   const [title, setTitle] = useState("");
+  const [parentPickerOpen, setParentPickerOpen] = useState(false);
+  const [parentSearch, setParentSearch] = useState("");
+
+  const normalizedSearch = parentSearch.trim().toLocaleLowerCase();
+  const parentCandidates = projectTasks
+    .filter(
+      (candidate) =>
+        candidate.id !== task.id &&
+        !candidate.parentTaskId &&
+        (normalizedSearch === "" ||
+          candidate.title.toLocaleLowerCase().includes(normalizedSearch) ||
+          getEntityReferenceLabel("tasks", candidate.number)
+            .toLocaleLowerCase()
+            .includes(normalizedSearch)),
+    )
+    .toSorted((left, right) => left.number - right.number);
 
   if (task.parentTaskId) {
-    return parent ? (
+    return (
       <div>
-        <Label className="text-muted-foreground text-xs">Tâche parente</Label>
-        <button
-          type="button"
-          className="group flex items-center gap-2 hover:bg-accent/45 mt-2 py-2 pr-3 pl-3 border rounded-md w-full text-left transition-colors"
-          onClick={() => openEntity({ type: "tasks", id: parent.id })}
-        >
-          <span className="text-muted-foreground shrink-0">
-            {parent.done ? (
-              <CheckCircle2 className="size-4 text-green-500" />
-            ) : (
-              <Circle className="size-4" />
-            )}
-          </span>
-          <span className="font-data text-muted-foreground text-xs shrink-0">
-            {getEntityReferenceLabel("tasks", parent.number)}
-          </span>
-          <span
-            className={cn("flex-1 text-sm truncate", {
-              "text-muted-foreground line-through": parent.done,
-            })}
+        <div className="flex justify-between items-center gap-2">
+          <Label className="text-muted-foreground text-xs">Tâche parente</Label>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-7 text-xs"
+            onClick={() => setTaskParent(task.id)}
           >
-            {parent.title}
-          </span>
-          <StatusBadge columnId={parent.columnId} />
-        </button>
+            <Unlink className="size-3.5" />
+            Détacher
+          </Button>
+        </div>
+        {parent ? (
+          <button
+            type="button"
+            className="group flex items-center gap-2 hover:bg-accent/45 mt-2 py-2 pr-3 pl-3 border rounded-md w-full text-left transition-colors"
+            onClick={() => openEntity({ type: "tasks", id: parent.id })}
+          >
+            <span className="text-muted-foreground shrink-0">
+              {parent.done ? (
+                <CheckCircle2 className="size-4 text-green-500" />
+              ) : (
+                <Circle className="size-4" />
+              )}
+            </span>
+            <span className="font-data text-muted-foreground text-xs shrink-0">
+              {getEntityReferenceLabel("tasks", parent.number)}
+            </span>
+            <span
+              className={cn("flex-1 text-sm truncate", {
+                "text-muted-foreground line-through": parent.done,
+              })}
+            >
+              {parent.title}
+            </span>
+            <StatusBadge columnId={parent.columnId} />
+          </button>
+        ) : (
+          <p className="mt-2 text-muted-foreground text-xs">
+            La tâche parente est introuvable.
+          </p>
+        )}
       </div>
-    ) : null;
+    );
   }
 
   const add = () => {
@@ -363,9 +418,75 @@ function SubtasksSection({ task }: { task: Task }) {
     <div>
       <div className="flex justify-between items-center gap-2">
         <Label className="text-muted-foreground text-xs">Sous-tâches</Label>
-        <span className="font-data text-muted-foreground text-xs">
-          {subtasks.filter((subtask) => subtask.done).length}/{subtasks.length}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="font-data text-muted-foreground text-xs">
+            {subtasks.filter((subtask) => subtask.done).length}/
+            {subtasks.length}
+          </span>
+          {subtasks.length === 0 ? (
+            <Popover
+              open={parentPickerOpen}
+              onOpenChange={(open) => {
+                setParentPickerOpen(open);
+                if (!open) setParentSearch("");
+              }}
+            >
+              <PopoverTrigger
+                render={
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 text-xs"
+                  >
+                    <Link2 className="size-3.5" />
+                    Relier
+                  </Button>
+                }
+              />
+              <PopoverContent align="end" className="w-80">
+                <Label className="text-xs">Choisir une tâche parente</Label>
+                <div className="relative">
+                  <Search className="top-1/2 left-2.5 absolute size-3.5 text-muted-foreground -translate-y-1/2" />
+                  <Input
+                    value={parentSearch}
+                    onChange={(event) => setParentSearch(event.target.value)}
+                    placeholder="Rechercher par référence ou titre..."
+                    className="h-8 pl-8 text-sm"
+                  />
+                </div>
+                <div className="max-h-56 overflow-y-auto">
+                  {parentCandidates.map((candidate) => (
+                    <button
+                      key={candidate.id}
+                      type="button"
+                      className="flex items-center gap-2 hover:bg-accent px-2 py-1.5 rounded-md w-full text-left"
+                      onClick={() => {
+                        if (setTaskParent(task.id, candidate.id)) {
+                          setParentPickerOpen(false);
+                          setParentSearch("");
+                        }
+                      }}
+                    >
+                      <span className="font-data text-muted-foreground text-xs shrink-0">
+                        {getEntityReferenceLabel("tasks", candidate.number)}
+                      </span>
+                      <span className="flex-1 text-sm truncate">
+                        {candidate.title}
+                      </span>
+                      <StatusBadge columnId={candidate.columnId} />
+                    </button>
+                  ))}
+                  {parentCandidates.length === 0 ? (
+                    <p className="px-2 py-4 text-muted-foreground text-xs text-center">
+                      Aucune tâche parente disponible.
+                    </p>
+                  ) : null}
+                </div>
+              </PopoverContent>
+            </Popover>
+          ) : null}
+        </div>
       </div>
       <div className="space-y-2 mt-2">
         {subtasks.map((subtask) => (

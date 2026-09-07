@@ -57,6 +57,7 @@ export function useTaskActions() {
   const addTask = useTaskStore((s) => s.addTask);
   const addSubtask = useTaskStore((s) => s.addSubtask);
   const updateTask = useTaskStore((s) => s.updateTask);
+  const setTaskParent = useTaskStore((s) => s.setTaskParent);
   const deleteTask = deleteTaskCascade;
   const moveTask = useTaskStore((s) => s.dndTasks);
   const moveTasksToProject = moveTasksToProjectCascade;
@@ -64,6 +65,7 @@ export function useTaskActions() {
     addTask,
     addSubtask,
     updateTask,
+    setTaskParent,
     deleteTask,
     moveTask,
     moveTasksToProject,

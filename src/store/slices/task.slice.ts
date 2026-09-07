@@ -16,6 +16,7 @@ export interface TaskSlice {
     id: string,
     data: Partial<Omit<Task, "id" | "projectId" | "parentTaskId">>,
   ) => void;
+  setTaskParent: (id: string, parentTaskId?: string) => boolean;
   deleteTask: (id: string) => void;
   dndTasks: (newState: Record<BoardColumnId, string[]>) => void;
   moveTasksToProject: (taskIds: string[], targetProjectId: string) => string[];
@@ -99,6 +100,39 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (
           : t,
       ),
     })),
+
+  setTaskParent: (id, parentTaskId) => {
+    let changed = false;
+    set((state) => {
+      const task = state.tasks.find((item) => item.id === id);
+      if (!task || task.parentTaskId === parentTaskId) return state;
+
+      if (parentTaskId) {
+        const parent = state.tasks.find((item) => item.id === parentTaskId);
+        const hasSubtasks = state.tasks.some(
+          (item) => item.parentTaskId === id,
+        );
+        if (
+          !parent ||
+          parent.id === id ||
+          parent.projectId !== task.projectId ||
+          parent.parentTaskId ||
+          hasSubtasks
+        ) {
+          return state;
+        }
+      }
+
+      changed = true;
+      const now = new Date().toISOString();
+      return {
+        tasks: state.tasks.map((item) =>
+          item.id === id ? { ...item, parentTaskId, updatedAt: now } : item,
+        ),
+      };
+    });
+    return changed;
+  },
 
   deleteTask: (id) =>
     set((state) => ({
