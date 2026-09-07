@@ -14,12 +14,7 @@ export interface ProjectSlice {
   deleteProject: (id: string) => void;
 }
 
-export const createProjectSlice: StateCreator<
-  ProjectSlice,
-  [],
-  [],
-  ProjectSlice
-> = (set) => ({
+export const createProjectSlice: StateCreator<ProjectSlice, [], [], ProjectSlice> = (set) => ({
   projects: [],
   activeProjectId: null,
 
@@ -46,16 +41,13 @@ export const createProjectSlice: StateCreator<
   updateProject: (id, data) =>
     set((state) => ({
       projects: state.projects.map((p) =>
-        p.id === id
-          ? { ...p, ...data, updatedAt: new Date().toISOString() }
-          : p,
+        p.id === id ? { ...p, ...data, updatedAt: new Date().toISOString() } : p,
       ),
     })),
 
   deleteProject: (id) =>
     set((state) => ({
       projects: state.projects.filter((p) => p.id !== id),
-      activeProjectId:
-        state.activeProjectId === id ? null : state.activeProjectId,
+      activeProjectId: state.activeProjectId === id ? null : state.activeProjectId,
     })),
 });

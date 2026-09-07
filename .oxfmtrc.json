@@ -1,0 +1,13 @@
+{
+  "useTabs": false,
+  "tabWidth": 2,
+  "singleQuote": false,
+  "semi": true,
+  "sortImports": {
+    "newlinesBetween": false
+  },
+  "sortTailwindcss": {
+    "functions": ["cn", "cva"],
+    "stylesheet": "./src/index.css"
+  }
+}

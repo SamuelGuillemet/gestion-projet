@@ -3,12 +3,12 @@ import { move } from "@dnd-kit/helpers";
 import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
 import { Plus } from "lucide-react";
 import { useRef, useState } from "react";
-import { TaskFilterBar } from "@/components/task-filters/TaskFilterDrawer";
 import {
   countActiveFilters,
   useFilteredTaskIds,
   useTaskFilters,
 } from "@/components/task-filters/task-filters";
+import { TaskFilterBar } from "@/components/task-filters/TaskFilterDrawer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getEmptyRecordOfColumns } from "@/constants/board-columns";
@@ -19,38 +19,30 @@ import { Column } from "./Column";
 
 export function BoardPage() {
   const { activeProjectId } = useProjects();
-  const allTaskColumns = useTaskColumnRecord(activeProjectId);
   const { tags } = useTags();
   const { addTask, moveTask } = useTaskActions();
   const [newTaskTitle, setNewTaskTitle] = useState("");
-  const { filters, updateFilters, clearFilters } = useTaskFilters(
-    activeProjectId ?? "",
-    tags,
-  );
+
+  const { filters, updateFilters, clearFilters } = useTaskFilters(activeProjectId ?? "", tags);
+  const filtersActive = countActiveFilters(filters) > 0;
+
+  const allTaskColumns = useTaskColumnRecord(activeProjectId);
+  const visibleTaskIds = new Set(useFilteredTaskIds(Object.values(allTaskColumns).flat(), filters));
+  const taskColumns = getEmptyRecordOfColumns();
+  for (const [columnId, taskIds] of Object.entries(allTaskColumns)) {
+    taskColumns[columnId] = taskIds.filter((taskId) => visibleTaskIds.has(taskId));
+  }
 
   if (!activeProjectId) {
     return (
-      <div className="flex justify-center items-center h-full text-muted-foreground">
+      <div className="flex h-full items-center justify-center text-muted-foreground">
         <div className="space-y-2 text-center">
-          <p className="font-medium text-lg">Aucun projet sélectionné</p>
-          <p className="text-sm">
-            Créez ou sélectionnez un projet pour commencer.
-          </p>
+          <p className="text-lg font-medium">Aucun projet sélectionné</p>
+          <p className="text-sm">Créez ou sélectionnez un projet pour commencer.</p>
         </div>
       </div>
     );
   }
-
-  const visibleTaskIds = new Set(
-    useFilteredTaskIds(Object.values(allTaskColumns).flat(), filters),
-  );
-  const taskColumns = getEmptyRecordOfColumns();
-  for (const [columnId, taskIds] of Object.entries(allTaskColumns)) {
-    taskColumns[columnId] = taskIds.filter((taskId) =>
-      visibleTaskIds.has(taskId),
-    );
-  }
-  const filtersActive = countActiveFilters(filters) > 0;
 
   const handleAddTask = () => {
     if (!newTaskTitle.trim()) return;
@@ -58,26 +50,25 @@ export function BoardPage() {
     setNewTaskTitle("");
   };
 
-  const handleDragEnd = (event: DragEndEvent) =>
-    moveTask(move(allTaskColumns, event));
+  const handleDragEnd = (event: DragEndEvent) => moveTask(move(allTaskColumns, event));
 
   return (
-    <div className="flex flex-col gap-4 h-full">
-      <div className="flex flex-wrap justify-between items-center gap-2 p-3 rounded-md atelier-card">
+    <div className="flex h-full flex-col gap-4">
+      <div className="atelier-card flex flex-wrap items-center justify-between gap-2 rounded-md p-3">
         <Input
           placeholder="Ajouter une tâche..."
           value={newTaskTitle}
           onChange={(e) => setNewTaskTitle(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
-          className="bg-background/80 max-w-md h-9"
+          className="h-9 max-w-md bg-background/80"
         />
         <Button
           onClick={handleAddTask}
           size="sm"
-          className="gap-1.5 h-9"
+          className="h-9 gap-1.5"
           disabled={!newTaskTitle.trim()}
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="h-4 w-4" />
           Ajouter
         </Button>
         <div className="flex-1"></div>
@@ -90,7 +81,7 @@ export function BoardPage() {
       </div>
 
       <DragAndDropWrapper onDragEnd={handleDragEnd}>
-        <div className="flex flex-1 gap-3 pb-2 overflow-x-hidden">
+        <div className="flex flex-1 gap-3 overflow-x-hidden pb-2">
           {Object.entries(taskColumns).map(([columnId, taskIds]) => {
             return (
               <Column
@@ -129,11 +120,7 @@ function DragAndDropWrapper({
     const sourceElement = event.operation.source?.element;
     const prevParent = sourceParentRef.current;
     sourceParentRef.current = null;
-    if (
-      sourceElement &&
-      prevParent &&
-      sourceElement.parentElement !== prevParent
-    ) {
+    if (sourceElement && prevParent && sourceElement.parentElement !== prevParent) {
       prevParent.appendChild(sourceElement);
     }
 

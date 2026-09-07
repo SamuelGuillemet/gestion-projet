@@ -1,24 +1,12 @@
 import { useState } from "react";
+import { useFilteredTaskIds, useTaskFilters } from "@/components/task-filters/task-filters";
 import { TaskFilterBar } from "@/components/task-filters/TaskFilterDrawer";
-import {
-  useFilteredTaskIds,
-  useTaskFilters,
-} from "@/components/task-filters/task-filters";
-import {
-  useDeliverableActions,
-  useDeliverableIds,
-} from "@/hooks/useDeliverables";
+import { useDeliverableActions, useDeliverableIds } from "@/hooks/useDeliverables";
 import { useQuestionActions, useQuestionIds } from "@/hooks/useQuestions";
 import { useTags } from "@/hooks/useTags";
 import { useTaskActions, useTaskIds } from "@/hooks/useTasks";
 import { type Section, useBacklogUI } from "./backlog-state";
-import {
-  AddItemRow,
-  DeliverableRow,
-  QuestionRow,
-  TaskRow,
-  TreeSection,
-} from "./list";
+import { AddItemRow, DeliverableRow, QuestionRow, TaskRow, TreeSection } from "./list";
 
 interface BacklogListProps {
   activeProjectId: string;
@@ -27,10 +15,7 @@ interface BacklogListProps {
 export function BacklogList({ activeProjectId }: BacklogListProps) {
   const baseTaskIds = useTaskIds(activeProjectId);
   const { tags } = useTags();
-  const { filters, updateFilters, clearFilters } = useTaskFilters(
-    activeProjectId,
-    tags,
-  );
+  const { filters, updateFilters, clearFilters } = useTaskFilters(activeProjectId, tags);
   const taskIds = useFilteredTaskIds(baseTaskIds, filters);
   const questionIds = useQuestionIds(activeProjectId);
   const deliverableIds = useDeliverableIds(activeProjectId);
@@ -72,8 +57,8 @@ export function BacklogList({ activeProjectId }: BacklogListProps) {
   };
 
   return (
-    <div className="flex-1 space-y-3 min-w-0">
-      <div className="top-0 z-10 sticky flex flex-wrap justify-end items-center gap-2 bg-background/90 backdrop-blur-sm mb-1 p-2 border rounded-md">
+    <div className="min-w-0 flex-1 space-y-3">
+      <div className="sticky top-0 z-10 mb-1 flex flex-wrap items-center justify-end gap-2 rounded-md border bg-background/90 p-2 backdrop-blur-sm">
         <TaskFilterBar
           filters={filters}
           tags={tags}
@@ -129,9 +114,7 @@ export function BacklogList({ activeProjectId }: BacklogListProps) {
         ))}
         <AddItemRow
           value={newItems.deliverables}
-          onChange={(v) =>
-            setNewItems((prev) => ({ ...prev, deliverables: v }))
-          }
+          onChange={(v) => setNewItems((prev) => ({ ...prev, deliverables: v }))}
           onAdd={() => handleAdd("deliverables")}
           placeholder="Nouveau livrable..."
         />

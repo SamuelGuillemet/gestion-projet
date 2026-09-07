@@ -1,35 +1,26 @@
 import { useShallow } from "zustand/react/shallow";
 import { getEmptyRecordOfColumns } from "@/constants/board-columns";
 import { useTaskStore } from "@/store";
-import {
-  deleteTaskCascade,
-  moveTasksToProjectCascade,
-} from "@/store/cascade-delete";
+import { deleteTaskCascade, moveTasksToProjectCascade } from "@/store/cascade-delete";
 
 export function useTasks() {
   return useTaskStore(useShallow((s) => s.tasks));
 }
 
 export function useTasksByProjectId(projectId: string | null) {
-  return useTaskStore(
-    useShallow((s) => s.tasks.filter((t) => t.projectId === projectId)),
-  );
+  return useTaskStore(useShallow((s) => s.tasks.filter((t) => t.projectId === projectId)));
 }
 
 export function useTaskIds(projectId: string | null) {
   return useTaskStore(
-    useShallow((s) =>
-      s.tasks.filter((t) => t.projectId === projectId).map((t) => t.id),
-    ),
+    useShallow((s) => s.tasks.filter((t) => t.projectId === projectId).map((t) => t.id)),
   );
 }
 
 export function useTaskColumnRecord(projectId: string | null) {
   const tasks = useTaskStore(
     useShallow((s) =>
-      s.tasks
-        .filter((t) => t.projectId === projectId)
-        .sort((a, b) => a.order - b.order),
+      s.tasks.filter((t) => t.projectId === projectId).sort((a, b) => a.order - b.order),
     ),
   );
 
@@ -47,9 +38,7 @@ export function useTask(id: string) {
 
 export function useSubtasks(parentTaskId: string) {
   return useTaskStore(
-    useShallow((s) =>
-      s.tasks.filter((task) => task.parentTaskId === parentTaskId),
-    ),
+    useShallow((s) => s.tasks.filter((task) => task.parentTaskId === parentTaskId)),
   );
 }
 

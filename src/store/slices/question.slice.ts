@@ -8,22 +8,12 @@ export interface QuestionSlice {
   addQuestion: (projectId: string, title: string) => string;
   updateQuestion: (
     id: string,
-    data: Partial<
-      Pick<
-        Question,
-        "title" | "description" | "recipient" | "answer" | "status"
-      >
-    >,
+    data: Partial<Pick<Question, "title" | "description" | "recipient" | "answer" | "status">>,
   ) => void;
   deleteQuestion: (id: string) => void;
 }
 
-export const createQuestionSlice: StateCreator<
-  QuestionSlice,
-  [],
-  [],
-  QuestionSlice
-> = (set) => ({
+export const createQuestionSlice: StateCreator<QuestionSlice, [], [], QuestionSlice> = (set) => ({
   questions: [],
 
   addQuestion: (projectId, title) => {
@@ -45,9 +35,7 @@ export const createQuestionSlice: StateCreator<
 
   updateQuestion: (id, data) =>
     set((state) => ({
-      questions: state.questions.map((q) =>
-        q.id === id ? { ...q, ...data } : q,
-      ),
+      questions: state.questions.map((q) => (q.id === id ? { ...q, ...data } : q)),
     })),
 
   deleteQuestion: (id) =>

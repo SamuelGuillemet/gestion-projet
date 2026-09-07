@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useBacklogUI } from "@/components/backlog/backlog-state";
 import { useProjectStore } from "@/store";
@@ -16,22 +15,17 @@ export function useProjectNavigation() {
   const setActiveProject = useProjectStore((state) => state.setActiveProject);
   const clearBacklogSelection = useBacklogUI((state) => state.clear);
 
-  const switchProject = useCallback(
-    (projectId: string, preserveCurrentTab = true) => {
-      setActiveProject(projectId);
-      clearBacklogSelection();
-      const tab = preserveCurrentTab
-        ? getCurrentProjectTab(location.pathname)
-        : "board";
-      navigate(`/project/${projectId}/${tab}`);
-    },
-    [clearBacklogSelection, location.pathname, navigate, setActiveProject],
-  );
+  const switchProject = (projectId: string, preserveCurrentTab = true) => {
+    setActiveProject(projectId);
+    clearBacklogSelection();
+    const tab = preserveCurrentTab ? getCurrentProjectTab(location.pathname) : "board";
+    navigate(`/project/${projectId}/${tab}`);
+  };
 
-  const switchToDashboard = useCallback(() => {
+  const switchToDashboard = () => {
     clearBacklogSelection();
     navigate("/dashboard/overview");
-  }, [clearBacklogSelection, navigate]);
+  };
 
   return { switchProject, switchToDashboard };
 }

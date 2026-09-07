@@ -17,9 +17,7 @@ export function NoteEditorPanel({ activeNoteId }: Props) {
   const [content, setContent] = useState(activeNote?.content ?? "");
   const copyFeedbackRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [mode, setMode] = useState<"both" | "edit" | "preview">("both");
-  const [copyState, setCopyState] = useState<"idle" | "success" | "error">(
-    "idle",
-  );
+  const [copyState, setCopyState] = useState<"idle" | "success" | "error">("idle");
 
   const save = (value: string) => {
     if (!activeNoteId) return;
@@ -52,11 +50,11 @@ export function NoteEditorPanel({ activeNoteId }: Props) {
   };
 
   return (
-    <div className="flex flex-col gap-3 p-3 grow">
+    <div className="flex grow flex-col gap-3 p-3">
       <div
         role="radiogroup"
         aria-label="Mode d'édition"
-        className="flex items-center self-end gap-1"
+        className="flex items-center gap-1 self-end"
       >
         <Button
           variant="outline"
@@ -67,19 +65,18 @@ export function NoteEditorPanel({ activeNoteId }: Props) {
           title="Copier un contenu compatible avec Word"
           className={cn(
             "h-8",
-            copyState === "error" &&
-              "border-red-500/50 text-red-700 dark:text-red-400",
+            copyState === "error" && "border-red-500/50 text-red-700 dark:text-red-400",
           )}
         >
           {copyState === "success" ? (
-            <Check className="mr-1 w-4 h-4" />
+            <Check className="mr-1 h-4 w-4" />
           ) : (
-            <ClipboardCopy className="mr-1 w-4 h-4" />
+            <ClipboardCopy className="mr-1 h-4 w-4" />
           )}
           {copyState === "success" ? "Copié" : "Copy to Word"}
         </Button>
 
-        <div className="flex items-center gap-1 bg-background/75 p-1 border rounded-md">
+        <div className="flex items-center gap-1 rounded-md border bg-background/75 p-1">
           <Button
             size="icon"
             variant="ghost"
@@ -87,13 +84,11 @@ export function NoteEditorPanel({ activeNoteId }: Props) {
             title="Both (édition + prévisualisation)"
             onClick={() => setMode("both")}
             className={cn(
-              "p-0 rounded-md w-8 h-8",
-              mode === "both"
-                ? "bg-primary/10 text-primary"
-                : "hover:bg-accent/70",
+              "h-8 w-8 rounded-md p-0",
+              mode === "both" ? "bg-primary/10 text-primary" : "hover:bg-accent/70",
             )}
           >
-            <Columns className="w-4 h-4" />
+            <Columns className="h-4 w-4" />
           </Button>
 
           <Button
@@ -103,13 +98,11 @@ export function NoteEditorPanel({ activeNoteId }: Props) {
             title="Edit (édition seule)"
             onClick={() => setMode("edit")}
             className={cn(
-              "p-0 rounded-md w-8 h-8",
-              mode === "edit"
-                ? "bg-primary/10 text-primary"
-                : "hover:bg-accent/70",
+              "h-8 w-8 rounded-md p-0",
+              mode === "edit" ? "bg-primary/10 text-primary" : "hover:bg-accent/70",
             )}
           >
-            <Edit className="w-4 h-4" />
+            <Edit className="h-4 w-4" />
           </Button>
 
           <Button
@@ -119,44 +112,40 @@ export function NoteEditorPanel({ activeNoteId }: Props) {
             title="Preview (prévisualisation seule)"
             onClick={() => setMode("preview")}
             className={cn(
-              "p-0 rounded-md w-8 h-8",
-              mode === "preview"
-                ? "bg-primary/10 text-primary"
-                : "hover:bg-accent/70",
+              "h-8 w-8 rounded-md p-0",
+              mode === "preview" ? "bg-primary/10 text-primary" : "hover:bg-accent/70",
             )}
           >
-            <Eye className="w-4 h-4" />
+            <Eye className="h-4 w-4" />
           </Button>
         </div>
       </div>
 
-      <div className="overflow-y-auto grow">
+      <div className="grow overflow-y-auto">
         <div
-          className={cn("gap-3 grid p-1 pt-0 min-w-0 h-min min-h-full", {
+          className={cn("grid h-min min-h-full min-w-0 gap-3 p-1 pt-0", {
             "grid-cols-2": mode === "both",
             "grid-cols-1": mode !== "both",
           })}
         >
           {(mode === "both" || mode === "edit") && (
-            <div className="flex flex-col min-h-0 grow">
-              <span className="mb-2 text-muted-foreground atelier-section-title">
-                Édition
-              </span>
+            <div className="flex min-h-0 grow flex-col">
+              <span className="atelier-section-title mb-2 text-muted-foreground">Édition</span>
               <MarkdownTextarea
                 value={content}
                 onChange={handleChange}
-                className="flex-1 min-h-0"
+                className="min-h-0 flex-1"
                 placeholder="Écrivez vos notes en Markdown..."
               />
             </div>
           )}
 
           {(mode === "both" || mode === "preview") && (
-            <div className="flex flex-col min-h-0 grow">
-              <span className="mb-2 text-muted-foreground atelier-section-title">
+            <div className="flex min-h-0 grow flex-col">
+              <span className="atelier-section-title mb-2 text-muted-foreground">
                 Prévisualisation
               </span>
-              <div className="flex-1 bg-background/80 p-5 border rounded-md min-h-0">
+              <div className="min-h-0 flex-1 rounded-md border bg-background/80 p-5">
                 <MarkdownPreview content={content} />
               </div>
             </div>

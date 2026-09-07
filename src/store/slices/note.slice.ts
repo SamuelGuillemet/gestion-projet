@@ -6,16 +6,11 @@ import { getNextProjectScopedNumber } from "./utils";
 export interface NoteSlice {
   notes: Note[];
   addNote: (projectId: string, title: string) => void;
-  updateNote: (
-    id: string,
-    data: Partial<Pick<Note, "title" | "content">>,
-  ) => void;
+  updateNote: (id: string, data: Partial<Pick<Note, "title" | "content">>) => void;
   deleteNote: (id: string) => void;
 }
 
-export const createNoteSlice: StateCreator<NoteSlice, [], [], NoteSlice> = (
-  set,
-) => ({
+export const createNoteSlice: StateCreator<NoteSlice, [], [], NoteSlice> = (set) => ({
   notes: [],
 
   addNote: (projectId, title) =>

@@ -8,12 +8,7 @@ import {
 } from "@/lib/entity-references";
 import { getInverseType } from "@/lib/relations";
 import type { RelationType } from "@/models/relation";
-import {
-  useDeliverableStore,
-  useQuestionStore,
-  useRelationStore,
-  useTaskStore,
-} from "@/store";
+import { useDeliverableStore, useQuestionStore, useRelationStore, useTaskStore } from "@/store";
 
 export type RelatedEntityRelation = {
   id: string;
@@ -54,11 +49,8 @@ export function useRelationOfTask(taskId: string) {
     }
 
     const displayType =
-      relation.sourceId === taskId
-        ? relation.type
-        : getInverseType(relation.type);
-    const relatedId =
-      relation.sourceId === taskId ? relation.targetId : relation.sourceId;
+      relation.sourceId === taskId ? relation.type : getInverseType(relation.type);
+    const relatedId = relation.sourceId === taskId ? relation.targetId : relation.sourceId;
     const relatedItem = itemById.get(relatedId);
     if (!relatedItem) {
       continue;

@@ -47,7 +47,7 @@ const TimePage = lazy(() =>
 
 function RouteFallback() {
   return (
-    <div className="flex justify-center items-center h-full text-muted-foreground text-sm">
+    <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
       Chargement...
     </div>
   );

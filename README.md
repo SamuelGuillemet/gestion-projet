@@ -62,9 +62,9 @@ pnpm preview
 | `pnpm dev`     | Start Vite in development mode.                                        |
 | `pnpm build`   | Run TypeScript project builds, then create the Vite production bundle. |
 | `pnpm preview` | Serve the built app locally.                                           |
-| `pnpm lint`    | Run Biome checks on `src/`.                                            |
-| `pnpm format`  | Format `src/` with Biome.                                              |
-| `pnpm check`   | Run Biome checks and apply safe fixes in `src/`.                       |
+| `pnpm lint`    | Run Oxlint on `src/`.                                                  |
+| `pnpm format`  | Format `src/` with Oxfmt.                                              |
+| `pnpm check`   | Format `src/` and apply Oxlint fixes where available.                  |
 
 ## Application Structure
 
@@ -105,5 +105,5 @@ Because storage is browser-local, use export regularly before clearing site data
 - Base UI dialogs and controls
 - Zustand stores with IndexedDB persistence
 - DnD Kit for drag and drop
-- Biome for linting and formatting
+- Oxlint and Oxfmt from the Oxc tool suite
 - React Markdown, Remark/Rehype, Highlight.js, and Mermaid for notes

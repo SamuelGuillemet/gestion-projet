@@ -14,22 +14,15 @@ export function TreeSection({
   accentColor: string;
 }) {
   return (
-    <div className="rounded-md overflow-hidden atelier-card">
+    <div className="atelier-card overflow-hidden rounded-md">
       <button
         type="button"
-        className="flex items-center gap-2 hover:bg-accent/40 px-3 py-2.5 border-border/70 border-b w-full transition-colors"
+        className="flex w-full items-center gap-2 border-b border-border/70 px-3 py-2.5 transition-colors hover:bg-accent/40"
         onClick={onToggle}
       >
-        <span
-          className="rounded-full w-1 h-6"
-          style={{ backgroundColor: accentColor }}
-        />
-        {expanded ? (
-          <ChevronDown className="w-4 h-4" />
-        ) : (
-          <ChevronRight className="w-4 h-4" />
-        )}
-        <span className="text-foreground atelier-section-title">{title}</span>
+        <span className="h-6 w-1 rounded-full" style={{ backgroundColor: accentColor }} />
+        {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+        <span className="atelier-section-title text-foreground">{title}</span>
       </button>
       {expanded && <div className="space-y-1 p-2.5">{children}</div>}
     </div>

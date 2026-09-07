@@ -26,10 +26,7 @@ export function reportByDateAndProject(
 ) {
   const byDate: Record<
     string,
-    Record<
-      string,
-      { minutes: number; taskMinutesByTaskId: Record<string, number> }
-    >
+    Record<string, { minutes: number; taskMinutesByTaskId: Record<string, number> }>
   > = {};
 
   for (const entry of timeEntries) {
@@ -41,10 +38,8 @@ export function reportByDateAndProject(
       };
     }
     byDate[entry.date][entry.projectId].minutes += entry.minutes;
-    const taskMinutesByTaskId =
-      byDate[entry.date][entry.projectId].taskMinutesByTaskId;
-    taskMinutesByTaskId[entry.taskId] =
-      (taskMinutesByTaskId[entry.taskId] ?? 0) + entry.minutes;
+    const taskMinutesByTaskId = byDate[entry.date][entry.projectId].taskMinutesByTaskId;
+    taskMinutesByTaskId[entry.taskId] = (taskMinutesByTaskId[entry.taskId] ?? 0) + entry.minutes;
   }
 
   const dates = Object.keys(byDate).sort((a, b) => b.localeCompare(a));
@@ -73,10 +68,7 @@ export function reportByDateAndProject(
         tasksBreakdown,
       };
     }),
-    total: Object.values(byDate[date]).reduce(
-      (sum, projectData) => sum + projectData.minutes,
-      0,
-    ),
+    total: Object.values(byDate[date]).reduce((sum, projectData) => sum + projectData.minutes, 0),
   }));
 }
 
@@ -92,10 +84,7 @@ function isWorkday(date: Date): boolean {
   return dayOfWeek >= 1 && dayOfWeek <= 5;
 }
 
-export function getWorkdayDatesInRange(
-  fromDate: string,
-  toDate: string,
-): string[] {
+export function getWorkdayDatesInRange(fromDate: string, toDate: string): string[] {
   const start = new Date(`${fromDate}T00:00:00`);
   const end = new Date(`${toDate}T00:00:00`);
 
@@ -116,10 +105,7 @@ export function getWorkdayDatesInRange(
   return dates;
 }
 
-export function getRollingWorkdayDates(
-  windowEndDate: string,
-  dayCount = 5,
-): string[] {
+export function getRollingWorkdayDates(windowEndDate: string, dayCount = 5): string[] {
   const cursor = new Date(`${windowEndDate}T00:00:00`);
   const dates: string[] = [];
 
@@ -133,10 +119,7 @@ export function getRollingWorkdayDates(
   return dates.reverse();
 }
 
-export function getRollingWorkdayRange(
-  windowEndDate: string,
-  dayCount = 5,
-): WorkdayRange {
+export function getRollingWorkdayRange(windowEndDate: string, dayCount = 5): WorkdayRange {
   const workdayDates = getRollingWorkdayDates(windowEndDate, dayCount);
   return {
     startDate: workdayDates[0] ?? windowEndDate,
@@ -149,20 +132,14 @@ export function createDefaultWorkdayDateRange(
   dayCount = 5,
   yesterday = new Date(new Date().setDate(new Date().getDate() - 1)),
 ): { from: Date; to: Date } {
-  const defaultRange = getRollingWorkdayRange(
-    toIsoDateInput(yesterday),
-    dayCount,
-  );
+  const defaultRange = getRollingWorkdayRange(toIsoDateInput(yesterday), dayCount);
   return {
     from: new Date(`${defaultRange.startDate}T00:00:00`),
     to: new Date(`${defaultRange.endDate}T00:00:00`),
   };
 }
 
-export function toWorkdayRangeFromDateSelection(
-  from?: Date,
-  to?: Date,
-): WorkdayRange {
+export function toWorkdayRangeFromDateSelection(from?: Date, to?: Date): WorkdayRange {
   if (!from || !to) {
     return {
       startDate: "",
@@ -201,13 +178,8 @@ export function sumTimeEntryMinutes(timeEntries: TimeEntry[]): number {
   return timeEntries.reduce((sum, entry) => sum + entry.minutes, 0);
 }
 
-export function sumWeeklyActualMinutes(
-  weeklyProgress: WeeklyProjectProgress[],
-): number {
-  return weeklyProgress.reduce(
-    (sum, project) => sum + project.actualMinutes,
-    0,
-  );
+export function sumWeeklyActualMinutes(weeklyProgress: WeeklyProjectProgress[]): number {
+  return weeklyProgress.reduce((sum, project) => sum + project.actualMinutes, 0);
 }
 
 export function formatShortDateLabel(date: string): string {
@@ -256,19 +228,17 @@ export function addDaysToDate(date: Date, days: number): Date {
 
 /** Returns the 7 ISO dates (Monday to Sunday) of the week containing `weekStart`. */
 export function getWeekDates(weekStart: Date): string[] {
-  return Array.from({ length: 7 }, (_, index) =>
-    toIsoDateInput(addDaysToDate(weekStart, index)),
-  );
+  return Array.from({ length: 7 }, (_, index) => toIsoDateInput(addDaysToDate(weekStart, index)));
 }
 
 export function formatWeekRangeLabel(weekDates: string[]): string {
   const start = weekDates[0];
   const end = weekDates.at(-1);
   if (!start || !end) return "";
-  const startLabel = new Date(`${start}T00:00:00`).toLocaleDateString(
-    FR_LOCALE,
-    { day: "2-digit", month: "short" },
-  );
+  const startLabel = new Date(`${start}T00:00:00`).toLocaleDateString(FR_LOCALE, {
+    day: "2-digit",
+    month: "short",
+  });
   const endLabel = new Date(`${end}T00:00:00`).toLocaleDateString(FR_LOCALE, {
     day: "2-digit",
     month: "short",
@@ -300,8 +270,7 @@ export function buildDailyTaskEntries(
       minutesByDateAndTask[entry.date] = {};
     }
     const minutesByTask = minutesByDateAndTask[entry.date];
-    minutesByTask[entry.taskId] =
-      (minutesByTask[entry.taskId] ?? 0) + entry.minutes;
+    minutesByTask[entry.taskId] = (minutesByTask[entry.taskId] ?? 0) + entry.minutes;
   }
 
   const result: Record<string, DailyTaskEntry[]> = {};
@@ -309,9 +278,7 @@ export function buildDailyTaskEntries(
     result[date] = Object.entries(minutesByTask)
       .map(([taskId, minutes]) => {
         const task = tasks.find((t) => t.id === taskId);
-        const project = task
-          ? projects.find((p) => p.id === task.projectId)
-          : undefined;
+        const project = task ? projects.find((p) => p.id === task.projectId) : undefined;
         return {
           taskId,
           taskNumber: task?.number ?? -1,
@@ -356,9 +323,7 @@ export function buildWeeklyProjectProgress(
       const plannedMinutes = Math.round(plannedDays * MINUTES_PER_DAY);
       const actualMinutes = minutesByProject[project.id] ?? 0;
       const completionPercent =
-        plannedMinutes > 0
-          ? Math.min(100, (actualMinutes / plannedMinutes) * 100)
-          : 0;
+        plannedMinutes > 0 ? Math.min(100, (actualMinutes / plannedMinutes) * 100) : 0;
 
       return {
         projectId: project.id,

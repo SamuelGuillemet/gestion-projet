@@ -8,19 +8,19 @@ export function TimePage() {
 
   if (!activeProjectId) {
     return (
-      <div className="flex justify-center items-center h-full text-muted-foreground">
+      <div className="flex h-full items-center justify-center text-muted-foreground">
         Sélectionnez ou créez un projet pour commencer.
       </div>
     );
   }
 
   return (
-    <div className="gap-4 grid grid-cols-[minmax(0,1fr)_26rem] 2xl:grid-cols-[minmax(0,1fr)_32rem] h-full overflow-hidden">
-      <div className="gap-4 grid grid-rows-[auto_1fr] overflow-hidden">
+    <div className="grid h-full grid-cols-[minmax(0,1fr)_26rem] gap-4 overflow-hidden 2xl:grid-cols-[minmax(0,1fr)_32rem]">
+      <div className="grid grid-rows-[auto_1fr] gap-4 overflow-hidden">
         <TimeEntryForm projectId={activeProjectId} />
         <TimeRecap projectId={activeProjectId} />
       </div>
-      <div className="p-4 rounded-md atelier-card">
+      <div className="atelier-card rounded-md p-4">
         <MilestoneTimeline projectId={activeProjectId} />
       </div>
     </div>

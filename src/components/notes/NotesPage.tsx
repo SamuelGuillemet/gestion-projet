@@ -10,7 +10,7 @@ export function NotesPage() {
 
   if (!activeProjectId) {
     return (
-      <div className="flex justify-center items-center h-full text-muted-foreground">
+      <div className="flex h-full items-center justify-center text-muted-foreground">
         Sélectionnez ou créez un projet pour commencer.
       </div>
     );
@@ -21,15 +21,15 @@ export function NotesPage() {
   };
 
   return (
-    <div className="flex bg-card border rounded-md h-full overflow-hidden">
+    <div className="flex h-full overflow-hidden rounded-md border bg-card">
       <NoteList activeNoteId={activeNoteId} setActiveNoteId={setActiveNoteId} />
 
       {activeNoteId ? (
         <NoteEditorPanel key={activeNoteId} activeNoteId={activeNoteId} />
       ) : (
-        <div className="flex flex-1 justify-center items-center text-muted-foreground">
+        <div className="flex flex-1 items-center justify-center text-muted-foreground">
           <div className="space-y-2 text-center">
-            <div className="opacity-30 mx-auto w-10 h-10" />
+            <div className="mx-auto h-10 w-10 opacity-30" />
             <p className="text-sm">Créez une note pour commencer</p>
           </div>
         </div>

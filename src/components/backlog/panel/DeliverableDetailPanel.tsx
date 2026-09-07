@@ -2,11 +2,7 @@ import { DeliverableDetailContent } from "@/components/shared/DeliverableDetailC
 import { useDeliverable, useDeliverableActions } from "@/hooks/useDeliverables";
 import { useBacklogUI } from "../backlog-state";
 
-export function DeliverableDetailPanel({
-  deliverableId,
-}: {
-  deliverableId: string;
-}) {
+export function DeliverableDetailPanel({ deliverableId }: { deliverableId: string }) {
   const deliverable = useDeliverable(deliverableId);
   const { updateDeliverable, deleteDeliverable } = useDeliverableActions();
   const clear = useBacklogUI((s) => s.clear);

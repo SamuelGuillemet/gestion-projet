@@ -1,19 +1,8 @@
-import {
-  BarChart3,
-  Clock,
-  FileText,
-  KanbanSquare,
-  List,
-  Settings,
-  Target,
-} from "lucide-react";
+import { BarChart3, Clock, FileText, KanbanSquare, List, Settings, Target } from "lucide-react";
 import { useEffect } from "react";
 import { matchPath, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import {
-  flushPendingIdbStorageWrites,
-  hasPendingIdbStorageWrites,
-} from "@/store/idb-storage";
+import { flushPendingIdbStorageWrites, hasPendingIdbStorageWrites } from "@/store/idb-storage";
 import { createAutoSnapshotIfNeeded } from "@/store/snapshots";
 import { AppSwitcher } from "./AppSwitcher";
 import { GlobalSearchBox } from "./GlobalSearchBox";
@@ -112,54 +101,52 @@ export function AppLayout() {
       });
 
   return (
-    <div className="flex md:flex-row flex-col bg-background h-screen overflow-hidden text-foreground atelier-shell">
-      <div className="flex flex-col flex-1 min-w-0">
-        <header className="z-10 items-center gap-2 grid grid-cols-[18rem_1fr_minmax(12rem,0.5fr)_auto] bg-card px-4 py-1 border-border/70 border-b h-12 shrink-0">
+    <div className="atelier-shell flex h-screen flex-col overflow-hidden bg-background text-foreground md:flex-row">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="z-10 grid h-12 shrink-0 grid-cols-[18rem_1fr_minmax(12rem,0.5fr)_auto] items-center gap-2 border-b border-border/70 bg-card px-4 py-1">
           <ProjectSelector />
-          <nav className="flex gap-1 pb-2 md:pb-0 md:overflow-visible overflow-x-auto">
-            {tabs.map(
-              ({ value, label, icon: Icon, to, active, prefetcher }) => (
-                <button
-                  key={value}
-                  type="button"
-                  aria-current={active ? "page" : undefined}
-                  data-active={active}
-                  onMouseEnter={() => void prefetcher?.()}
-                  onFocus={() => void prefetcher?.()}
-                  onClick={() => navigate(to)}
+          <nav className="flex gap-1 overflow-x-auto pb-2 md:overflow-visible md:pb-0">
+            {tabs.map(({ value, label, icon: Icon, to, active, prefetcher }) => (
+              <button
+                key={value}
+                type="button"
+                aria-current={active ? "page" : undefined}
+                data-active={active}
+                onMouseEnter={() => void prefetcher?.()}
+                onFocus={() => void prefetcher?.()}
+                onClick={() => navigate(to)}
+                className={cn(
+                  "group flex min-w-28 items-center gap-2.5 rounded-md border px-3 py-2 text-left text-sm transition-all md:min-w-0",
+                  active
+                    ? "border-primary/30 bg-card text-foreground shadow-sm"
+                    : "border-transparent text-muted-foreground hover:hover:bg-card/65 hover:text-foreground",
+                )}
+              >
+                <Icon
                   className={cn(
-                    "group flex items-center gap-2.5 px-3 py-2 border rounded-md min-w-28 md:min-w-0 text-sm text-left transition-all",
-                    active
-                      ? "border-primary/30 bg-card text-foreground shadow-sm"
-                      : "border-transparent text-muted-foreground hover:hover:bg-card/65 hover:text-foreground",
+                    "size-4 shrink-0",
+                    active ? "text-primary" : "text-muted-foreground",
                   )}
-                >
-                  <Icon
-                    className={cn(
-                      "size-4 shrink-0",
-                      active ? "text-primary" : "text-muted-foreground",
-                    )}
-                  />
-                  <span className="font-medium">{label}</span>
-                </button>
-              ),
-            )}
+                />
+                <span className="font-medium">{label}</span>
+              </button>
+            ))}
           </nav>
 
-          <div className="flex justify-center min-w-0">
+          <div className="flex min-w-0 justify-center">
             <GlobalSearchBox />
           </div>
 
-          <div className="flex justify-end items-center gap-2 min-w-0">
-            <div className="flex items-center gap-1 bg-muted/55 p-0.5 rounded-md">
+          <div className="flex min-w-0 items-center justify-end gap-2">
+            <div className="flex items-center gap-1 rounded-md bg-muted/55 p-0.5">
               <ThemeToggle />
               <HelpDialog />
             </div>
           </div>
         </header>
 
-        <main className="flex-1 p-2 lg:p-4 min-h-0 overflow-hidden">
-          <div className="h-full min-h-0 atelier-page-enter">
+        <main className="min-h-0 flex-1 overflow-hidden p-2 lg:p-4">
+          <div className="atelier-page-enter h-full min-h-0">
             <Outlet />
           </div>
         </main>

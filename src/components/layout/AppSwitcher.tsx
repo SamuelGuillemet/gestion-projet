@@ -23,12 +23,9 @@ function buildSwitcherItems(projects: Project[]): SwitcherItem[] {
 }
 
 function getCurrentIndex(items: SwitcherItem[], pathname: string): number {
-  const projectId = matchPath("/project/:projectId/*", pathname)?.params
-    .projectId;
+  const projectId = matchPath("/project/:projectId/*", pathname)?.params.projectId;
   if (!projectId) return 0;
-  const index = items.findIndex(
-    (item) => item.type === "project" && item.id === projectId,
-  );
+  const index = items.findIndex((item) => item.type === "project" && item.id === projectId);
   return index === -1 ? 0 : index;
 }
 
@@ -86,8 +83,7 @@ export function AppSwitcher() {
         const builtItems = buildSwitcherItems(projectsRef.current);
         if (builtItems.length <= 1) return;
         const currentIndex = getCurrentIndex(builtItems, pathnameRef.current);
-        const nextIndex =
-          (currentIndex + direction + builtItems.length) % builtItems.length;
+        const nextIndex = (currentIndex + direction + builtItems.length) % builtItems.length;
         itemsRef.current = builtItems;
         selectedIndexRef.current = nextIndex;
         openRef.current = true;
@@ -98,8 +94,7 @@ export function AppSwitcher() {
       }
 
       const nextIndex =
-        (selectedIndexRef.current + direction + itemsRef.current.length) %
-        itemsRef.current.length;
+        (selectedIndexRef.current + direction + itemsRef.current.length) % itemsRef.current.length;
       selectedIndexRef.current = nextIndex;
       setSelectedIndex(nextIndex);
     };
@@ -132,9 +127,9 @@ export function AppSwitcher() {
       ref={dialogRef}
       onClose={() => setOpen(false)}
       aria-label="Changer de vue"
-      className="top-1/2 left-1/2 fixed bg-popover backdrop:bg-background/60 shadow-xl backdrop:backdrop-blur-sm p-2 border rounded-lg w-72 max-w-[calc(100vw-2rem)] text-popover-foreground -translate-x-1/2 -translate-y-1/2 transform"
+      className="fixed top-1/2 left-1/2 w-72 max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 transform rounded-lg border bg-popover p-2 text-popover-foreground shadow-xl backdrop:bg-background/60 backdrop:backdrop-blur-sm"
     >
-      <ul className="space-y-1 p-1 max-h-[70vh] overflow-y-auto">
+      <ul className="max-h-[70vh] space-y-1 overflow-y-auto p-1">
         {items.map((item, index) => (
           <li key={item.type === "dashboard" ? "dashboard" : item.id}>
             <button
@@ -149,7 +144,7 @@ export function AppSwitcher() {
                 }
               }}
               className={cn(
-                "flex items-center gap-2 px-3 py-2 rounded-md w-full text-sm text-left transition-colors",
+                "flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors",
                 index === selectedIndex
                   ? "bg-primary/15 text-foreground ring-1 ring-primary/40"
                   : "text-muted-foreground hover:bg-accent/55",
@@ -159,7 +154,7 @@ export function AppSwitcher() {
                 <LayoutDashboard className="size-4 shrink-0" />
               ) : (
                 <span
-                  className="rounded-full size-2.5 shrink-0"
+                  className="size-2.5 shrink-0 rounded-full"
                   style={{ backgroundColor: item.color }}
                 />
               )}
@@ -171,8 +166,7 @@ export function AppSwitcher() {
         ))}
       </ul>
       <p className="mt-2 px-1 text-[11px] text-muted-foreground">
-        Alt (maintenu) + A pour parcourir (+ Maj pour l'ordre inverse), relâchez
-        Alt pour valider
+        Alt (maintenu) + A pour parcourir (+ Maj pour l'ordre inverse), relâchez Alt pour valider
       </p>
     </dialog>
   );

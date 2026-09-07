@@ -8,9 +8,7 @@ export function useDeliverables() {
 
 export function useDeliverableIds(projectId: string | null) {
   return useDeliverableStore(
-    useShallow((s) =>
-      s.deliverables.filter((d) => d.projectId === projectId).map((d) => d.id),
-    ),
+    useShallow((s) => s.deliverables.filter((d) => d.projectId === projectId).map((d) => d.id)),
   );
 }
 

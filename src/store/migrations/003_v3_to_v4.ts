@@ -65,9 +65,7 @@ async function migrateStore(storeName: string, collectionKey: string) {
 export async function run(): Promise<boolean> {
   try {
     const writes = await Promise.all([
-      ...ENTITY_STORES.map(([storeName, collectionKey]) =>
-        migrateStore(storeName, collectionKey),
-      ),
+      ...ENTITY_STORES.map(([storeName, collectionKey]) => migrateStore(storeName, collectionKey)),
       migrateVersion("gp-projects", version),
       migrateVersion("gp-relations", version),
       migrateVersion("gp-tags", version),
@@ -80,9 +78,7 @@ export async function run(): Promise<boolean> {
   }
 }
 
-export function transform(
-  state: Record<string, unknown>,
-): Record<string, unknown> {
+export function transform(state: Record<string, unknown>): Record<string, unknown> {
   const next = { ...state };
 
   for (const [storeName, collectionKey] of ENTITY_STORES) {

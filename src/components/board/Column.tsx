@@ -29,41 +29,34 @@ export function Column({ columnId, taskIds, dragEnabled }: ColumnProps) {
     <div
       ref={droppableRef}
       className={cn(
-        "flex flex-col rounded-md w-full min-w-80 transition-all duration-200 atelier-card",
+        "atelier-card flex w-full min-w-80 flex-col rounded-md transition-all duration-200",
         droppable.isDropTarget &&
           "scale-[1.01] border-primary/40 bg-primary/5 ring-2 ring-primary/30",
       )}
     >
-      <div className="flex items-center gap-3 px-4 py-3 border-border/70 border-b">
+      <div className="flex items-center gap-3 border-b border-border/70 px-4 py-3">
         <span
-          className="rounded-full ring-2 ring-card size-3"
+          className="size-3 rounded-full ring-2 ring-card"
           style={{
             backgroundColor: column.color,
           }}
         />
-        <span className="text-foreground atelier-section-title">
-          {column.label}
-        </span>
-        <span className="bg-background/70 ml-auto px-2 py-0.5 border rounded font-data text-muted-foreground text-xs">
+        <span className="atelier-section-title text-foreground">{column.label}</span>
+        <span className="font-data ml-auto rounded border bg-background/70 px-2 py-0.5 text-xs text-muted-foreground">
           {taskIds.length}
         </span>
       </div>
 
-      <div className="flex-1 space-y-2.5 p-3 overflow-y-auto no-scrollbar">
+      <div className="no-scrollbar flex-1 space-y-2.5 overflow-y-auto p-3">
         {taskIds.map((id, index) =>
           dragEnabled ? (
-            <SortableCard
-              key={id}
-              taskId={id}
-              index={index}
-              columnId={column.id}
-            />
+            <SortableCard key={id} taskId={id} index={index} columnId={column.id} />
           ) : (
             <Card key={id} taskId={id} />
           ),
         )}
         {taskIds.length === 0 && (
-          <div className="py-10 border border-border/70 border-dashed rounded-md font-data text-muted-foreground/60 text-xs text-center">
+          <div className="font-data rounded-md border border-dashed border-border/70 py-10 text-center text-xs text-muted-foreground/60">
             Glissez des tâches ici
           </div>
         )}

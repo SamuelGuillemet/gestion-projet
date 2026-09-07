@@ -26,7 +26,7 @@ export function ThemeToggle() {
       title={`Thème : ${label} (cliquer pour changer)`}
       onClick={handleClick}
     >
-      <Icon className="w-4 h-4" />
+      <Icon className="h-4 w-4" />
     </Button>
   );
 }

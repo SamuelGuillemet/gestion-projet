@@ -30,12 +30,13 @@ export function Card({ taskId, isDragging }: CardProps) {
   return (
     <>
       <div
+        aria-label="Card"
         role="button"
         tabIndex={0}
         className={cn(
-          "group bg-card/88 shadow-sm hover:shadow-md p-3 border hover:border-primary/30 border-l-2 border-l-(--ink)! rounded-md transition-all hover:-translate-y-0.5",
+          "group rounded-md border border-l-2 border-l-(--ink)! bg-card/88 p-3 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md",
           {
-            "opacity-60 rotate-1 shadow-lg": isDragging,
+            "rotate-1 opacity-60 shadow-lg": isDragging,
             "opacity-70": task.done,
           },
         )}
@@ -49,27 +50,27 @@ export function Card({ taskId, isDragging }: CardProps) {
       >
         <div className="flex items-start gap-2">
           <div className="flex flex-col gap-2">
-            <span className="font-data text-[14px] text-muted-foreground shrink-0">
+            <span className="font-data shrink-0 text-[14px] text-muted-foreground">
               {getEntityReferenceLabel("tasks", task.number)}
             </span>
-            <GripVertical className="opacity-0 group-hover:opacity-100 mt-0.5 w-4 h-4 text-muted-foreground/40 transition-opacity shrink-0" />
+            <GripVertical className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground/40 opacity-0 transition-opacity group-hover:opacity-100" />
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex flex-col gap-1.5 min-w-0">
+          <div className="min-w-0 flex-1">
+            <div className="flex min-w-0 flex-col gap-1.5">
               <span
-                className={cn("block font-medium text-sm leading-snug", {
-                  "line-through text-muted-foreground": task.done,
+                className={cn("block text-sm leading-snug font-medium", {
+                  "text-muted-foreground line-through": task.done,
                 })}
               >
                 {task.title}
               </span>
               {task.description && (
-                <p className="mt-1 text-muted-foreground text-xs line-clamp-2 leading-relaxed">
+                <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
                   {task.description}
                 </p>
               )}
               <TaskFocusBadges task={task} compact />
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <div className="flex flex-wrap gap-1">
                   {taskTags.map((tag) => (
                     <TagBadge key={tag.id} tag={tag} />
@@ -91,11 +92,7 @@ export function Card({ taskId, isDragging }: CardProps) {
           </div>
         </div>
       </div>
-      <CardDetail
-        taskId={task.id}
-        open={detailOpen}
-        onOpenChange={setDetailOpen}
-      />
+      <CardDetail taskId={task.id} open={detailOpen} onOpenChange={setDetailOpen} />
     </>
   );
 }

@@ -68,25 +68,22 @@ export function TaskMigrationPanel() {
   const targetProjects = projects.filter((p) => p.id !== sourceProjectId);
 
   return (
-    <div className="space-y-4 mt-2 max-w-2xl">
-      <p className="text-muted-foreground text-sm">
-        Déplacez des tâches (et leurs sous-tâches) d'un projet vers un autre,
-        par exemple lorsqu'une tâche a été créée dans le mauvais projet.
+    <div className="mt-2 max-w-2xl space-y-4">
+      <p className="text-sm text-muted-foreground">
+        Déplacez des tâches (et leurs sous-tâches) d'un projet vers un autre, par exemple lorsqu'une
+        tâche a été créée dans le mauvais projet.
       </p>
 
-      <div className="gap-3 grid grid-cols-2">
+      <div className="grid grid-cols-2 gap-3">
         <div>
-          <label
-            className="block mb-1 text-muted-foreground text-xs"
-            htmlFor="migration-source"
-          >
+          <label className="mb-1 block text-xs text-muted-foreground" htmlFor="migration-source">
             Projet source
           </label>
           <select
             id="migration-source"
             value={sourceProjectId}
             onChange={(e) => handleSourceChange(e.target.value)}
-            className="bg-background px-2 border border-input rounded-md w-full h-8 text-sm"
+            className="h-8 w-full rounded-md border border-input bg-background px-2 text-sm"
           >
             <option value="">Sélectionner...</option>
             {projects.map((project) => (
@@ -97,10 +94,7 @@ export function TaskMigrationPanel() {
           </select>
         </div>
         <div>
-          <label
-            className="block mb-1 text-muted-foreground text-xs"
-            htmlFor="migration-target"
-          >
+          <label className="mb-1 block text-xs text-muted-foreground" htmlFor="migration-target">
             Projet cible
           </label>
           <select
@@ -108,7 +102,7 @@ export function TaskMigrationPanel() {
             value={targetProjectId}
             onChange={(e) => setTargetProjectId(e.target.value)}
             disabled={!sourceProjectId}
-            className="bg-background disabled:opacity-50 px-2 border border-input rounded-md w-full h-8 text-sm"
+            className="h-8 w-full rounded-md border border-input bg-background px-2 text-sm disabled:opacity-50"
           >
             <option value="">Sélectionner...</option>
             {targetProjects.map((project) => (
@@ -122,26 +116,23 @@ export function TaskMigrationPanel() {
 
       {sourceProjectId && (
         <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <label className="flex items-center gap-2 text-sm cursor-pointer">
+          <div className="flex items-center justify-between">
+            <label className="flex cursor-pointer items-center gap-2 text-sm">
               <Checkbox
-                checked={
-                  topLevelTasks.length > 0 &&
-                  selectedIds.size === topLevelTasks.length
-                }
+                checked={topLevelTasks.length > 0 && selectedIds.size === topLevelTasks.length}
                 onCheckedChange={toggleAll}
                 disabled={topLevelTasks.length === 0}
               />
               Tout sélectionner
             </label>
-            <span className="text-muted-foreground text-xs">
+            <span className="text-xs text-muted-foreground">
               {selectedIds.size} sélectionnée(s)
             </span>
           </div>
 
-          <div className="border rounded-md max-h-80 overflow-y-auto">
+          <div className="max-h-80 overflow-y-auto rounded-md border">
             {topLevelTasks.length === 0 && (
-              <p className="py-6 text-muted-foreground text-xs text-center">
+              <p className="py-6 text-center text-xs text-muted-foreground">
                 Aucune tâche dans ce projet.
               </p>
             )}
@@ -150,24 +141,24 @@ export function TaskMigrationPanel() {
               return (
                 <label
                   key={task.id}
-                  className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1.5 border-b last:border-b-0 text-sm cursor-pointer"
+                  className="flex cursor-pointer items-center gap-2 border-b px-2 py-1.5 text-sm last:border-b-0 hover:bg-muted/50"
                 >
                   <Checkbox
                     checked={selectedIds.has(task.id)}
                     onCheckedChange={() => toggleTask(task.id)}
                   />
-                  <span className="font-data text-[10px] text-muted-foreground shrink-0">
+                  <span className="font-data shrink-0 text-[10px] text-muted-foreground">
                     {getEntityReferenceLabel("tasks", task.number)}
                   </span>
                   <span
                     className={cn("flex-1 truncate", {
-                      "line-through text-muted-foreground": task.done,
+                      "text-muted-foreground line-through": task.done,
                     })}
                   >
                     {task.title}
                   </span>
                   {subtaskCount > 0 && (
-                    <span className="text-[10px] text-muted-foreground shrink-0">
+                    <span className="shrink-0 text-[10px] text-muted-foreground">
                       +{subtaskCount} sous-tâche(s)
                     </span>
                   )}
@@ -183,7 +174,7 @@ export function TaskMigrationPanel() {
         disabled={!targetProjectId || selectedIds.size === 0}
         size="sm"
       >
-        <ArrowRightLeft className="w-4 h-4" />
+        <ArrowRightLeft className="h-4 w-4" />
         Migrer{selectedIds.size > 0 ? ` ${selectedIds.size} tâche(s)` : ""}
       </Button>
     </div>

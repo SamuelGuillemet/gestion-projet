@@ -54,10 +54,7 @@ export function toggleWrap(
     selected.startsWith(before) &&
     selected.endsWith(after)
   ) {
-    const unwrapped = selected.slice(
-      before.length,
-      selected.length - after.length,
-    );
+    const unwrapped = selected.slice(before.length, selected.length - after.length);
     insertUndoableText(textarea, unwrapped, start, end, onChange);
     textarea.setSelectionRange(start, start + unwrapped.length);
     return;
@@ -68,32 +65,14 @@ export function toggleWrap(
     value.slice(start - before.length, start) === before &&
     value.slice(end, end + after.length) === after
   ) {
-    insertUndoableText(
-      textarea,
-      selected,
-      start - before.length,
-      end + after.length,
-      onChange,
-    );
-    textarea.setSelectionRange(
-      start - before.length,
-      start - before.length + selected.length,
-    );
+    insertUndoableText(textarea, selected, start - before.length, end + after.length, onChange);
+    textarea.setSelectionRange(start - before.length, start - before.length + selected.length);
     return;
   }
 
   const text = selected || placeholder;
-  insertUndoableText(
-    textarea,
-    `${before}${text}${after}`,
-    start,
-    end,
-    onChange,
-  );
-  textarea.setSelectionRange(
-    start + before.length,
-    start + before.length + text.length,
-  );
+  insertUndoableText(textarea, `${before}${text}${after}`, start, end, onChange);
+  textarea.setSelectionRange(start + before.length, start + before.length + text.length);
 }
 
 /** Adds `prefix` to every selected line, or removes it if every line already has it. */
@@ -106,9 +85,7 @@ export function togglePrefix(
   const { start, end } = getSelection(textarea, value);
   const { lineStart, lineEnd } = getLineRange(value, start, end);
   const lines = value.slice(lineStart, lineEnd).split("\n");
-  const allPrefixed = lines.every(
-    (line) => line.length === 0 || line.startsWith(prefix),
-  );
+  const allPrefixed = lines.every((line) => line.length === 0 || line.startsWith(prefix));
 
   const newLines = lines.map((line) => {
     if (line.length === 0) return line;
@@ -152,9 +129,7 @@ export function toggleOrderedList(
   const { start, end } = getSelection(textarea, value);
   const { lineStart, lineEnd } = getLineRange(value, start, end);
   const lines = value.slice(lineStart, lineEnd).split("\n");
-  const allOrdered = lines.every(
-    (line) => line.length === 0 || /^\d+\.\s/.test(line),
-  );
+  const allOrdered = lines.every((line) => line.length === 0 || /^\d+\.\s/.test(line));
 
   let index = 0;
   const newLines = lines.map((line) => {

@@ -8,16 +8,12 @@ export function useTimeEntries() {
 
 /** Returns time entries for a project. */
 export function useTimeEntriesByProjectId(projectId: string | null) {
-  return useTimeStore(
-    useShallow((s) => s.timeEntries.filter((e) => e.projectId === projectId)),
-  );
+  return useTimeStore(useShallow((s) => s.timeEntries.filter((e) => e.projectId === projectId)));
 }
 
 /** Returns time entries for a task. */
 export function useTimeEntriesByTaskId(taskId: string | null) {
-  return useTimeStore(
-    useShallow((s) => s.timeEntries.filter((e) => e.taskId === taskId)),
-  );
+  return useTimeStore(useShallow((s) => s.timeEntries.filter((e) => e.taskId === taskId)));
 }
 
 export function useTimeEntriesByTaskIds(taskIds: string[]) {
@@ -31,9 +27,7 @@ export function useTimeEntriesByTaskIds(taskIds: string[]) {
 
 /** Returns milestones for a project. */
 export function useMilestonesByProjectId(projectId: string | null) {
-  return useTimeStore(
-    useShallow((s) => s.milestones.filter((m) => m.projectId === projectId)),
-  );
+  return useTimeStore(useShallow((s) => s.milestones.filter((m) => m.projectId === projectId)));
 }
 
 /** Returns time action functions only (stable references). */

@@ -30,9 +30,7 @@ export function TaskRow({ taskId }: { taskId: string }) {
     <div
       className={cn(
         "group flex cursor-pointer items-center gap-2 rounded-md border border-l-2 border-l-(--entity-task)! py-2 pr-2 pl-3 transition-colors",
-        selected
-          ? "border-primary/25 bg-primary/7"
-          : "border-transparent hover:hover:bg-accent/45",
+        selected ? "border-primary/25 bg-primary/7" : "border-transparent hover:hover:bg-accent/45",
       )}
       onClick={onSelect}
       onKeyDown={(e) => {
@@ -44,26 +42,26 @@ export function TaskRow({ taskId }: { taskId: string }) {
       role="button"
       tabIndex={0}
     >
-      <span className="text-muted-foreground shrink-0">
+      <span className="shrink-0 text-muted-foreground">
         {task.done ? (
-          <CheckCircle2 className="w-4 h-4 text-green-500" />
+          <CheckCircle2 className="h-4 w-4 text-green-500" />
         ) : (
-          <Circle className="w-4 h-4" />
+          <Circle className="h-4 w-4" />
         )}
       </span>
-      <span className="font-data text-[10px] text-muted-foreground shrink-0">
+      <span className="font-data shrink-0 text-[10px] text-muted-foreground">
         {getEntityReferenceLabel("tasks", task.number)}
       </span>
       <span
-        className={cn("flex-1 text-sm truncate", {
-          "line-through text-muted-foreground": task.done,
+        className={cn("flex-1 truncate text-sm", {
+          "text-muted-foreground line-through": task.done,
         })}
       >
         {task.title}
       </span>
       <TaskFocusBadges task={task} compact showMetadata={false} />
       {taskTags.length > 0 && (
-        <div className="flex gap-1 shrink-0">
+        <div className="flex shrink-0 gap-1">
           {taskTags.map((tag) => (
             <TagBadge key={tag.id} tag={tag} />
           ))}
@@ -71,7 +69,7 @@ export function TaskRow({ taskId }: { taskId: string }) {
       )}
       {priority ? (
         <span
-          className="inline-flex items-center px-1.5 py-0.5 border rounded h-4.5 font-medium text-[10px] leading-none shrink-0"
+          className="inline-flex h-4.5 shrink-0 items-center rounded border px-1.5 py-0.5 text-[10px] leading-none font-medium"
           style={{
             borderColor: `${priority.color}55`,
             backgroundColor: `${priority.color}16`,
@@ -90,9 +88,9 @@ export function TaskRow({ taskId }: { taskId: string }) {
           <Button
             variant="ghost"
             size="icon"
-            className="opacity-0 group-hover:opacity-100 w-6 h-6 transition-opacity shrink-0"
+            className="h-6 w-6 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
           >
-            <Trash2 className="w-3 h-3" />
+            <Trash2 className="h-3 w-3" />
           </Button>
         }
         title="Supprimer la tâche"

@@ -6,17 +6,13 @@ function loadHiddenProjectIds() {
   if (typeof window === "undefined") return new Set<string>();
 
   try {
-    const rawValue = window.localStorage.getItem(
-      HIDDEN_PROJECT_IDS_STORAGE_KEY,
-    );
+    const rawValue = window.localStorage.getItem(HIDDEN_PROJECT_IDS_STORAGE_KEY);
     if (!rawValue) return new Set<string>();
 
     const parsedValue = JSON.parse(rawValue);
     if (!Array.isArray(parsedValue)) return new Set<string>();
 
-    return new Set(
-      parsedValue.filter((value): value is string => typeof value === "string"),
-    );
+    return new Set(parsedValue.filter((value): value is string => typeof value === "string"));
   } catch {
     return new Set<string>();
   }
@@ -37,15 +33,12 @@ export type FocusDetailSelection =
   | null;
 
 export function useFocusSelection() {
-  const [selectedDetail, setSelectedDetail] =
-    useState<FocusDetailSelection>(null);
+  const [selectedDetail, setSelectedDetail] = useState<FocusDetailSelection>(null);
 
   return {
     selectedDetail,
-    selectTask: (taskId: string) =>
-      setSelectedDetail({ type: "task", id: taskId }),
-    selectQuestion: (questionId: string) =>
-      setSelectedDetail({ type: "question", id: questionId }),
+    selectTask: (taskId: string) => setSelectedDetail({ type: "task", id: taskId }),
+    selectQuestion: (questionId: string) => setSelectedDetail({ type: "question", id: questionId }),
     clearSelection: () => setSelectedDetail(null),
   };
 }

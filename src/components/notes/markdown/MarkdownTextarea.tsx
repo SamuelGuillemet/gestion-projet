@@ -11,13 +11,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { escapeMarkdownImageAlt } from "@/lib/markdown-images";
 import { cn } from "@/lib/utils";
 import { saveMarkdownImage } from "@/store/markdown-image.store";
-import { MarkdownToolbar } from "./MarkdownToolbar";
 import { insertUndoableText } from "./markdown-editing";
+import { MarkdownToolbar } from "./MarkdownToolbar";
 
-type Props = Omit<
-  TextareaHTMLAttributes<HTMLTextAreaElement>,
-  "onChange" | "value"
-> & {
+type Props = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "onChange" | "value"> & {
   value: string;
   onChange: (value: string) => void;
 };
@@ -44,12 +41,7 @@ function extractDroppedImageFiles(files: Iterable<File>) {
   return [...files].filter((file) => file.type.startsWith("image/"));
 }
 
-export function MarkdownTextarea({
-  className,
-  onChange,
-  value,
-  ...props
-}: Props) {
+export function MarkdownTextarea({ className, onChange, value, ...props }: Props) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -70,13 +62,7 @@ export function MarkdownTextarea({
     );
 
     const insertedText = fragments.join("\n");
-    insertUndoableText(
-      textarea,
-      insertedText,
-      selectionStart,
-      selectionEnd,
-      onChange,
-    );
+    insertUndoableText(textarea, insertedText, selectionStart, selectionEnd, onChange);
   };
 
   const handlePaste = async (event: ClipboardEvent<HTMLTextAreaElement>) => {
@@ -109,8 +95,7 @@ export function MarkdownTextarea({
   };
 
   const handleDragLeave = (event: DragEvent<HTMLTextAreaElement>) => {
-    if (event.currentTarget.contains(event.relatedTarget as Node | null))
-      return;
+    if (event.currentTarget.contains(event.relatedTarget as Node | null)) return;
     setIsDragging(false);
   };
 
@@ -124,23 +109,17 @@ export function MarkdownTextarea({
       const selectionStart = textarea.selectionStart;
       const selectionEnd = textarea.selectionEnd;
 
-      insertUndoableText(
-        textarea,
-        "\t",
-        selectionStart,
-        selectionEnd,
-        onChange,
-      );
+      insertUndoableText(textarea, "\t", selectionStart, selectionEnd, onChange);
     }
   };
 
   return (
-    <div className="relative flex flex-col flex-1 gap-2 min-h-0">
+    <div className="relative flex min-h-0 flex-1 flex-col gap-2">
       <MarkdownToolbar
         textareaRef={textareaRef}
         value={value}
         onChange={onChange}
-        className="top-0 z-10 sticky bg-card"
+        className="sticky top-0 z-10 bg-card"
       />
 
       <Textarea
@@ -154,16 +133,16 @@ export function MarkdownTextarea({
         onDragLeave={handleDragLeave}
         onKeyDown={handleKeyDown}
         className={cn(
-          "flex-1 bg-background/80 min-h-0 font-data text-sm leading-relaxed transition-colors resize-none",
+          "font-data min-h-0 flex-1 resize-none bg-background/80 text-sm leading-relaxed transition-colors",
           isDragging && "border-primary bg-primary/5",
           className,
         )}
       />
 
       {isDragging ? (
-        <div className="absolute inset-0 flex justify-center items-center bg-background/85 backdrop-blur-[1px] border border-primary border-dashed rounded-md text-primary pointer-events-none">
-          <div className="flex items-center gap-2 font-medium text-sm">
-            <ImagePlus className="w-4 h-4" />
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-md border border-dashed border-primary bg-background/85 text-primary backdrop-blur-[1px]">
+          <div className="flex items-center gap-2 text-sm font-medium">
+            <ImagePlus className="h-4 w-4" />
             Déposez l'image pour l'ajouter à la note
           </div>
         </div>

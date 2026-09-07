@@ -36,30 +36,29 @@ export function FocusHeader({
   onShowAllProjects: () => void;
 }) {
   return (
-    <header className="flex flex-row justify-between items-start gap-4 p-4 rounded-md atelier-card">
+    <header className="atelier-card flex flex-row items-start justify-between gap-4 rounded-md p-4">
       <div className="min-w-0">
-        <div className="flex items-center gap-2 text-primary atelier-section-title">
+        <div className="atelier-section-title flex items-center gap-2 text-primary">
           <Target className="size-4" aria-hidden="true" />
           Focus
         </div>
-        <h1 className="mt-2 font-heading font-semibold text-3xl tracking-normal">
+        <h1 className="mt-2 font-heading text-3xl font-semibold tracking-normal">
           {dateLabel.toUpperCase()}
         </h1>
-        <p className="mt-1 text-muted-foreground text-sm">
-          {projectCount} {pluralize(projectCount, "projet", "projets")} ·{" "}
-          {openTaskCount}{" "}
+        <p className="mt-1 text-sm text-muted-foreground">
+          {projectCount} {pluralize(projectCount, "projet", "projets")} · {openTaskCount}{" "}
           {pluralize(openTaskCount, "tâche ouverte", "tâches ouvertes")}
         </p>
       </div>
 
-      <div className="flex flex-col items-end gap-2 min-w-0">
+      <div className="flex min-w-0 flex-col items-end gap-2">
         <ProjectFilterDropdown
           projects={projects}
           hiddenProjectIds={hiddenProjectIds}
           onProjectVisibilityChange={onProjectVisibilityChange}
           onShowAllProjects={onShowAllProjects}
         />
-        <div className="gap-2 grid grid-cols-2 sm:grid-cols-3 min-w-0">
+        <div className="grid min-w-0 grid-cols-2 gap-2 sm:grid-cols-3">
           <HeaderStat label="En cours" value={inProgressCount} />
           <HeaderStat label="À faire" value={todoCount} />
           <HeaderStat label="Bloqués" value={blockedCount} />
@@ -80,9 +79,7 @@ function ProjectFilterDropdown({
   onProjectVisibilityChange: (projectId: string, visible: boolean) => void;
   onShowAllProjects: () => void;
 }) {
-  const hiddenCount = projects.filter((project) =>
-    hiddenProjectIds.has(project.id),
-  ).length;
+  const hiddenCount = projects.filter((project) => hiddenProjectIds.has(project.id)).length;
   const visibleCount = projects.length - hiddenCount;
   const label = getProjectFilterLabel(projects.length, visibleCount);
 
@@ -92,11 +89,11 @@ function ProjectFilterDropdown({
         render={
           <Button
             variant="outline"
-            className="justify-between bg-background/70 w-full sm:w-46 font-normal"
+            className="w-full justify-between bg-background/70 font-normal sm:w-46"
           >
-            <Filter className="size-4 text-muted-foreground shrink-0" />
+            <Filter className="size-4 shrink-0 text-muted-foreground" />
             <span className="truncate">{label}</span>
-            <ChevronDown className="opacity-50 size-4 shrink-0" />
+            <ChevronDown className="size-4 shrink-0 opacity-50" />
           </Button>
         }
       />
@@ -109,12 +106,10 @@ function ProjectFilterDropdown({
               checked={!hiddenProjectIds.has(project.id)}
               closeOnClick={false}
               label={project.name}
-              onCheckedChange={(visible) =>
-                onProjectVisibilityChange(project.id, visible)
-              }
+              onCheckedChange={(visible) => onProjectVisibilityChange(project.id, visible)}
             >
               <span
-                className="rounded-full size-2.5 shrink-0"
+                className="size-2.5 shrink-0 rounded-full"
                 style={{ backgroundColor: project.color }}
               />
               <span className="truncate">{project.name}</span>
@@ -122,15 +117,11 @@ function ProjectFilterDropdown({
           ))}
         </DropdownMenuGroup>
 
-        {projects.length === 0 ? (
-          <DropdownMenuItem disabled>Aucun projet</DropdownMenuItem>
-        ) : null}
+        {projects.length === 0 ? <DropdownMenuItem disabled>Aucun projet</DropdownMenuItem> : null}
         {hiddenCount > 0 ? (
           <>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={onShowAllProjects}>
-              Tout afficher
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={onShowAllProjects}>Tout afficher</DropdownMenuItem>
           </>
         ) : null}
       </DropdownMenuContent>
@@ -146,13 +137,9 @@ function getProjectFilterLabel(projectCount: number, visibleCount: number) {
 
 function HeaderStat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="bg-background/70 px-3 py-2 border rounded-md min-w-24">
-      <div className="font-data font-semibold text-xl leading-none">
-        {value}
-      </div>
-      <div className="mt-1 font-data text-[0.65rem] text-muted-foreground uppercase">
-        {label}
-      </div>
+    <div className="min-w-24 rounded-md border bg-background/70 px-3 py-2">
+      <div className="font-data text-xl leading-none font-semibold">{value}</div>
+      <div className="font-data mt-1 text-[0.65rem] text-muted-foreground uppercase">{label}</div>
     </div>
   );
 }

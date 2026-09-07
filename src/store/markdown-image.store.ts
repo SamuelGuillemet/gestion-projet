@@ -8,10 +8,7 @@ import {
 const MARKDOWN_IMAGE_DB_NAME = "gestion-projet-assets";
 const MARKDOWN_IMAGE_STORE_NAME = "markdown-images";
 
-const markdownImageStore = createStore(
-  MARKDOWN_IMAGE_DB_NAME,
-  MARKDOWN_IMAGE_STORE_NAME,
-);
+const markdownImageStore = createStore(MARKDOWN_IMAGE_DB_NAME, MARKDOWN_IMAGE_STORE_NAME);
 
 export interface ExportedMarkdownImageAsset {
   id: string;
@@ -56,9 +53,7 @@ export async function getMarkdownImageBlob(uri: string) {
   return image ?? null;
 }
 
-export async function cleanupMarkdownImages(
-  markdownContents: Iterable<string>,
-) {
+export async function cleanupMarkdownImages(markdownContents: Iterable<string>) {
   const referencedIds = collectMarkdownImageIds(markdownContents);
   const storedKeys = await keys(markdownImageStore);
 
@@ -93,9 +88,7 @@ export async function exportMarkdownImageAssets() {
   return assets.filter((asset) => asset !== null);
 }
 
-export async function importMarkdownImageAssets(
-  assets: readonly ExportedMarkdownImageAsset[],
-) {
+export async function importMarkdownImageAssets(assets: readonly ExportedMarkdownImageAsset[]) {
   await Promise.all(
     assets.map(async (asset) => {
       if (!asset.base64) return;

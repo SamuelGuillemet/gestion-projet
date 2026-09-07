@@ -5,8 +5,8 @@ import { TaskFocusBadges } from "@/components/shared/TaskFocusBadges";
 import { StatusBadge } from "@/components/shared/TaskStatusBadge";
 import { getEntityReferenceLabel } from "@/lib/entity-references";
 import type { Project } from "@/models/project";
-import { EmptyState, ProjectName, SectionTitle } from "./FocusPrimitives";
 import type { FocusOverviewItem } from "./focus-data";
+import { EmptyState, ProjectName, SectionTitle } from "./FocusPrimitives";
 
 export function FocusOverviewColumn({
   icon,
@@ -26,8 +26,8 @@ export function FocusOverviewColumn({
   onOpenQuestion: (questionId: string) => void;
 }) {
   return (
-    <section className="p-4 rounded-md atelier-card">
-      <div className="flex justify-between items-center gap-3">
+    <section className="atelier-card rounded-md p-4">
+      <div className="flex items-center justify-between gap-3">
         <SectionTitle icon={icon} label={label} />
         <span className="font-data text-[0.68rem] text-muted-foreground uppercase">
           {countLabel}
@@ -37,7 +37,7 @@ export function FocusOverviewColumn({
       {items.length === 0 ? (
         <EmptyState>{emptyLabel}</EmptyState>
       ) : (
-        <div className="flex flex-col gap-2 mt-3">
+        <div className="mt-3 flex flex-col gap-2">
           {items.map((item) => (
             <FocusOverviewCard
               key={getFocusOverviewItemKey(item)}
@@ -79,10 +79,10 @@ function FocusOverviewCard({
 
         onOpenQuestion(item.question.id);
       }}
-      className="group flex items-center gap-3 bg-background/60 hover:bg-background/90 p-3 border rounded-md w-full min-w-0 text-left transition-colors"
+      className="group flex w-full min-w-0 items-center gap-3 rounded-md border bg-background/60 p-3 text-left transition-colors hover:bg-background/90"
     >
       <Icon className="size-4 shrink-0" />
-      <div className="flex flex-col flex-1 gap-2 min-w-0">
+      <div className="flex min-w-0 flex-1 flex-col gap-2">
         <ItemBody project={item.project} reference={reference} title={title} />
         {item.type === "task" ? <TaskFocusBadges task={item.task} /> : null}
       </div>
@@ -106,19 +106,15 @@ function ItemBody({
 }) {
   return (
     <div className="min-w-0 grow">
-      <div className="flex items-center gap-2 min-w-0 text-muted-foreground text-xs">
+      <div className="flex min-w-0 items-center gap-2 text-xs text-muted-foreground">
         <ProjectName project={project} />
         <span className="font-data shrink-0">{reference}</span>
       </div>
-      <div className="mt-1 font-medium group-hover:text-primary truncate">
-        {title}
-      </div>
+      <div className="mt-1 truncate font-medium group-hover:text-primary">{title}</div>
     </div>
   );
 }
 
 function getFocusOverviewItemKey(item: FocusOverviewItem) {
-  return item.type === "task"
-    ? `task-${item.task.id}`
-    : `question-${item.question.id}`;
+  return item.type === "task" ? `task-${item.task.id}` : `question-${item.question.id}`;
 }

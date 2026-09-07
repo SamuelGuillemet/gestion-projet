@@ -39,14 +39,14 @@ export function TagsPanel() {
   };
 
   return (
-    <div className="space-y-4 mt-2">
-      <div className="flex items-center gap-2 max-w-sm">
+    <div className="mt-2 space-y-4">
+      <div className="flex max-w-sm items-center gap-2">
         <input
           type="color"
           aria-label="New tag color"
           value={newColor}
           onChange={(e) => setNewColor(e.target.value)}
-          className="border rounded-full w-8 h-8 cursor-pointer shrink-0"
+          className="h-8 w-8 shrink-0 cursor-pointer rounded-full border"
         />
         <Input
           value={newName}
@@ -55,26 +55,19 @@ export function TagsPanel() {
           placeholder="Nouveau tag..."
           className="h-8 text-sm"
         />
-        <Button
-          variant="outline"
-          size="icon"
-          className="w-8 h-8 shrink-0"
-          onClick={handleAdd}
-        >
-          <Plus className="w-4 h-4" />
+        <Button variant="outline" size="icon" className="h-8 w-8 shrink-0" onClick={handleAdd}>
+          <Plus className="h-4 w-4" />
         </Button>
       </div>
 
       {tags.length === 0 && (
-        <p className="py-4 text-muted-foreground text-xs text-center">
-          Aucun tag créé.
-        </p>
+        <p className="py-4 text-center text-xs text-muted-foreground">Aucun tag créé.</p>
       )}
-      <div className="gap-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-h-[70vh] overflow-y-auto">
+      <div className="grid max-h-[70vh] grid-cols-1 gap-1 overflow-y-auto sm:grid-cols-2 lg:grid-cols-3">
         {tags.map((tag) => (
           <div
             key={tag.id}
-            className="group flex items-center gap-2 hover:bg-muted/50 p-1.5 border border-transparent hover:border-border rounded-md"
+            className="group flex items-center gap-2 rounded-md border border-transparent p-1.5 hover:border-border hover:bg-muted/50"
           >
             {editingId === tag.id ? (
               <>
@@ -83,7 +76,7 @@ export function TagsPanel() {
                   aria-label="Edit tag color"
                   value={editColor}
                   onChange={(e) => setEditColor(e.target.value)}
-                  className="border rounded-full w-6 h-6 cursor-pointer shrink-0"
+                  className="h-6 w-6 shrink-0 cursor-pointer rounded-full border"
                 />
                 <Input
                   value={editName}
@@ -98,34 +91,34 @@ export function TagsPanel() {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="w-7 h-7 shrink-0"
+                  className="h-7 w-7 shrink-0"
                   onClick={saveEdit}
                 >
-                  <Check className="w-3 h-3" />
+                  <Check className="h-3 w-3" />
                 </Button>
                 <Button
                   variant="outline"
                   size="icon"
-                  className="w-7 h-7 shrink-0"
+                  className="h-7 w-7 shrink-0"
                   onClick={() => setEditingId(null)}
                 >
-                  <X className="w-3 h-3" />
+                  <X className="h-3 w-3" />
                 </Button>
               </>
             ) : (
               <>
                 <span
-                  className="rounded-full w-3 h-3 shrink-0"
+                  className="h-3 w-3 shrink-0 rounded-full"
                   style={{ backgroundColor: tag.color }}
                 />
-                <span className="flex-1 text-sm truncate">{tag.name}</span>
+                <span className="flex-1 truncate text-sm">{tag.name}</span>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="opacity-0 group-hover:opacity-100 w-6 h-6 transition-opacity"
+                  className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
                   onClick={() => startEdit(tag.id, tag.name, tag.color)}
                 >
-                  <Pencil className="w-3 h-3" />
+                  <Pencil className="h-3 w-3" />
                 </Button>
                 <ConfirmDialog
                   triggerClassName="inline-flex"
@@ -133,9 +126,9 @@ export function TagsPanel() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="opacity-0 group-hover:opacity-100 w-6 h-6 text-destructive transition-opacity"
+                      className="h-6 w-6 text-destructive opacity-0 transition-opacity group-hover:opacity-100"
                     >
-                      <Trash2 className="w-3 h-3" />
+                      <Trash2 className="h-3 w-3" />
                     </Button>
                   }
                   title="Supprimer le tag"

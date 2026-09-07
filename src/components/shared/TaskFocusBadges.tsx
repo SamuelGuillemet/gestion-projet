@@ -31,12 +31,10 @@ export function TaskFocusBadges({
   const doneSubtasks = subtasks.filter((subtask) => subtask.done).length;
   const dueLabel = getDueLabel(task.dueDate);
   const showSize = !compact && task.size !== "small";
-  const showDue =
-    task.columnId !== "done" && dueLabel && dueLabel.day <= MAX_DUE_DAYS;
+  const showDue = task.columnId !== "done" && dueLabel && dueLabel.day <= MAX_DUE_DAYS;
 
   if (
-    (!showMetadata ||
-      (!showDue && !task.priority && !showSize && doneChecks === 0)) &&
+    (!showMetadata || (!showDue && !task.priority && !showSize && doneChecks === 0)) &&
     !task.parentTaskId &&
     subtasks.length === 0
   ) {
@@ -46,10 +44,7 @@ export function TaskFocusBadges({
   return (
     <div className="flex flex-wrap items-center gap-1">
       {showMetadata && showDue ? (
-        <Badge
-          tone={dueLabel.overdue ? "red" : "amber"}
-          title="Date d'échéance"
-        >
+        <Badge tone={dueLabel.overdue ? "red" : "amber"} title="Date d'échéance">
           <CalendarDays className="size-3" />
           {dueLabel.label}
         </Badge>
@@ -103,13 +98,11 @@ function Badge({
     <span
       title={title}
       className={cn(
-        "inline-flex items-center gap-1 px-1.5 py-0.5 border rounded h-4.5 font-medium text-[10px] leading-none shrink-0",
+        "inline-flex h-4.5 shrink-0 items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] leading-none font-medium",
         {
-          "border-border bg-background/75 text-muted-foreground":
-            tone === "neutral",
+          "border-border bg-background/75 text-muted-foreground": tone === "neutral",
           "border-primary/35 bg-primary/10 text-primary": tone === "blue",
-          "border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400":
-            tone === "red",
+          "border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400": tone === "red",
           "border-amber-500/35 bg-amber-500/10 text-amber-700 dark:text-amber-400":
             tone === "amber",
           "border-green-600/30 bg-green-600/10 text-green-700 dark:text-green-400":
@@ -141,8 +134,7 @@ function getDueLabel(dueDate?: string) {
   today.setHours(0, 0, 0, 0);
   const days = Math.round((target.getTime() - today.getTime()) / 86_400_000);
 
-  if (days < 0)
-    return { label: `${Math.abs(days)} j`, overdue: true, day: days };
+  if (days < 0) return { label: `${Math.abs(days)} j`, overdue: true, day: days };
   if (days === 0) return { label: "Aujourd'hui", overdue: false, day: 0 };
   if (days === 1) return { label: "Demain", overdue: false, day: 1 };
   return { label: `J-${days}`, overdue: false, day: days };

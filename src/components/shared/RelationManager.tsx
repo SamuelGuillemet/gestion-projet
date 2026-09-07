@@ -42,13 +42,9 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
   const [adding, setAdding] = useState(false);
   const [relType, setRelType] = useState<RelationType>("relates");
   const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] = useState<
-    "all" | BacklogEntityReferenceType
-  >("all");
+  const [typeFilter, setTypeFilter] = useState<"all" | BacklogEntityReferenceType>("all");
 
-  const itemRelations = relations.filter(
-    (r) => r.sourceId === itemId || r.targetId === itemId,
-  );
+  const itemRelations = relations.filter((r) => r.sourceId === itemId || r.targetId === itemId);
   const itemsByType = {
     tasks,
     questions,
@@ -70,8 +66,7 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
 
   const filteredItems = projectItems.filter((i) => {
     if (typeFilter !== "all" && i.type !== typeFilter) return false;
-    if (search.trim() && !i.label.toLowerCase().includes(search.toLowerCase()))
-      return false;
+    if (search.trim() && !i.label.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
 
@@ -98,21 +93,16 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
 
   return (
     <div>
-      <div className="flex justify-between items-center">
-        <Label className="text-muted-foreground text-xs">Relations</Label>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="w-5 h-5"
-          onClick={() => setAdding(!adding)}
-        >
-          {adding ? <X className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
+      <div className="flex items-center justify-between">
+        <Label className="text-xs text-muted-foreground">Relations</Label>
+        <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => setAdding(!adding)}>
+          {adding ? <X className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
         </Button>
       </div>
 
       {/* Existing relations */}
       {itemRelations.length > 0 && (
-        <div className="space-y-1.5 mt-2">
+        <div className="mt-2 space-y-1.5">
           {itemRelations.map((rel) => {
             const isSource = rel.sourceId === itemId;
             const otherId = isSource ? rel.targetId : rel.sourceId;
@@ -124,12 +114,12 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
               <div
                 key={rel.id}
                 className={cn(
-                  "group flex items-center gap-2 hover:bg-accent/40 p-2 border rounded-md text-xs transition-colors",
+                  "group flex items-center gap-2 rounded-md border p-2 text-xs transition-colors hover:bg-accent/40",
                   style.bg,
                 )}
               >
-                <Icon className={cn("w-3.5 h-3.5 shrink-0", style.color)} />
-                <span className={cn("font-medium shrink-0", style.color)}>
+                <Icon className={cn("h-3.5 w-3.5 shrink-0", style.color)} />
+                <span className={cn("shrink-0 font-medium", style.color)}>
                   {RELATION_LABELS[displayType]}
                 </span>
                 <button
@@ -140,10 +130,8 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
                   {other.label}
                 </button>
                 <div className="grow"></div>
-                <span className="bg-muted px-1.5 py-0.5 border rounded text-[10px] text-muted-foreground">
-                  {other.type
-                    ? getEntityReferenceTypeLabel(other.type)
-                    : "Inconnu"}
+                <span className="rounded border bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                  {other.type ? getEntityReferenceTypeLabel(other.type) : "Inconnu"}
                 </span>
                 <ConfirmDialog
                   triggerClassName="inline-flex"
@@ -152,9 +140,9 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="opacity-0 group-hover:opacity-100 w-5 h-5 transition-opacity shrink-0"
+                      className="h-5 w-5 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
                     >
-                      <Trash2 className="w-3 h-3" />
+                      <Trash2 className="h-3 w-3" />
                     </Button>
                   }
                   title="Supprimer la relation"
@@ -169,46 +157,42 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
 
       {/* Add relation form */}
       {adding && (
-        <div className="space-y-2 bg-card mt-2 p-2 border rounded-md">
+        <div className="mt-2 space-y-2 rounded-md border bg-card p-2">
           <div className="flex flex-wrap gap-1">
-            {(Object.entries(RELATION_LABELS) as [RelationType, string][]).map(
-              ([value, label]) => {
-                const style = RELATION_STYLES[value];
-                const Icon = style.icon;
-                return (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => setRelType(value)}
-                    className={cn(
-                      "inline-flex items-center gap-1 px-2 py-0.5 border rounded font-medium text-[10px] transition-colors",
-                      relType === value
-                        ? [style.bg, style.color]
-                        : "bg-muted text-muted-foreground hover:bg-muted/80 border-transparent",
-                    )}
-                  >
-                    <Icon className="w-3 h-3" />
-                    {label}
-                  </button>
-                );
-              },
-            )}
+            {(Object.entries(RELATION_LABELS) as [RelationType, string][]).map(([value, label]) => {
+              const style = RELATION_STYLES[value];
+              const Icon = style.icon;
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setRelType(value)}
+                  className={cn(
+                    "inline-flex items-center gap-1 rounded border px-2 py-0.5 text-[10px] font-medium transition-colors",
+                    relType === value
+                      ? [style.bg, style.color]
+                      : "border-transparent bg-muted text-muted-foreground hover:bg-muted/80",
+                  )}
+                >
+                  <Icon className="h-3 w-3" />
+                  {label}
+                </button>
+              );
+            })}
           </div>
           <div className="flex gap-1">
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Rechercher..."
-              className="flex-1 h-7 text-xs"
+              className="h-7 flex-1 text-xs"
               autoFocus
             />
             <select
               aria-label="Filtrer par type"
               value={typeFilter}
-              onChange={(e) =>
-                setTypeFilter(e.target.value as typeof typeFilter)
-              }
-              className="bg-background px-2 border border-input rounded-md h-7 text-xs"
+              onChange={(e) => setTypeFilter(e.target.value as typeof typeFilter)}
+              className="h-7 rounded-md border border-input bg-background px-2 text-xs"
             >
               <option value="all">Tous</option>
               {BACKLOG_ENTITY_REFERENCE_TYPES.map((type) => (
@@ -218,23 +202,23 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
               ))}
             </select>
           </div>
-          <div className="space-y-0.5 max-h-32 overflow-y-auto">
+          <div className="max-h-32 space-y-0.5 overflow-y-auto">
             {filteredItems.map((item) => (
               <button
                 key={item.id}
                 type="button"
                 aria-label={`Ajouter une relation avec ${item.label}`}
                 onClick={() => handleAdd(item.id)}
-                className="flex items-center gap-2 hover:bg-muted/50 px-2 py-1 rounded w-full text-xs text-left transition-colors"
+                className="flex w-full items-center gap-2 rounded px-2 py-1 text-left text-xs transition-colors hover:bg-muted/50"
               >
                 <span className="flex-1 truncate">{item.label}</span>
-                <span className="bg-muted px-1 rounded text-[10px] text-muted-foreground shrink-0">
+                <span className="shrink-0 rounded bg-muted px-1 text-[10px] text-muted-foreground">
                   {getEntityReferenceTypeLabel(item.type)}
                 </span>
               </button>
             ))}
             {filteredItems.length === 0 && (
-              <p className="py-2 text-[10px] text-muted-foreground text-center">
+              <p className="py-2 text-center text-[10px] text-muted-foreground">
                 Aucun élément trouvé.
               </p>
             )}
@@ -243,9 +227,7 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
       )}
 
       {itemRelations.length === 0 && !adding && (
-        <p className="mt-1 text-[10px] text-muted-foreground">
-          Aucune relation.
-        </p>
+        <p className="mt-1 text-[10px] text-muted-foreground">Aucune relation.</p>
       )}
     </div>
   );

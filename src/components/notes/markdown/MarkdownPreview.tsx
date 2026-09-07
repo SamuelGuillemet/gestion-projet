@@ -14,16 +14,10 @@ import { rehypeEntityReferences } from "./plugins/rehype-entity-references";
 import { rehypeIdbImages } from "./plugins/rehype-idb-images";
 import { rehypeMermaid } from "./plugins/rehype-mermaid";
 
-const rehypeHighlight = () =>
-  rehypeHighlightRaw({ languages: { ...common, powershell } });
+const rehypeHighlight = () => rehypeHighlightRaw({ languages: { ...common, powershell } });
 
 const remarkPlugins = [remarkGfm, remarkBreaks, remarkGithubAlerts];
-const rehypePlugins = [
-  rehypeEntityReferences,
-  rehypeIdbImages,
-  rehypeMermaid,
-  rehypeHighlight,
-];
+const rehypePlugins = [rehypeEntityReferences, rehypeIdbImages, rehypeMermaid, rehypeHighlight];
 
 const components = {
   a: MarkdownLink,
@@ -57,7 +51,7 @@ type Props = {
 
 export function MarkdownPreview({ content }: Props) {
   return (
-    <article className="prose-code:bg-muted prose-pre:bg-muted dark:prose-invert prose-code:px-1 prose-code:py-0.5 prose-pre:border prose-code:rounded-sm max-w-none prose-headings:font-heading prose-headings:font-semibold prose-a:text-primary prose-code:text-primary/80 prose-p:leading-relaxed prose prose-sm prose-slate">
+    <article className="prose prose-sm max-w-none prose-slate dark:prose-invert prose-headings:font-heading prose-headings:font-semibold prose-p:leading-relaxed prose-a:text-primary prose-code:rounded-sm prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:text-primary/80 prose-pre:border prose-pre:bg-muted">
       <Markdown
         urlTransform={urlTransform}
         remarkPlugins={remarkPlugins}
@@ -102,10 +96,7 @@ function MarkdownLink({
 
   if (typeof entityReference === "string") {
     return (
-      <EntityReferenceButton
-        referenceLabel={entityReference}
-        className={cn("px-1.5", className)}
-      />
+      <EntityReferenceButton referenceLabel={entityReference} className={cn("px-1.5", className)} />
     );
   }
 
@@ -116,10 +107,7 @@ function MarkdownLink({
   );
 }
 
-function MarkdownTable({
-  className,
-  ...props
-}: ComponentPropsWithoutRef<"table">) {
+function MarkdownTable({ className, ...props }: ComponentPropsWithoutRef<"table">) {
   return (
     <div className="my-4 max-w-full overflow-x-auto">
       <table {...props} className={cn("min-w-full", className)} />

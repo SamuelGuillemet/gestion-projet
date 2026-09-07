@@ -3,10 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  useMilestonesByProjectId,
-  useTimeActions,
-} from "@/hooks/useTimeTracking";
+import { useMilestonesByProjectId, useTimeActions } from "@/hooks/useTimeTracking";
 import { ConfirmDialog } from "../ui/confirm-dialog";
 
 interface MilestoneTimelineProps {
@@ -30,9 +27,9 @@ export function MilestoneTimeline({ projectId }: MilestoneTimelineProps) {
 
   return (
     <div>
-      <h3 className="mb-3 text-foreground atelier-section-title">Jalons</h3>
+      <h3 className="atelier-section-title mb-3 text-foreground">Jalons</h3>
 
-      <div className="flex flex-wrap items-end gap-3 mb-4">
+      <div className="mb-4 flex flex-wrap items-end gap-3">
         <div className="flex-1">
           <Label className="text-xs">Nom</Label>
           <Input
@@ -44,36 +41,30 @@ export function MilestoneTimeline({ projectId }: MilestoneTimelineProps) {
         </div>
         <div>
           <Label className="text-xs">Date</Label>
-          <Input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
+          <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
         </div>
         <Button onClick={handleAdd} size="icon" variant="outline">
-          <Plus className="w-4 h-4" />
+          <Plus className="h-4 w-4" />
         </Button>
       </div>
 
       <div className="px-2">
         {sorted.length > 0 && (
-          <div className="relative space-y-4 ml-1 pl-4 border-muted border-l-2">
+          <div className="relative ml-1 space-y-4 border-l-2 border-muted pl-4">
             {sorted.map((m) => {
               const isPast = new Date(m.date) < new Date();
               return (
                 <div key={m.id} className="group relative">
                   <div
-                    className={`absolute -left-6.25 top-1 h-4 w-4 rounded-full border-2 ${
+                    className={`absolute top-1 -left-6.25 h-4 w-4 rounded-full border-2 ${
                       isPast
                         ? "border-(--entity-deliverable) bg-(--entity-deliverable)"
                         : "border-primary bg-background"
                     }`}
                   />
-                  <div className="flex items-center gap-2 ml-4">
-                    <span className="w-24 font-data text-muted-foreground text-xs">
-                      {m.date}
-                    </span>
-                    <span className="font-medium text-sm">{m.name}</span>
+                  <div className="ml-4 flex items-center gap-2">
+                    <span className="font-data w-24 text-xs text-muted-foreground">{m.date}</span>
+                    <span className="text-sm font-medium">{m.name}</span>
                     <div className="grow"></div>
                     <ConfirmDialog
                       triggerClassName="inline-flex"
@@ -81,9 +72,9 @@ export function MilestoneTimeline({ projectId }: MilestoneTimelineProps) {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="opacity-0 group-hover:opacity-100 w-6 h-6 shrink-0"
+                          className="h-6 w-6 shrink-0 opacity-0 group-hover:opacity-100"
                         >
-                          <Trash2 className="w-3 h-3" />
+                          <Trash2 className="h-3 w-3" />
                         </Button>
                       }
                       title="Supprimer le jalon"

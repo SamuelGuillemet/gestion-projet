@@ -22,15 +22,15 @@ export function GlobalSearchBox() {
     <Button
       type="button"
       variant="outline"
-      className="justify-start gap-2 bg-card/75 hover:bg-accent/80 shadow-none border-foreground/15 xl:w-92 h-9 font-normal text-muted-foreground"
+      className="h-9 justify-start gap-2 border-foreground/15 bg-card/75 font-normal text-muted-foreground shadow-none hover:bg-accent/80 xl:w-92"
       onClick={() => {
         setOpen(true);
       }}
       title="Recherche globale (Ctrl+K)"
     >
-      <Search className="w-4 h-4" />
+      <Search className="h-4 w-4" />
       <span className="flex-1 text-left">Rechercher partout...</span>
-      <span className="opacity-70 font-data text-[10px]">Ctrl K</span>
+      <span className="font-data text-[10px] opacity-70">Ctrl K</span>
     </Button>
   );
 }

@@ -1,31 +1,19 @@
-import {
-  CircleDashed,
-  CircleDot,
-  Clipboard,
-  Clock3,
-  Hourglass,
-} from "lucide-react";
+import { CircleDashed, CircleDot, Clipboard, Clock3, Hourglass } from "lucide-react";
 import type { ReactNode } from "react";
 import { useProjectNavigation } from "@/hooks/useProjectNavigation";
 import { formatMinutes } from "@/lib/time";
 import { cn } from "@/lib/utils";
-import { EmptyState, SectionTitle } from "./FocusPrimitives";
 import type { ProjectSummary } from "./focus-data";
+import { EmptyState, SectionTitle } from "./FocusPrimitives";
 
-export function ProjectsOverview({
-  summaries,
-}: {
-  summaries: ProjectSummary[];
-}) {
+export function ProjectsOverview({ summaries }: { summaries: ProjectSummary[] }) {
   return (
-    <section className="p-4 rounded-md atelier-card grow">
+    <section className="atelier-card grow rounded-md p-4">
       <SectionTitle icon={<CircleDot className="size-4" />} label="Projets" />
       {summaries.length === 0 ? (
-        <EmptyState>
-          Créez un projet pour voir les priorités du jour.
-        </EmptyState>
+        <EmptyState>Créez un projet pour voir les priorités du jour.</EmptyState>
       ) : (
-        <div className="gap-3 grid grid-cols-5 2xl:grid-cols-6 mt-3">
+        <div className="mt-3 grid grid-cols-5 gap-3 2xl:grid-cols-6">
           {summaries.map((summary) => (
             <ProjectOverviewCard key={summary.project.id} summary={summary} />
           ))}
@@ -46,29 +34,27 @@ function ProjectOverviewCard({ summary }: { summary: ProjectSummary }) {
     <button
       type="button"
       onClick={openProject}
-      className="flex flex-col gap-3 bg-background/60 hover:bg-background/90 p-3 border rounded-md min-w-0 text-left transition-colors cursor-pointer"
+      className="flex min-w-0 cursor-pointer flex-col gap-3 rounded-md border bg-background/60 p-3 text-left transition-colors hover:bg-background/90"
     >
-      <div className="flex items-start gap-2 min-w-0">
+      <div className="flex min-w-0 items-start gap-2">
         <span
-          className="mt-1 rounded-full size-3 shrink-0"
+          className="mt-1 size-3 shrink-0 rounded-full"
           style={{ backgroundColor: summary.project.color }}
         />
         <div className="min-w-0">
-          <h3 className="font-heading font-semibold text-base truncate">
-            {summary.project.name}
-          </h3>
-          <p className="mt-0.5 text-muted-foreground text-xs">
+          <h3 className="truncate font-heading text-base font-semibold">{summary.project.name}</h3>
+          <p className="mt-0.5 text-xs text-muted-foreground">
             {summary.completedTasks}/{summary.totalTasks} tâches terminées
           </p>
         </div>
-        <span className="ml-auto font-data font-semibold text-sm shrink-0">
+        <span className="font-data ml-auto shrink-0 text-sm font-semibold">
           {summary.progress}%
         </span>
       </div>
 
-      <div className="bg-muted/60 border rounded-full h-2 overflow-hidden">
+      <div className="h-2 overflow-hidden rounded-full border bg-muted/60">
         <div
-          className="rounded-full h-full transition-[width]"
+          className="h-full rounded-full transition-[width]"
           style={{
             width: `${summary.progress}%`,
             backgroundColor: summary.project.color,
@@ -76,7 +62,7 @@ function ProjectOverviewCard({ summary }: { summary: ProjectSummary }) {
         />
       </div>
 
-      <div className="gap-2 grid grid-cols-2">
+      <div className="grid grid-cols-2 gap-2">
         <ProjectStat
           icon={<CircleDashed className="size-3" />}
           label="En cours"
@@ -99,7 +85,7 @@ function ProjectOverviewCard({ summary }: { summary: ProjectSummary }) {
         />
       </div>
 
-      <div className="flex flex-wrap gap-1 min-h-5">
+      <div className="flex min-h-5 flex-wrap gap-1">
         <ProjectBadge
           tone="amber"
           show={summary.unansweredQuestions > 0}
@@ -118,7 +104,7 @@ function ProjectOverviewCard({ summary }: { summary: ProjectSummary }) {
         {summary.unansweredQuestions === 0 &&
         summary.overdueTasks === 0 &&
         summary.dueSoonTasks === 0 ? (
-          <span className="text-muted-foreground text-xs">Rien à signaler</span>
+          <span className="text-xs text-muted-foreground">Rien à signaler</span>
         ) : null}
       </div>
     </button>
@@ -135,15 +121,11 @@ function ProjectStat({
   value: ReactNode;
 }) {
   return (
-    <div className="flex items-start gap-3 bg-card/70 px-2.5 py-2 border rounded-md min-w-0">
+    <div className="flex min-w-0 items-start gap-3 rounded-md border bg-card/70 px-2.5 py-2">
       <div className="pt-0.5 text-[0.65rem] text-muted-foreground">{icon}</div>
       <div>
-        <div className="font-data font-semibold text-sm truncate leading-none">
-          {value}
-        </div>
-        <div className="mt-1 font-data text-[0.62rem] text-muted-foreground uppercase">
-          {label}
-        </div>
+        <div className="font-data truncate text-sm leading-none font-semibold">{value}</div>
+        <div className="font-data mt-1 text-[0.62rem] text-muted-foreground uppercase">{label}</div>
       </div>
     </div>
   );
@@ -163,12 +145,11 @@ function ProjectBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center px-1.5 py-0.5 border rounded font-medium text-[10px] leading-none",
+        "inline-flex items-center rounded border px-1.5 py-0.5 text-[10px] leading-none font-medium",
         tone === "amber" &&
           "border-amber-500/35 bg-amber-500/10 text-amber-700 dark:text-amber-400",
         tone === "blue" && "border-primary/35 bg-primary/10 text-primary",
-        tone === "red" &&
-          "border-red-500/35 bg-red-500/10 text-red-700 dark:text-red-400",
+        tone === "red" && "border-red-500/35 bg-red-500/10 text-red-700 dark:text-red-400",
       )}
     >
       {label}

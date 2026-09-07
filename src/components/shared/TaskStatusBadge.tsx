@@ -5,7 +5,7 @@ export function StatusBadge({ columnId }: { columnId: string }) {
   if (!col) return null;
   return (
     <span
-      className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded font-medium text-[10px] shrink-0"
+      className="inline-flex shrink-0 items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium"
       style={{
         backgroundColor: `${col.color}10`,
         color: col.color,

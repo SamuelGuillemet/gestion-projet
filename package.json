@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "biome check src/",
-    "format": "biome format --write src/ && biome lint --fix --unsafe src/",
-    "check": "biome check --write src/",
+    "lint": "oxlint -c .oxlintrc.json src",
+    "format": "oxfmt -c .oxfmtrc.json --write src",
+    "check": "pnpm format && oxlint -c .oxlintrc.json --fix src",
     "preview": "vite preview",
     "doctor": "npx react-doctor@latest",
     "generate-pwa-assets": "pwa-assets-generator"
@@ -51,7 +51,6 @@
   },
   "devDependencies": {
     "@babel/core": "^8.0.1",
-    "@biomejs/biome": "^2.5.2",
     "@rolldown/plugin-babel": "^0.2.3",
     "@types/node": ">=24.0.0 <25.0.0",
     "@types/react": "^19.2.17",
@@ -59,6 +58,8 @@
     "@vite-pwa/assets-generator": "^1.0.2",
     "@vitejs/plugin-react": "^6.0.3",
     "babel-plugin-react-compiler": "^1.0.0",
+    "oxfmt": "^0.66.0",
+    "oxlint": "^1.81.0",
     "react-doctor": "^0.8.1",
     "react-scan": "^0.5.7",
     "typescript": "^6.0.3",
