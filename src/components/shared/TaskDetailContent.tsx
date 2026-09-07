@@ -377,9 +377,11 @@ function SubtasksSection({ task }: { task: Task }) {
       <div className="flex items-center justify-between gap-2">
         <Label className="text-xs text-muted-foreground">Sous-tâches</Label>
         <div className="flex items-center gap-2">
-          <span className="font-data text-xs text-muted-foreground">
-            {subtasks.filter((subtask) => subtask.done).length}/{subtasks.length}
-          </span>
+          {subtasks.length > 0 ? (
+            <span className="font-data text-xs text-muted-foreground">
+              {subtasks.filter((subtask) => subtask.done).length}/{subtasks.length}
+            </span>
+          ) : null}
           {subtasks.length === 0 ? (
             <Popover
               open={parentPickerOpen}
