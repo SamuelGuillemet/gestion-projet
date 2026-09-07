@@ -1,4 +1,4 @@
-import { CheckCircle2, Circle, Trash2 } from "lucide-react";
+import { CheckCircle2, ChevronDown, ChevronRight, Circle, Trash2 } from "lucide-react";
 import { TagBadge } from "@/components/shared/TagBadge";
 import { TaskFocusBadges } from "@/components/shared/TaskFocusBadges";
 import { StatusBadge } from "@/components/shared/TaskStatusBadge";
@@ -11,7 +11,13 @@ import { getEntityReferenceLabel } from "@/lib/entity-references";
 import { cn } from "@/lib/utils";
 import { useBacklogUI } from "../backlog-state";
 
-export function TaskRow({ taskId }: { taskId: string }) {
+export function TaskRow({
+  taskId,
+  toggle,
+}: {
+  taskId: string;
+  toggle?: { open: boolean; onToggle: () => void };
+}) {
   const task = useTask(taskId);
   const { deleteTask } = useTaskActions();
   const { tags } = useTags();
@@ -52,6 +58,23 @@ export function TaskRow({ taskId }: { taskId: string }) {
       <span className="font-data shrink-0 text-[10px] text-muted-foreground">
         {getEntityReferenceLabel("tasks", task.number)}
       </span>
+      {toggle && (
+        <button
+          type="button"
+          className="flex h-5 w-5 shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-accent/60"
+          onClick={(e) => {
+            e.stopPropagation();
+            toggle.onToggle();
+          }}
+          aria-label={toggle.open ? "Réduire les sous-tâches" : "Afficher les sous-tâches"}
+        >
+          {toggle.open ? (
+            <ChevronDown className="h-3.5 w-3.5" />
+          ) : (
+            <ChevronRight className="h-3.5 w-3.5" />
+          )}
+        </button>
+      )}
       <span
         className={cn("flex-1 truncate text-sm", {
           "text-muted-foreground line-through": task.done,
@@ -59,7 +82,6 @@ export function TaskRow({ taskId }: { taskId: string }) {
       >
         {task.title}
       </span>
-      <TaskFocusBadges task={task} compact showMetadata={false} />
       {taskTags.length > 0 && (
         <div className="flex shrink-0 gap-1">
           {taskTags.map((tag) => (
@@ -67,6 +89,7 @@ export function TaskRow({ taskId }: { taskId: string }) {
           ))}
         </div>
       )}
+      <TaskFocusBadges task={task} compact showMetadata={false} />
       {priority ? (
         <span
           className="inline-flex h-4.5 shrink-0 items-center rounded border px-1.5 py-0.5 text-[10px] leading-none font-medium"

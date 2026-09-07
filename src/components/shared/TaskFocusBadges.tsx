@@ -43,6 +43,20 @@ export function TaskFocusBadges({
 
   return (
     <div className="flex flex-wrap items-center gap-1">
+      {task.parentTaskId ? (
+        <Badge tone="blue" title={parent?.title ?? "Tâche parente"}>
+          <ListTree className="size-3" />
+          {parent
+            ? `Sous-tâche de ${getEntityReferenceLabel("tasks", parent.number)}`
+            : "Sous-tâche"}
+        </Badge>
+      ) : null}
+      {subtasks.length > 0 ? (
+        <Badge tone="blue" title="Progression des sous-tâches">
+          <ListTree className="size-3" />
+          {doneSubtasks}/{subtasks.length}
+        </Badge>
+      ) : null}
       {showMetadata && showDue ? (
         <Badge tone={dueLabel.overdue ? "red" : "amber"} title="Date d'échéance">
           <CalendarDays className="size-3" />
@@ -63,20 +77,6 @@ export function TaskFocusBadges({
         <Badge tone="green" title="Checks ouverts">
           <ListChecks className="size-3" />
           {doneChecks}/{allChecks}
-        </Badge>
-      ) : null}
-      {task.parentTaskId ? (
-        <Badge tone="blue" title={parent?.title ?? "Tâche parente"}>
-          <ListTree className="size-3" />
-          {parent
-            ? `Sous-tâche de ${getEntityReferenceLabel("tasks", parent.number)}`
-            : "Sous-tâche"}
-        </Badge>
-      ) : null}
-      {subtasks.length > 0 ? (
-        <Badge tone="blue" title="Progression des sous-tâches">
-          <ListTree className="size-3" />
-          {doneSubtasks}/{subtasks.length}
         </Badge>
       ) : null}
     </div>
