@@ -3,7 +3,6 @@ import { useFilteredTaskIds, useTaskFilters } from "@/components/task-filters/ta
 import { TaskFilterBar } from "@/components/task-filters/TaskFilterDrawer";
 import { useDeliverableActions, useDeliverableIds } from "@/hooks/useDeliverables";
 import { useQuestionActions, useQuestionIds } from "@/hooks/useQuestions";
-import { useTags } from "@/hooks/useTags";
 import { useTaskActions, useTaskIds, useTasksByProjectId } from "@/hooks/useTasks";
 import type { Task } from "@/models/task";
 import { type Section, useBacklogUI } from "./backlog-state";
@@ -38,8 +37,7 @@ function buildTaskTree(taskIds: string[], allTasks: Task[]) {
 
 export function BacklogList({ activeProjectId }: BacklogListProps) {
   const baseTaskIds = useTaskIds(activeProjectId);
-  const { tags } = useTags();
-  const { filters, updateFilters, clearFilters } = useTaskFilters(activeProjectId, tags);
+  const { filters, updateFilters, clearFilters } = useTaskFilters(activeProjectId, "backlog");
   const taskIds = useFilteredTaskIds(baseTaskIds, filters);
   const projectTasks = useTasksByProjectId(activeProjectId);
   const taskTree = buildTaskTree(taskIds, projectTasks);
@@ -87,7 +85,6 @@ export function BacklogList({ activeProjectId }: BacklogListProps) {
       <div className="sticky top-0 z-10 mb-1 flex flex-wrap items-center justify-end gap-2 rounded-md border bg-background/90 p-2 backdrop-blur-sm">
         <TaskFilterBar
           filters={filters}
-          tags={tags}
           updateFilters={updateFilters}
           clearFilters={clearFilters}
         />

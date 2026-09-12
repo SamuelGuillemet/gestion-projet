@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { PRIORITY_OPTIONS, SIZE_OPTIONS } from "@/constants/task-options";
-import type { Tag } from "@/models/tag";
+import { useTags } from "@/hooks/useTags";
 import type { DueDateStatus, TaskCompletionStatus, TaskFilters } from "./task-filters";
 import { countActiveFilters } from "./task-filters";
 
@@ -62,15 +62,14 @@ const COMPLETION_OPTIONS: { value: TaskCompletionStatus; label: string }[] = [
 
 export function TaskFilterDrawer({
   filters,
-  tags,
   updateFilters,
   clearFilters,
 }: {
   filters: TaskFilters;
-  tags: Tag[];
   updateFilters: (update: Partial<TaskFilters>) => void;
   clearFilters: () => void;
 }) {
+  const { tags } = useTags();
   const [open, setOpen] = useState(false);
   const activeFilterCount = countActiveFilters(filters);
 
@@ -185,12 +184,10 @@ export function TaskFilterDrawer({
 
 export function TaskFilterBar({
   filters,
-  tags,
   updateFilters,
   clearFilters,
 }: {
   filters: TaskFilters;
-  tags: Tag[];
   updateFilters: (update: Partial<TaskFilters>) => void;
   clearFilters: () => void;
 }) {
@@ -219,7 +216,6 @@ export function TaskFilterBar({
       )}
       <TaskFilterDrawer
         filters={filters}
-        tags={tags}
         updateFilters={updateFilters}
         clearFilters={clearFilters}
       />

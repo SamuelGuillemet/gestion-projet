@@ -1,7 +1,7 @@
 import { useState } from "react";
+import { useTags } from "@/hooks/useTags";
 import { useTasks } from "@/hooks/useTasks";
 import { toIsoDateInput } from "@/lib/time";
-import type { Tag } from "@/models/tag";
 import type { Task, TaskPriority, TaskSize } from "@/models/task";
 
 const FILTER_SCHEMA_VERSION = 1;
@@ -37,8 +37,8 @@ const DEFAULT_FILTERS: TaskFilters = {
   completionStatuses: new Set(),
 };
 
-function storageKey(projectId: string) {
-  return `task-filters:${projectId}`;
+function storageKey(projectId: string, page: "kanban" | "backlog") {
+  return `task-filters:${projectId}:${page}`;
 }
 
 function isStringArray(value: unknown): value is string[] {
@@ -97,15 +97,15 @@ function parseFilters(value: string | null): TaskFilters {
   }
 }
 
-function loadFilters(projectId: string) {
+function loadFilters(projectId: string, page: "kanban" | "backlog") {
   try {
-    return parseFilters(localStorage.getItem(storageKey(projectId)));
+    return parseFilters(localStorage.getItem(storageKey(projectId, page)));
   } catch {
     return DEFAULT_FILTERS;
   }
 }
 
-function saveFilters(projectId: string, filters: TaskFilters) {
+function saveFilters(projectId: string, page: "kanban" | "backlog", filters: TaskFilters) {
   try {
     const persistedFilters: PersistedTaskFilters = {
       version: FILTER_SCHEMA_VERSION,
@@ -116,7 +116,7 @@ function saveFilters(projectId: string, filters: TaskFilters) {
       dueDateStatuses: [...filters.dueDateStatuses],
       completionStatuses: [...filters.completionStatuses],
     };
-    localStorage.setItem(storageKey(projectId), JSON.stringify(persistedFilters));
+    localStorage.setItem(storageKey(projectId, page), JSON.stringify(persistedFilters));
   } catch {
     // Filters remain usable when local storage is unavailable.
   }
@@ -182,26 +182,27 @@ export function useFilteredTaskIds(taskIds: string[], filters: TaskFilters) {
   return taskIds.filter((taskId) => visibleTaskIds.has(taskId));
 }
 
-export function useTaskFilters(projectId: string, tags: Tag[]) {
+export function useTaskFilters(projectId: string, page: "kanban" | "backlog") {
+  const { tags } = useTags();
   const tagIds = new Set(tags.map((tag) => tag.id));
   const [storedFilters, setStoredFilters] = useState(() => ({
     projectId,
-    value: loadFilters(projectId),
+    value: loadFilters(projectId, page),
   }));
 
   const projectFilters =
-    storedFilters.projectId === projectId ? storedFilters.value : loadFilters(projectId);
+    storedFilters.projectId === projectId ? storedFilters.value : loadFilters(projectId, page);
   const filters = { ...projectFilters, tagIds: projectFilters.tagIds.intersection(tagIds) };
 
   const updateFilters = (update: Partial<TaskFilters>) => {
     const next = { ...projectFilters, ...update };
     setStoredFilters({ projectId, value: next });
-    saveFilters(projectId, next);
+    saveFilters(projectId, page, next);
   };
 
   const clearFilters = () => {
     setStoredFilters({ projectId, value: DEFAULT_FILTERS });
-    saveFilters(projectId, DEFAULT_FILTERS);
+    saveFilters(projectId, page, DEFAULT_FILTERS);
   };
 
   return { filters, updateFilters, clearFilters };

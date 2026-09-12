@@ -51,7 +51,13 @@ export function Column({ columnId, taskIds, dragEnabled, onSelectTask }: ColumnP
       <div className="no-scrollbar flex-1 space-y-2.5 overflow-y-auto p-3">
         {taskIds.map((id, index) =>
           dragEnabled ? (
-            <SortableCard key={id} taskId={id} index={index} columnId={column.id} onSelectTask={onSelectTask} />
+            <SortableCard
+              key={id}
+              taskId={id}
+              index={index}
+              columnId={column.id}
+              onSelectTask={onSelectTask}
+            />
           ) : (
             <Card key={id} taskId={id} onSelectTask={onSelectTask} />
           ),

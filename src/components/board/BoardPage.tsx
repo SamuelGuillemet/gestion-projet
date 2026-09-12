@@ -13,19 +13,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getEmptyRecordOfColumns } from "@/constants/board-columns";
 import { useProjects } from "@/hooks/useProjects";
-import { useTags } from "@/hooks/useTags";
 import { useTaskActions, useTaskColumnRecord } from "@/hooks/useTasks";
 import { CardDetail } from "./CardDetail";
 import { Column } from "./Column";
 
 export function BoardPage() {
   const { activeProjectId } = useProjects();
-  const { tags } = useTags();
   const { addTask, moveTask } = useTaskActions();
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
-  const { filters, updateFilters, clearFilters } = useTaskFilters(activeProjectId ?? "", tags);
+  const { filters, updateFilters, clearFilters } = useTaskFilters(activeProjectId ?? "", "kanban");
   const filtersActive = countActiveFilters(filters) > 0;
 
   const allTaskColumns = useTaskColumnRecord(activeProjectId);
@@ -77,7 +75,6 @@ export function BoardPage() {
           <div className="flex-1"></div>
           <TaskFilterBar
             filters={filters}
-            tags={tags}
             updateFilters={updateFilters}
             clearFilters={clearFilters}
           />
