@@ -79,7 +79,7 @@ export function TaskFilterDrawer({
       <DrawerTrigger render={<Button variant="outline" size="sm" />}>
         <Filter className="size-4" />
         Filtres
-        {activeFilterCount > 0 && <Badge>{activeFilterCount}</Badge>}
+        {activeFilterCount > 0 && <Badge className="ml-2">{activeFilterCount}</Badge>}
       </DrawerTrigger>
       <DrawerContent className="w-lg">
         <DrawerHeader className="border-b">
