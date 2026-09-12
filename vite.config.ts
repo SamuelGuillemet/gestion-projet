@@ -1,6 +1,5 @@
-import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
-import react, { reactCompilerPreset } from "@vitejs/plugin-react";
+import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
@@ -11,10 +10,7 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes("node_modules/mermaid")) return "vendor-mermaid";
-          if (
-            id.includes("node_modules/katex") ||
-            id.includes("node_modules/cytoscape")
-          ) {
+          if (id.includes("node_modules/katex") || id.includes("node_modules/cytoscape")) {
             return "vendor-diagrams";
           }
           if (
@@ -32,16 +28,11 @@ export default defineConfig({
     },
   },
   plugins: [
-    react(),
-    babel({ presets: [reactCompilerPreset()] }),
+    react({ compiler: true }),
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: [
-        "favicon.svg",
-        "favicon.ico",
-        "apple-touch-icon-180x180.png",
-      ],
+      includeAssets: ["favicon.svg", "favicon.ico", "apple-touch-icon-180x180.png"],
       manifest: {
         name: "Gestion Projet",
         short_name: "Gestion Projet",
