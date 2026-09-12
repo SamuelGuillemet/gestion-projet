@@ -9,9 +9,10 @@ interface ColumnProps {
   columnId: BoardColumnId;
   taskIds: string[];
   dragEnabled: boolean;
+  onSelectTask?: (taskId: string) => void;
 }
 
-export function Column({ columnId, taskIds, dragEnabled }: ColumnProps) {
+export function Column({ columnId, taskIds, dragEnabled, onSelectTask }: ColumnProps) {
   const droppableRef = useRef<HTMLDivElement>(null);
   const droppable = useDroppable({
     id: columnId,
@@ -50,9 +51,9 @@ export function Column({ columnId, taskIds, dragEnabled }: ColumnProps) {
       <div className="no-scrollbar flex-1 space-y-2.5 overflow-y-auto p-3">
         {taskIds.map((id, index) =>
           dragEnabled ? (
-            <SortableCard key={id} taskId={id} index={index} columnId={column.id} />
+            <SortableCard key={id} taskId={id} index={index} columnId={column.id} onSelectTask={onSelectTask} />
           ) : (
-            <Card key={id} taskId={id} />
+            <Card key={id} taskId={id} onSelectTask={onSelectTask} />
           ),
         )}
         {taskIds.length === 0 && (

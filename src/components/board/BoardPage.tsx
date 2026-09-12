@@ -15,6 +15,7 @@ import { getEmptyRecordOfColumns } from "@/constants/board-columns";
 import { useProjects } from "@/hooks/useProjects";
 import { useTags } from "@/hooks/useTags";
 import { useTaskActions, useTaskColumnRecord } from "@/hooks/useTasks";
+import { CardDetail } from "./CardDetail";
 import { Column } from "./Column";
 
 export function BoardPage() {
@@ -22,6 +23,7 @@ export function BoardPage() {
   const { tags } = useTags();
   const { addTask, moveTask } = useTaskActions();
   const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
   const { filters, updateFilters, clearFilters } = useTaskFilters(activeProjectId ?? "", tags);
   const filtersActive = countActiveFilters(filters) > 0;
@@ -53,48 +55,58 @@ export function BoardPage() {
   const handleDragEnd = (event: DragEndEvent) => moveTask(move(allTaskColumns, event));
 
   return (
-    <div className="flex h-full flex-col gap-4">
-      <div className="atelier-card flex flex-wrap items-center justify-between gap-2 rounded-md p-3">
-        <Input
-          placeholder="Ajouter une tâche..."
-          value={newTaskTitle}
-          onChange={(e) => setNewTaskTitle(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
-          className="h-9 max-w-md bg-background/80"
-        />
-        <Button
-          onClick={handleAddTask}
-          size="sm"
-          className="h-9 gap-1.5"
-          disabled={!newTaskTitle.trim()}
-        >
-          <Plus className="h-4 w-4" />
-          Ajouter
-        </Button>
-        <div className="flex-1"></div>
-        <TaskFilterBar
-          filters={filters}
-          tags={tags}
-          updateFilters={updateFilters}
-          clearFilters={clearFilters}
-        />
-      </div>
-
-      <DragAndDropWrapper onDragEnd={handleDragEnd}>
-        <div className="flex flex-1 gap-3 overflow-x-hidden pb-2">
-          {Object.entries(taskColumns).map(([columnId, taskIds]) => {
-            return (
-              <Column
-                key={columnId}
-                columnId={columnId}
-                taskIds={taskIds}
-                dragEnabled={!filtersActive}
-              />
-            );
-          })}
+    <>
+      <div className="flex h-full flex-col gap-4">
+        <div className="atelier-card flex flex-wrap items-center justify-between gap-2 rounded-md p-3">
+          <Input
+            placeholder="Ajouter une tâche..."
+            value={newTaskTitle}
+            onChange={(e) => setNewTaskTitle(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
+            className="h-9 max-w-md bg-background/80"
+          />
+          <Button
+            onClick={handleAddTask}
+            size="sm"
+            className="h-9 gap-1.5"
+            disabled={!newTaskTitle.trim()}
+          >
+            <Plus className="h-4 w-4" />
+            Ajouter
+          </Button>
+          <div className="flex-1"></div>
+          <TaskFilterBar
+            filters={filters}
+            tags={tags}
+            updateFilters={updateFilters}
+            clearFilters={clearFilters}
+          />
         </div>
-      </DragAndDropWrapper>
-    </div>
+
+        <DragAndDropWrapper onDragEnd={handleDragEnd}>
+          <div className="flex flex-1 gap-3 overflow-x-hidden pb-2">
+            {Object.entries(taskColumns).map(([columnId, taskIds]) => {
+              return (
+                <Column
+                  key={columnId}
+                  columnId={columnId}
+                  taskIds={taskIds}
+                  dragEnabled={!filtersActive}
+                  onSelectTask={setSelectedTaskId}
+                />
+              );
+            })}
+          </div>
+        </DragAndDropWrapper>
+      </div>
+      {selectedTaskId && (
+        <CardDetail
+          taskId={selectedTaskId}
+          open={!!selectedTaskId}
+          onOpenChange={(open) => !open && setSelectedTaskId(null)}
+        />
+      )}
+    </>
   );
 }
 
