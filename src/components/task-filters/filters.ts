@@ -1,7 +1,11 @@
 import { useState } from "react";
+import { useDeliverables } from "@/hooks/useDeliverables";
+import { useQuestions } from "@/hooks/useQuestions";
 import { useTags } from "@/hooks/useTags";
 import { useTasks } from "@/hooks/useTasks";
 import { toIsoDateInput } from "@/lib/time";
+import type { Deliverable } from "@/models/deliverable";
+import type { Question } from "@/models/question";
 import type { Task, TaskPriority, TaskSize } from "@/models/task";
 
 const FILTER_SCHEMA_VERSION = 1;
@@ -141,7 +145,7 @@ function dueDateStatus(task: Task, today: string): DueDateStatus {
   return "upcoming";
 }
 
-export function filterTasks(tasks: Task[], filters: TaskFilters, today: string) {
+function filterTasks(tasks: Task[], filters: TaskFilters, today: string) {
   const query = filters.query.trim().toLocaleLowerCase();
 
   return tasks.filter((task) => {
@@ -173,6 +177,15 @@ export function filterTasks(tasks: Task[], filters: TaskFilters, today: string) 
   });
 }
 
+function filterByCompletionStatus<T>(
+  items: T[],
+  completionStatuses: Set<TaskCompletionStatus>,
+  isCompleted: (item: T) => boolean,
+) {
+  if (completionStatuses.size === 0) return items;
+  return items.filter((item) => completionStatuses.has(isCompleted(item) ? "completed" : "open"));
+}
+
 export function useFilteredTaskIds(taskIds: string[], filters: TaskFilters) {
   const tasks = useTasks();
   const visibleTaskIds = new Set(
@@ -182,7 +195,41 @@ export function useFilteredTaskIds(taskIds: string[], filters: TaskFilters) {
   return taskIds.filter((taskId) => visibleTaskIds.has(taskId));
 }
 
-export function useTaskFilters(projectId: string, page: "kanban" | "backlog") {
+function filterQuestions(questions: Question[], filters: TaskFilters) {
+  return filterByCompletionStatus(
+    questions,
+    filters.completionStatuses,
+    (question) => question.status === "resolved",
+  );
+}
+
+export function useFilteredQuestionIds(questionIds: string[], filters: TaskFilters) {
+  const questions = useQuestions();
+  const visibleQuestionIds = new Set(
+    filterQuestions(questions, filters).map((question) => question.id),
+  );
+
+  return questionIds.filter((questionId) => visibleQuestionIds.has(questionId));
+}
+
+function filterDeliverables(deliverables: Deliverable[], filters: TaskFilters) {
+  return filterByCompletionStatus(
+    deliverables,
+    filters.completionStatuses,
+    (deliverable) => deliverable.done,
+  );
+}
+
+export function useFilteredDeliverableIds(deliverableIds: string[], filters: TaskFilters) {
+  const deliverables = useDeliverables();
+  const visibleDeliverableIds = new Set(
+    filterDeliverables(deliverables, filters).map((deliverable) => deliverable.id),
+  );
+
+  return deliverableIds.filter((deliverableId) => visibleDeliverableIds.has(deliverableId));
+}
+
+export function useFilters(projectId: string, page: "kanban" | "backlog") {
   const { tags } = useTags();
   const tagIds = new Set(tags.map((tag) => tag.id));
   const [storedFilters, setStoredFilters] = useState(() => ({

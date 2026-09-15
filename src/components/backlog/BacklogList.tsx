@@ -1,6 +1,11 @@
 import { useState } from "react";
-import { useFilteredTaskIds, useTaskFilters } from "@/components/task-filters/task-filters";
-import { TaskFilterBar } from "@/components/task-filters/TaskFilterDrawer";
+import { FilterBar } from "@/components/task-filters/FilterDrawer";
+import {
+  useFilteredDeliverableIds,
+  useFilteredQuestionIds,
+  useFilteredTaskIds,
+  useFilters,
+} from "@/components/task-filters/filters";
 import { useDeliverableActions, useDeliverableIds } from "@/hooks/useDeliverables";
 import { useQuestionActions, useQuestionIds } from "@/hooks/useQuestions";
 import { useTaskActions, useTaskIds, useTasksByProjectId } from "@/hooks/useTasks";
@@ -37,12 +42,18 @@ function buildTaskTree(taskIds: string[], allTasks: Task[]) {
 
 export function BacklogList({ activeProjectId }: BacklogListProps) {
   const baseTaskIds = useTaskIds(activeProjectId);
-  const { filters, updateFilters, clearFilters } = useTaskFilters(activeProjectId, "backlog");
+  const baseQuestionIds = useQuestionIds(activeProjectId);
+  const baseDeliverableIds = useDeliverableIds(activeProjectId);
+
+  const { filters, updateFilters, clearFilters } = useFilters(activeProjectId, "backlog");
+
   const taskIds = useFilteredTaskIds(baseTaskIds, filters);
   const projectTasks = useTasksByProjectId(activeProjectId);
   const taskTree = buildTaskTree(taskIds, projectTasks);
-  const questionIds = useQuestionIds(activeProjectId);
-  const deliverableIds = useDeliverableIds(activeProjectId);
+
+  const questionIds = useFilteredQuestionIds(baseQuestionIds, filters);
+  const deliverableIds = useFilteredDeliverableIds(baseDeliverableIds, filters);
+
   const { addTask } = useTaskActions();
   const { addQuestion } = useQuestionActions();
   const { addDeliverable } = useDeliverableActions();
@@ -83,11 +94,7 @@ export function BacklogList({ activeProjectId }: BacklogListProps) {
   return (
     <div className="min-w-0 flex-1 space-y-3">
       <div className="sticky top-0 z-10 mb-1 flex flex-wrap items-center justify-end gap-2 rounded-md border bg-background/90 p-2 backdrop-blur-sm">
-        <TaskFilterBar
-          filters={filters}
-          updateFilters={updateFilters}
-          clearFilters={clearFilters}
-        />
+        <FilterBar filters={filters} updateFilters={updateFilters} clearFilters={clearFilters} />
       </div>
 
       <TreeSection

@@ -3,12 +3,12 @@ import { move } from "@dnd-kit/helpers";
 import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
 import { Plus } from "lucide-react";
 import { useRef, useState } from "react";
+import { FilterBar } from "@/components/task-filters/FilterDrawer";
 import {
   countActiveFilters,
   useFilteredTaskIds,
-  useTaskFilters,
-} from "@/components/task-filters/task-filters";
-import { TaskFilterBar } from "@/components/task-filters/TaskFilterDrawer";
+  useFilters,
+} from "@/components/task-filters/filters";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getEmptyRecordOfColumns } from "@/constants/board-columns";
@@ -23,7 +23,7 @@ export function BoardPage() {
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
-  const { filters, updateFilters, clearFilters } = useTaskFilters(activeProjectId ?? "", "kanban");
+  const { filters, updateFilters, clearFilters } = useFilters(activeProjectId ?? "", "kanban");
   const filtersActive = countActiveFilters(filters) > 0;
 
   const allTaskColumns = useTaskColumnRecord(activeProjectId);
@@ -73,11 +73,7 @@ export function BoardPage() {
             Ajouter
           </Button>
           <div className="flex-1"></div>
-          <TaskFilterBar
-            filters={filters}
-            updateFilters={updateFilters}
-            clearFilters={clearFilters}
-          />
+          <FilterBar filters={filters} updateFilters={updateFilters} clearFilters={clearFilters} />
         </div>
 
         <DragAndDropWrapper onDragEnd={handleDragEnd}>

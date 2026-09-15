@@ -15,8 +15,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { PRIORITY_OPTIONS, SIZE_OPTIONS } from "@/constants/task-options";
 import { useTags } from "@/hooks/useTags";
-import type { DueDateStatus, TaskCompletionStatus, TaskFilters } from "./task-filters";
-import { countActiveFilters } from "./task-filters";
+import type { DueDateStatus, TaskCompletionStatus, TaskFilters } from "./filters";
+import { countActiveFilters } from "./filters";
 
 function toggleValue<T>(values: Set<T>, value: T) {
   return values.has(value)
@@ -60,7 +60,7 @@ const COMPLETION_OPTIONS: { value: TaskCompletionStatus; label: string }[] = [
   { value: "completed", label: "Terminees" },
 ];
 
-export function TaskFilterDrawer({
+export function FilterDrawer({
   filters,
   updateFilters,
   clearFilters,
@@ -182,7 +182,7 @@ export function TaskFilterDrawer({
   );
 }
 
-export function TaskFilterBar({
+export function FilterBar({
   filters,
   updateFilters,
   clearFilters,
@@ -214,11 +214,7 @@ export function TaskFilterBar({
           </Button>
         </>
       )}
-      <TaskFilterDrawer
-        filters={filters}
-        updateFilters={updateFilters}
-        clearFilters={clearFilters}
-      />
+      <FilterDrawer filters={filters} updateFilters={updateFilters} clearFilters={clearFilters} />
     </div>
   );
 }
