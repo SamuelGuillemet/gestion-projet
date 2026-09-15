@@ -1,8 +1,10 @@
-import { HelpCircle, ListTodo } from "lucide-react";
+import { ExternalLink, HelpCircle, ListTodo } from "lucide-react";
 import type { ReactNode } from "react";
 import { QuestionStatusBadge } from "@/components/shared/QuestionStatusBadge";
 import { TaskFocusBadges } from "@/components/shared/TaskFocusBadges";
 import { StatusBadge } from "@/components/shared/TaskStatusBadge";
+import { Button } from "@/components/ui/button";
+import { useEntityNavigation } from "@/hooks/useEntityReferenceNavigation";
 import { getEntityReferenceLabel } from "@/lib/entity-references";
 import type { Project } from "@/models/project";
 import type { FocusOverviewItem } from "./focus-data";
@@ -67,31 +69,50 @@ function FocusOverviewCard({
     item.type === "task"
       ? getEntityReferenceLabel("tasks", item.task.number)
       : getEntityReferenceLabel("questions", item.question.number);
+  const openEntity = useEntityNavigation();
 
   return (
-    <button
-      type="button"
-      onClick={() => {
-        if (item.type === "task") {
-          onOpenTask(item.task.id);
-          return;
-        }
+    <div className="group flex w-full min-w-0 items-center gap-3 rounded-md border bg-background/60 p-3 transition-colors hover:bg-background/90">
+      <button
+        type="button"
+        onClick={() => {
+          if (item.type === "task") {
+            onOpenTask(item.task.id);
+            return;
+          }
 
-        onOpenQuestion(item.question.id);
-      }}
-      className="group flex w-full min-w-0 items-center gap-3 rounded-md border bg-background/60 p-3 text-left transition-colors hover:bg-background/90"
-    >
-      <Icon className="size-4 shrink-0" />
-      <div className="flex min-w-0 flex-1 flex-col gap-2">
-        <ItemBody project={item.project} reference={reference} title={title} />
-        {item.type === "task" ? <TaskFocusBadges task={item.task} /> : null}
-      </div>
-      {item.type === "task" ? (
-        <StatusBadge columnId={item.task.columnId} />
-      ) : (
-        <QuestionStatusBadge status={item.question.status} />
-      )}
-    </button>
+          onOpenQuestion(item.question.id);
+        }}
+        className="flex min-w-0 flex-1 items-center gap-3 text-left"
+      >
+        <Icon className="size-4 shrink-0" />
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
+          <ItemBody project={item.project} reference={reference} title={title} />
+          {item.type === "task" ? <TaskFocusBadges task={item.task} /> : null}
+        </div>
+        {item.type === "task" ? (
+          <StatusBadge columnId={item.task.columnId} />
+        ) : (
+          <QuestionStatusBadge status={item.question.status} />
+        )}
+      </button>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        className="size-7 shrink-0"
+        title="Ouvrir dans le backlog"
+        onClick={() =>
+          openEntity(
+            item.type === "task"
+              ? { type: "tasks", id: item.task.id }
+              : { type: "questions", id: item.question.id },
+          )
+        }
+      >
+        <ExternalLink className="size-3.5" />
+      </Button>
+    </div>
   );
 }
 
