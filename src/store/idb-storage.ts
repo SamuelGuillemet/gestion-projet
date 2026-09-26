@@ -58,7 +58,7 @@ export function createIdbStorage<T>(debounceMs = 300): PersistStorage<T> {
       const existing = pendingWrites.get(name);
       if (existing) clearTimeout(existing.timeout);
       pendingWrites.delete(name);
-      del(name);
+      void del(name);
     },
   };
 }

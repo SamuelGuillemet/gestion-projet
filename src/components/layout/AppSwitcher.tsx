@@ -127,9 +127,9 @@ export function AppSwitcher() {
       ref={dialogRef}
       onClose={() => setOpen(false)}
       aria-label="Changer de vue"
-      className="fixed top-1/2 left-1/2 w-72 max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 transform rounded-lg border bg-popover p-2 text-popover-foreground shadow-xl backdrop:bg-background/60 backdrop:backdrop-blur-sm"
+      className="fixed top-1/2 left-1/2 w-72 max-w-viewport-inset -translate-x-1/2 -translate-y-1/2 transform rounded-lg border bg-popover p-2 text-popover-foreground shadow-xl backdrop:bg-background/60 backdrop:backdrop-blur-sm"
     >
-      <ul className="max-h-[70vh] space-y-1 overflow-y-auto p-1">
+      <ul className="max-h-list space-y-1 overflow-y-auto p-1">
         {items.map((item, index) => (
           <li key={item.type === "dashboard" ? "dashboard" : item.id}>
             <button
@@ -165,7 +165,7 @@ export function AppSwitcher() {
           </li>
         ))}
       </ul>
-      <p className="mt-2 px-1 text-[11px] text-muted-foreground">
+      <p className="mt-2 px-1 text-2xs text-muted-foreground">
         Alt (maintenu) + A pour parcourir (+ Maj pour l'ordre inverse), relâchez Alt pour valider
       </p>
     </dialog>

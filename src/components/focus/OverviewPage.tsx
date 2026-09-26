@@ -95,7 +95,7 @@ export function OverviewPage() {
           if (!open) clearSelection();
         }}
       >
-        <DialogContent className="max-h-[90vh] w-full overflow-y-auto sm:max-w-5xl">
+        <DialogContent className="max-h-dialog w-full overflow-y-auto sm:max-w-5xl">
           <DialogHeader>
             <DialogTitle>
               {selectedTask ? "Détail de la tâche" : "Détail de la question"}

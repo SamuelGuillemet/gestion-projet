@@ -31,7 +31,7 @@ export function BackupsPanel() {
   useEffect(() => {
     // Initial synchronization with the external IndexedDB snapshot store.
     // oxlint-disable-next-line react/set-state-in-effect react-doctor-disable-next-line react-hooks-js/set-state-in-effect -- initial fetch from IndexedDB, setState runs post-await
-    refreshSnapshots();
+    void refreshSnapshots();
   }, []);
 
   const handleSnapshot = async () => {
@@ -79,7 +79,7 @@ export function BackupsPanel() {
           <Archive className="h-4 w-4" />
           Créer un snapshot
         </Button>
-        <Button variant="ghost" size="sm" onClick={() => refreshSnapshots()}>
+        <Button variant="ghost" size="sm" onClick={() => void refreshSnapshots()}>
           Rafraîchir
         </Button>
       </div>
@@ -104,7 +104,7 @@ export function BackupsPanel() {
               description="L'état actuel sera remplacé. Un snapshot de sécurité sera créé juste avant la restauration."
               confirmLabel="Appliquer"
               onConfirm={() => {
-                handleRestoreSnapshot(recommendedSnapshot);
+                void handleRestoreSnapshot(recommendedSnapshot);
               }}
             />
           </div>
@@ -137,7 +137,7 @@ export function BackupsPanel() {
                 description="L'état actuel sera remplacé. Un snapshot de sécurité sera créé juste avant la restauration."
                 confirmLabel="Appliquer"
                 onConfirm={() => {
-                  handleRestoreSnapshot(snapshot);
+                  void handleRestoreSnapshot(snapshot);
                 }}
               />
               <ConfirmDialog
@@ -152,7 +152,7 @@ export function BackupsPanel() {
                 description="Cette action est irréversible. Le backup sélectionné sera définitivement supprimé."
                 confirmLabel="Supprimer"
                 onConfirm={() => {
-                  handleDeleteSnapshot(snapshot);
+                  void handleDeleteSnapshot(snapshot);
                 }}
               />
             </div>

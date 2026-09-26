@@ -69,10 +69,10 @@ export function TimeRecap({ projectId }: TimeRecapProps) {
           <table className="w-full text-sm">
             <thead className="bg-muted/70">
               <tr>
-                <th className="font-data p-2 text-left text-[0.68rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                <th className="font-data p-2 text-left text-2xs font-semibold tracking-widest text-muted-foreground uppercase">
                   Tâche
                 </th>
-                <th className="font-data p-2 text-right text-[0.68rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                <th className="font-data p-2 text-right text-2xs font-semibold tracking-widest text-muted-foreground uppercase">
                   Temps
                 </th>
               </tr>

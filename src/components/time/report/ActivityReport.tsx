@@ -42,7 +42,7 @@ export function ActivityReportPage() {
 
   return (
     <div className="h-full min-h-0 overflow-hidden rounded-lg border border-border bg-card">
-      <div className="grid h-full min-h-0 grid-cols-[3fr_2fr] gap-6 p-4">
+      <div className="grid h-full min-h-0 grid-cols-activity-report gap-6 p-4">
         {/* LEFT — 60% */}
         <div className="flex h-full min-h-0 min-w-0 flex-col gap-6">
           {/* Range follow — 50% */}

@@ -83,7 +83,7 @@ export function GlobalSearchDialog() {
           </div>
         </div>
 
-        <div className="max-h-[60vh] overflow-y-auto">
+        <div className="max-h-search-results overflow-y-auto">
           {results.length === 0 ? (
             <div className="px-4 py-8 text-center text-sm text-muted-foreground">
               {query.trim()
@@ -101,7 +101,7 @@ export function GlobalSearchDialog() {
                       type="button"
                       onClick={() => openResult(result)}
                       className={cn(
-                        "grid w-full grid-cols-[auto_1fr_auto] items-start gap-3 px-4 py-3 text-left transition-colors",
+                        "grid w-full grid-cols-search-result items-start gap-3 px-4 py-3 text-left transition-colors",
                         isActive ? "bg-muted" : "hover:bg-muted/60",
                       )}
                     >

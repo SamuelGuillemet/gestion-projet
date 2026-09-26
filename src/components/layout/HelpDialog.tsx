@@ -23,7 +23,7 @@ export function HelpDialog() {
           <span className="hidden 2xl:inline">Aide</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="flex h-[82vh] flex-col overflow-hidden sm:max-w-5xl">
+      <DialogContent className="flex h-help-dialog flex-col overflow-hidden sm:max-w-5xl">
         <DialogHeader>
           <DialogTitle>Aide & documentation</DialogTitle>
         </DialogHeader>

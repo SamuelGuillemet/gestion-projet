@@ -147,7 +147,7 @@ export function TaskMigrationPanel() {
                     checked={selectedIds.has(task.id)}
                     onCheckedChange={() => toggleTask(task.id)}
                   />
-                  <span className="font-data shrink-0 text-[10px] text-muted-foreground">
+                  <span className="font-data shrink-0 text-2xs text-muted-foreground">
                     {getEntityReferenceLabel("tasks", task.number)}
                   </span>
                   <span
@@ -158,7 +158,7 @@ export function TaskMigrationPanel() {
                     {task.title}
                   </span>
                   {subtaskCount > 0 && (
-                    <span className="shrink-0 text-[10px] text-muted-foreground">
+                    <span className="shrink-0 text-2xs text-muted-foreground">
                       +{subtaskCount} sous-tâche(s)
                     </span>
                   )}

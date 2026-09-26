@@ -140,7 +140,7 @@ export function MarkdownTextarea({ className, onChange, value, ...props }: Props
       />
 
       {isDragging ? (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-md border border-dashed border-primary bg-background/85 text-primary backdrop-blur-[1px]">
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-md border border-dashed border-primary bg-background/85 text-primary backdrop-blur-hairline">
           <div className="flex items-center gap-2 text-sm font-medium">
             <ImagePlus className="h-4 w-4" />
             Déposez l'image pour l'ajouter à la note

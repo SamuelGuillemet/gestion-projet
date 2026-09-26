@@ -39,7 +39,7 @@ export function QuestionRow({ questionId }: { questionId: string }) {
             "text-muted-foreground": question.status === "to-ask",
           })}
         />
-        <span className="font-data shrink-0 text-[10px] text-muted-foreground">
+        <span className="font-data shrink-0 text-2xs text-muted-foreground">
           ?{question.number}
         </span>
         <span
@@ -50,7 +50,7 @@ export function QuestionRow({ questionId }: { questionId: string }) {
           {question.title}
         </span>
         {question.recipient && (
-          <span className="max-w-48 truncate rounded-sm border bg-background/70 px-1.5 py-0.5 text-[10px] text-muted-foreground">
+          <span className="max-w-48 truncate rounded-sm border bg-background/70 px-1.5 py-0.5 text-2xs text-muted-foreground">
             → {question.recipient}
           </span>
         )}

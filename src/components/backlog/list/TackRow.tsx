@@ -55,7 +55,7 @@ export function TaskRow({
           <Circle className="h-4 w-4" />
         )}
       </span>
-      <span className="font-data shrink-0 text-[10px] text-muted-foreground">
+      <span className="font-data shrink-0 text-2xs text-muted-foreground">
         {getEntityReferenceLabel("tasks", task.number)}
       </span>
       {toggle && (
@@ -92,7 +92,7 @@ export function TaskRow({
       <TaskFocusBadges task={task} compact showMetadata={false} />
       {priority ? (
         <span
-          className="inline-flex h-4.5 shrink-0 items-center rounded border px-1.5 py-0.5 text-[10px] leading-none font-medium"
+          className="inline-flex h-4.5 shrink-0 items-center rounded border px-1.5 py-0.5 text-2xs leading-none font-medium"
           style={{
             borderColor: `${priority.color}55`,
             backgroundColor: `${priority.color}16`,

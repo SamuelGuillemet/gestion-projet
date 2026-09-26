@@ -15,7 +15,7 @@ export function TagFilter({
 
   return (
     <div className="sticky top-0 z-10 mb-1 flex flex-wrap items-center gap-2 rounded-md border bg-background/90 p-2 backdrop-blur-sm">
-      <span className="font-data text-[0.62rem] font-semibold tracking-[0.12em] text-muted-foreground uppercase">
+      <span className="font-data text-2xs font-semibold tracking-label text-muted-foreground uppercase">
         Filtrer :
       </span>
       {tags.map((tag) => (

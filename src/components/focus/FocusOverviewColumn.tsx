@@ -31,9 +31,7 @@ export function FocusOverviewColumn({
     <section className="atelier-card rounded-md p-4">
       <div className="flex items-center justify-between gap-3">
         <SectionTitle icon={icon} label={label} />
-        <span className="font-data text-[0.68rem] text-muted-foreground uppercase">
-          {countLabel}
-        </span>
+        <span className="font-data text-2xs text-muted-foreground uppercase">{countLabel}</span>
       </div>
 
       {items.length === 0 ? (

@@ -110,7 +110,7 @@ export function WeeklyCalendarReport({ timeEntries, tasks, projects }: WeeklyCal
               style={{ bottom: hour * PX_PER_HOUR }}
             >
               <span
-                className="text-center text-[0.6rem] text-muted-foreground"
+                className="text-center text-2xs text-muted-foreground"
                 style={{ width: HOUR_SCALE_WIDTH }}
               >
                 {hour}h
@@ -138,7 +138,7 @@ export function WeeklyCalendarReport({ timeEntries, tasks, projects }: WeeklyCal
 
       <div className="grid grid-cols-7 gap-2" style={{ paddingLeft: HOUR_SCALE_WIDTH }}>
         {weekDates.map((date) => (
-          <div key={date} className="text-center text-[0.65rem] text-muted-foreground">
+          <div key={date} className="text-center text-2xs text-muted-foreground">
             {dayTotalsByDate[date] > 0 ? formatMinutes(dayTotalsByDate[date]) : "—"}
           </div>
         ))}
@@ -154,7 +154,7 @@ function DayTaskBlock({ entry }: { entry: DailyTaskEntry }) {
   return (
     <div
       title={`#${entry.taskNumber} ${entry.taskTitle} — ${formatMinutes(entry.minutes)}`}
-      className="flex items-center overflow-hidden rounded-sm border-l-2 px-1 text-[0.65rem] leading-tight"
+      className="flex items-center overflow-hidden rounded-sm border-l-2 px-1 text-2xs leading-tight"
       style={{
         height,
         backgroundColor: `${entry.projectColor}50`,

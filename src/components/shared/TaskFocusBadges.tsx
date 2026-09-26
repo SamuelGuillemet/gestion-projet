@@ -98,7 +98,7 @@ function Badge({
     <span
       title={title}
       className={cn(
-        "inline-flex h-4.5 shrink-0 items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] leading-none font-medium",
+        "inline-flex h-4.5 shrink-0 items-center gap-1 rounded border px-1.5 py-0.5 text-2xs leading-none font-medium",
         {
           "border-border bg-background/75 text-muted-foreground": tone === "neutral",
           "border-primary/35 bg-primary/10 text-primary": tone === "blue",

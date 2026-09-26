@@ -54,11 +54,13 @@ export function EntityReferenceButton({
       title={resolvedReference.title}
       onClick={() => openReference(resolvedReference.reference)}
     >
-      <Icon className="size-[1em] shrink-0" />
+      <Icon className="size-em shrink-0" />
       <span>
         {resolvedReference.title}
         {" ("}
-        <span className="font-data shrink-0 text-[0.9em]">{resolvedReference.reference.label}</span>
+        <span className="font-data shrink-0 text-relative">
+          {resolvedReference.reference.label}
+        </span>
         {")"}
       </span>
     </button>

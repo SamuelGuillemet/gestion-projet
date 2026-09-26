@@ -57,7 +57,7 @@ export function AppLayout() {
     window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
-      flushPendingIdbStorageWrites();
+      void flushPendingIdbStorageWrites();
       window.removeEventListener("pagehide", handleBeforeUnload);
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
@@ -73,11 +73,11 @@ export function AppLayout() {
       }
     };
 
-    runAutoBackup();
+    void runAutoBackup();
 
     const intervalId = globalThis.setInterval(
       () => {
-        runAutoBackup();
+        void runAutoBackup();
       },
       60 * 60 * 1000,
     );
@@ -103,7 +103,7 @@ export function AppLayout() {
   return (
     <div className="atelier-shell flex h-screen flex-col overflow-hidden bg-background text-foreground md:flex-row">
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="z-10 grid h-12 shrink-0 grid-cols-[18rem_1fr_minmax(12rem,0.5fr)_auto] items-center gap-2 border-b border-border/70 bg-card px-4 py-1">
+        <header className="z-10 grid h-12 shrink-0 grid-cols-app-header items-center gap-2 border-b border-border/70 bg-card px-4 py-1">
           <ProjectSelector />
           <nav className="flex gap-1 overflow-x-auto pb-2 md:overflow-visible md:pb-0">
             {tabs.map(({ value, label, icon: Icon, to, active, prefetcher }) => (

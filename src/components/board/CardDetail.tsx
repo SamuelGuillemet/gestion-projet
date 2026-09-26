@@ -16,7 +16,7 @@ export function CardDetail({ taskId, open, onOpenChange }: CardDetailProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] w-full overflow-y-auto sm:max-w-5xl">
+      <DialogContent className="max-h-dialog w-full overflow-y-auto sm:max-w-5xl">
         <DialogHeader>
           <DialogTitle>Détail de la tâche</DialogTitle>
         </DialogHeader>

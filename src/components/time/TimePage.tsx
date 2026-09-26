@@ -15,8 +15,8 @@ export function TimePage() {
   }
 
   return (
-    <div className="grid h-full grid-cols-[minmax(0,1fr)_26rem] gap-4 overflow-hidden 2xl:grid-cols-[minmax(0,1fr)_32rem]">
-      <div className="grid grid-rows-[auto_1fr] gap-4 overflow-hidden">
+    <div className="grid h-full grid-cols-time-page gap-4 overflow-hidden 2xl:grid-cols-time-page-wide">
+      <div className="grid grid-rows-auto-1fr gap-4 overflow-hidden">
         <TimeEntryForm projectId={activeProjectId} />
         <TimeRecap projectId={activeProjectId} />
       </div>

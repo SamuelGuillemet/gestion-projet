@@ -23,7 +23,7 @@ export function ImportantInformation({
           icon={<AlertTriangle className="size-4" />}
           label="Informations importantes"
         />
-        <span className="font-data text-[0.68rem] text-muted-foreground uppercase">
+        <span className="font-data text-2xs text-muted-foreground uppercase">
           {STALE_DAYS} j sans mouvement
         </span>
       </div>
@@ -44,7 +44,7 @@ export function ImportantInformation({
               >
                 <div className="flex items-center justify-between gap-2">
                   <ProjectName project={project} />
-                  <span className="font-data shrink-0 text-[10px] text-muted-foreground">
+                  <span className="font-data shrink-0 text-2xs text-muted-foreground">
                     {getEntityReferenceLabel("tasks", task.number)}
                   </span>
                 </div>
@@ -53,7 +53,7 @@ export function ImportantInformation({
               <div className="flex items-center justify-between gap-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <StatusBadge columnId={task.columnId} />
-                  <span className="inline-flex items-center gap-1 rounded border border-amber-500/35 bg-amber-500/10 px-1.5 py-0.5 text-[10px] leading-none font-medium text-amber-700 dark:text-amber-400">
+                  <span className="inline-flex items-center gap-1 rounded border border-amber-500/35 bg-amber-500/10 px-1.5 py-0.5 text-2xs leading-none font-medium text-amber-700 dark:text-amber-400">
                     <Clock3 className="size-3" />
                     {staleDays} j
                   </span>

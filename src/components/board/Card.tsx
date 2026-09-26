@@ -48,7 +48,7 @@ export function Card({ taskId, isDragging, onSelectTask }: CardProps) {
     >
       <div className="flex items-start gap-2">
         <div className="flex flex-col gap-2">
-          <span className="font-data shrink-0 text-[14px] text-muted-foreground">
+          <span className="font-data shrink-0 text-sm text-muted-foreground">
             {getEntityReferenceLabel("tasks", task.number)}
           </span>
           <GripVertical className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground/40 opacity-0 transition-opacity group-hover:opacity-100" />

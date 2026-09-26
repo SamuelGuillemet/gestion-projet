@@ -31,7 +31,7 @@ export function RangeSelector({ onWindowRangeChange, windowActualTotal }: RangeS
   };
 
   return (
-    <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+    <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-2">
       <div>
         <Popover>
           <PopoverTrigger

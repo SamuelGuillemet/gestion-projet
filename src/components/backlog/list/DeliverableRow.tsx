@@ -37,7 +37,7 @@ export function DeliverableRow({ deliverableId }: { deliverableId: string }) {
             "text-muted-foreground": !deliverable.done,
           })}
         />
-        <span className="font-data shrink-0 text-[10px] text-muted-foreground">
+        <span className="font-data shrink-0 text-2xs text-muted-foreground">
           !{deliverable.number}
         </span>
         <span
@@ -48,12 +48,12 @@ export function DeliverableRow({ deliverableId }: { deliverableId: string }) {
           {deliverable.title}
         </span>
         {deliverable.version && (
-          <span className="font-data rounded-sm border bg-background/70 px-1.5 py-0.5 text-[10px] text-muted-foreground">
+          <span className="font-data rounded-sm border bg-background/70 px-1.5 py-0.5 text-2xs text-muted-foreground">
             {deliverable.version}
           </span>
         )}
         {deliverable.type && (
-          <span className="rounded-sm border border-(--entity-deliverable)/25 bg-(--entity-deliverable)/10 px-1.5 py-0.5 text-[10px] text-(--entity-deliverable)">
+          <span className="rounded-sm border border-(--entity-deliverable)/25 bg-(--entity-deliverable)/10 px-1.5 py-0.5 text-2xs text-(--entity-deliverable)">
             {deliverable.type}
           </span>
         )}

@@ -19,7 +19,7 @@ export function RelationBadge({ type, reference, title }: RelationBadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-medium",
+        "inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-2xs font-medium",
         style.className,
       )}
       title={tooltip}

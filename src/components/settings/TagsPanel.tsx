@@ -63,7 +63,7 @@ export function TagsPanel() {
       {tags.length === 0 && (
         <p className="py-4 text-center text-xs text-muted-foreground">Aucun tag créé.</p>
       )}
-      <div className="grid max-h-[70vh] grid-cols-1 gap-1 overflow-y-auto sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid max-h-list grid-cols-1 gap-1 overflow-y-auto sm:grid-cols-2 lg:grid-cols-3">
         {tags.map((tag) => (
           <div
             key={tag.id}

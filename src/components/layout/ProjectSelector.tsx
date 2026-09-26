@@ -275,8 +275,8 @@ export function ProjectSelector() {
         ) : null}
       </div>
 
-      <PopoverContent align="start" side="bottom" className="w-180 max-w-[calc(100vw-2rem)] p-3">
-        <div className="grid grid-cols-[minmax(0,15rem)_minmax(0,1fr)] gap-3">
+      <PopoverContent align="start" side="bottom" className="w-180 max-w-viewport-inset p-3">
+        <div className="grid grid-cols-project-selector gap-3">
           <div className="min-w-0">
             <div className="atelier-section-title mb-2 text-muted-foreground">Projets</div>
             <button

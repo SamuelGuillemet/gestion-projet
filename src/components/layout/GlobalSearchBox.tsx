@@ -30,7 +30,7 @@ export function GlobalSearchBox() {
     >
       <Search className="h-4 w-4" />
       <span className="flex-1 text-left">Rechercher partout...</span>
-      <span className="font-data text-[10px] opacity-70">Ctrl K</span>
+      <span className="font-data text-2xs opacity-70">Ctrl K</span>
     </Button>
   );
 }

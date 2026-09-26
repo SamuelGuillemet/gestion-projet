@@ -139,7 +139,7 @@ function HeaderStat({ label, value }: { label: string; value: number }) {
   return (
     <div className="min-w-24 rounded-md border bg-background/70 px-3 py-2">
       <div className="font-data text-xl leading-none font-semibold">{value}</div>
-      <div className="font-data mt-1 text-[0.65rem] text-muted-foreground uppercase">{label}</div>
+      <div className="font-data mt-1 text-2xs text-muted-foreground uppercase">{label}</div>
     </div>
   );
 }

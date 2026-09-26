@@ -54,7 +54,7 @@ function ProjectOverviewCard({ summary }: { summary: ProjectSummary }) {
 
       <div className="h-2 overflow-hidden rounded-full border bg-muted/60">
         <div
-          className="h-full rounded-full transition-[width]"
+          className="transition-width h-full rounded-full"
           style={{
             width: `${summary.progress}%`,
             backgroundColor: summary.project.color,
@@ -122,10 +122,10 @@ function ProjectStat({
 }) {
   return (
     <div className="flex min-w-0 items-start gap-3 rounded-md border bg-card/70 px-2.5 py-2">
-      <div className="pt-0.5 text-[0.65rem] text-muted-foreground">{icon}</div>
+      <div className="pt-0.5 text-2xs text-muted-foreground">{icon}</div>
       <div>
         <div className="font-data truncate text-sm leading-none font-semibold">{value}</div>
-        <div className="font-data mt-1 text-[0.62rem] text-muted-foreground uppercase">{label}</div>
+        <div className="font-data mt-1 text-2xs text-muted-foreground uppercase">{label}</div>
       </div>
     </div>
   );
@@ -145,7 +145,7 @@ function ProjectBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded border px-1.5 py-0.5 text-[10px] leading-none font-medium",
+        "inline-flex items-center rounded border px-1.5 py-0.5 text-2xs leading-none font-medium",
         tone === "amber" &&
           "border-amber-500/35 bg-amber-500/10 text-amber-700 dark:text-amber-400",
         tone === "blue" && "border-primary/35 bg-primary/10 text-primary",

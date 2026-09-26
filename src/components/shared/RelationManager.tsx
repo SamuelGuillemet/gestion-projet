@@ -130,7 +130,7 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
                   {other.label}
                 </button>
                 <div className="grow"></div>
-                <span className="rounded border bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                <span className="rounded border bg-muted px-1.5 py-0.5 text-2xs text-muted-foreground">
                   {other.type ? getEntityReferenceTypeLabel(other.type) : "Inconnu"}
                 </span>
                 <ConfirmDialog
@@ -168,7 +168,7 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
                   type="button"
                   onClick={() => setRelType(value)}
                   className={cn(
-                    "inline-flex items-center gap-1 rounded border px-2 py-0.5 text-[10px] font-medium transition-colors",
+                    "inline-flex items-center gap-1 rounded border px-2 py-0.5 text-2xs font-medium transition-colors",
                     relType === value
                       ? [style.bg, style.color]
                       : "border-transparent bg-muted text-muted-foreground hover:bg-muted/80",
@@ -212,13 +212,13 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
                 className="flex w-full items-center gap-2 rounded px-2 py-1 text-left text-xs transition-colors hover:bg-muted/50"
               >
                 <span className="flex-1 truncate">{item.label}</span>
-                <span className="shrink-0 rounded bg-muted px-1 text-[10px] text-muted-foreground">
+                <span className="shrink-0 rounded bg-muted px-1 text-2xs text-muted-foreground">
                   {getEntityReferenceTypeLabel(item.type)}
                 </span>
               </button>
             ))}
             {filteredItems.length === 0 && (
-              <p className="py-2 text-center text-[10px] text-muted-foreground">
+              <p className="py-2 text-center text-2xs text-muted-foreground">
                 Aucun élément trouvé.
               </p>
             )}
@@ -227,7 +227,7 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
       )}
 
       {itemRelations.length === 0 && !adding && (
-        <p className="mt-1 text-[10px] text-muted-foreground">Aucune relation.</p>
+        <p className="mt-1 text-2xs text-muted-foreground">Aucune relation.</p>
       )}
     </div>
   );

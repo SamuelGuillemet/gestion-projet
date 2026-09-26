@@ -222,7 +222,7 @@ export function FilterBar({
 function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h3 className="font-data mb-1 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">
+      <h3 className="font-data mb-1 text-xs font-semibold tracking-label text-muted-foreground uppercase">
         {title}
       </h3>
       <div className="grid grid-cols-3 gap-x-2">{children}</div>

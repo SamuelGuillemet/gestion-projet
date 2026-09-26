@@ -32,7 +32,7 @@ export function Column({ columnId, taskIds, dragEnabled, onSelectTask }: ColumnP
       className={cn(
         "atelier-card flex w-full min-w-80 flex-col rounded-md transition-all duration-200",
         droppable.isDropTarget &&
-          "scale-[1.01] border-primary/40 bg-primary/5 ring-2 ring-primary/30",
+          "scale-subtle border-primary/40 bg-primary/5 ring-2 ring-primary/30",
       )}
     >
       <div className="flex items-center gap-3 border-b border-border/70 px-4 py-3">

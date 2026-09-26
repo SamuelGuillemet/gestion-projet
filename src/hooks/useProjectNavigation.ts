@@ -19,12 +19,12 @@ export function useProjectNavigation() {
     setActiveProject(projectId);
     clearBacklogSelection();
     const tab = preserveCurrentTab ? getCurrentProjectTab(location.pathname) : "board";
-    navigate(`/project/${projectId}/${tab}`);
+    void navigate(`/project/${projectId}/${tab}`);
   };
 
   const switchToDashboard = () => {
     clearBacklogSelection();
-    navigate("/dashboard/overview");
+    void navigate("/dashboard/overview");
   };
 
   return { switchProject, switchToDashboard };
