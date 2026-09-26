@@ -128,6 +128,7 @@ export function deleteProjectCascade(projectId: string) {
 
   useNoteStore.setState((state) => ({
     notes: state.notes.filter((note) => note.projectId !== projectId),
+    noteFolders: state.noteFolders.filter((folder) => folder.projectId !== projectId),
   }));
 
   useTimeStore.setState((state) => ({

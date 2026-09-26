@@ -60,7 +60,7 @@ export function NoteEditorPanel({ activeNoteId }: Props) {
           variant="outline"
           size="sm"
           onClick={() => {
-            handleCopyForWord();
+            void handleCopyForWord();
           }}
           title="Copier un contenu compatible avec Word"
           className={cn(

@@ -53,6 +53,7 @@ export const useNoteStore = create<NoteSlice>()(
     },
     partialize: (s) => ({
       notes: s.notes,
+      noteFolders: s.noteFolders,
     }),
   }),
 );
