@@ -26,8 +26,8 @@ export function GlobalSearchDialog() {
 
   const results = buildGlobalSearchResults(query);
 
-  const openResult = (result: GlobalSearchResult) => {
-    if (openEntity({ type: result.type, id: result.id })) {
+  const openResult = async (result: GlobalSearchResult) => {
+    if (await openEntity({ type: result.type, id: result.id })) {
       setPageHighlightQuery(query.trim() || null);
       setOpen(false);
     }
@@ -60,7 +60,7 @@ export function GlobalSearchDialog() {
       const item = results[highlightedIndex];
       if (!item) return;
       event.preventDefault();
-      openResult(item);
+      void openResult(item);
     }
   };
 

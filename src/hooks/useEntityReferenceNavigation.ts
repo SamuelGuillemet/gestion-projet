@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, type NavigateFunction } from "react-router-dom";
 import { type Section, useBacklogUI } from "@/components/backlog/backlog-state";
 import { useNotesUI } from "@/components/notes/notes-state";
 import {
@@ -17,46 +17,44 @@ import {
   useTaskStore,
 } from "@/store";
 
-type Navigate = (to: string) => void;
-
 export type EntityNavigationTarget = { type: "notes"; id: string } | { type: Section; id: string };
 
 type EntityReferenceAdapter = {
   getItems: () => EntityReferenceRecord[];
-  open: (item: EntityReferenceRecord, navigate: Navigate) => void;
+  open: (item: EntityReferenceRecord, navigate: NavigateFunction) => Promise<void>;
 };
 
 const ENTITY_REFERENCE_ADAPTERS: Record<EntityReferenceType, EntityReferenceAdapter> = {
   notes: {
     getItems: () => useNoteStore.getState().notes,
-    open: (note, navigate) => {
+    open: async (note, navigate) => {
+      await navigate(`/project/${note.projectId}/notes`, { flushSync: true });
       useProjectStore.getState().setActiveProject(note.projectId);
       useNotesUI.getState().setActiveNoteId(note.projectId, note.id);
-      navigate(`/project/${note.projectId}/notes`);
     },
   },
   tasks: {
     getItems: () => useTaskStore.getState().tasks,
-    open: (task, navigate) => {
+    open: async (task, navigate) => {
+      await navigate(`/project/${task.projectId}/backlog`, { flushSync: true });
       useProjectStore.getState().setActiveProject(task.projectId);
       useBacklogUI.getState().select({ type: "tasks", id: task.id });
-      navigate(`/project/${task.projectId}/backlog`);
     },
   },
   questions: {
     getItems: () => useQuestionStore.getState().questions,
-    open: (question, navigate) => {
+    open: async (question, navigate) => {
+      await navigate(`/project/${question.projectId}/backlog`, { flushSync: true });
       useProjectStore.getState().setActiveProject(question.projectId);
       useBacklogUI.getState().select({ type: "questions", id: question.id });
-      navigate(`/project/${question.projectId}/backlog`);
     },
   },
   deliverables: {
     getItems: () => useDeliverableStore.getState().deliverables,
-    open: (deliverable, navigate) => {
+    open: async (deliverable, navigate) => {
+      await navigate(`/project/${deliverable.projectId}/backlog`, { flushSync: true });
       useProjectStore.getState().setActiveProject(deliverable.projectId);
       useBacklogUI.getState().select({ type: "deliverables", id: deliverable.id });
-      navigate(`/project/${deliverable.projectId}/backlog`);
     },
   },
 };
@@ -71,11 +69,11 @@ export function findEntityByReference(reference: EntityReference, projectId: str
     .find((item) => item.projectId === projectId && item.number === reference.number);
 }
 
-export function openEntityTarget(target: EntityNavigationTarget, navigate: Navigate) {
+export async function openEntityTarget(target: EntityNavigationTarget, navigate: NavigateFunction) {
   const item = findEntityById(target.type, target.id);
   if (!item) return false;
 
-  ENTITY_REFERENCE_ADAPTERS[target.type].open(item, navigate);
+  await ENTITY_REFERENCE_ADAPTERS[target.type].open(item, navigate);
   return true;
 }
 

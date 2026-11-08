@@ -78,7 +78,7 @@ export function RelationManager({ itemId, projectId }: RelationManagerProps) {
   const openRelatedItem = (item: RelationItem) => {
     if (!item.type) return;
 
-    openReference({
+    void openReference({
       type: item.type,
       number: item.number,
       label: getEntityReferenceLabel(item.type, item.number),
