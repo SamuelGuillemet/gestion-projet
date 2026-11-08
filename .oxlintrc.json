@@ -8,14 +8,16 @@
     "react-perf",
     "jsx-a11y",
     "import",
-    "eslint"
+    "eslint",
+    "import"
   ],
   "jsPlugins": ["@shadcn/lint"],
   "env": {
     "browser": true
   },
   "options": {
-    "typeAware": true
+    "typeAware": true,
+    "typeCheck": true
   },
   "settings": {
     "react": {
@@ -39,13 +41,15 @@
         "caughtErrorsIgnorePattern": "^_"
       }
     ],
-    "shadcn/no-arbitrary-values": "error"
+    "shadcn/no-arbitrary-values": ["error", { "allow": ["layout"] }],
+    "shadcn/require-static-classes": "error"
   },
   "overrides": [
     {
       "files": ["src/components/ui/**/*.tsx"],
       "rules": {
-        "shadcn/no-arbitrary-values": "off"
+        "shadcn/no-arbitrary-values": "off",
+        "shadcn/require-static-classes": "off"
       }
     }
   ]

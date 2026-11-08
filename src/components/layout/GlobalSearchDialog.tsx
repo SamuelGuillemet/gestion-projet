@@ -20,6 +20,7 @@ export function GlobalSearchDialog() {
   const query = useGlobalSearchState((s) => s.query);
   const highlightedIndex = useGlobalSearchState((s) => s.highlightedIndex);
   const setOpen = useGlobalSearchState((s) => s.setOpen);
+  const setPageHighlightQuery = useGlobalSearchState((s) => s.setPageHighlightQuery);
   const setQuery = useGlobalSearchState((s) => s.setQuery);
   const setHighlightedIndex = useGlobalSearchState((s) => s.setHighlightedIndex);
 
@@ -27,6 +28,7 @@ export function GlobalSearchDialog() {
 
   const openResult = (result: GlobalSearchResult) => {
     if (openEntity({ type: result.type, id: result.id })) {
+      setPageHighlightQuery(query.trim() || null);
       setOpen(false);
     }
   };

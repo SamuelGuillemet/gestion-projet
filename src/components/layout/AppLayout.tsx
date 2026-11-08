@@ -9,6 +9,7 @@ import { GlobalSearchBox } from "./GlobalSearchBox";
 import { GlobalSearchDialog } from "./GlobalSearchDialog";
 import { HelpDialog } from "./HelpDialog";
 import { ProjectSelector } from "./ProjectSelector";
+import { SearchHighlighter } from "./SearchHighlighter";
 import { ThemeToggle } from "./ThemeToggle";
 
 const DASHBOARD_ROUTE_PREFETCHERS: Record<string, () => Promise<unknown>> = {
@@ -152,6 +153,7 @@ export function AppLayout() {
         </main>
       </div>
       <GlobalSearchDialog />
+      <SearchHighlighter />
       <AppSwitcher />
     </div>
   );

@@ -380,3 +380,8 @@ body > div[id^="dmarkdown-mermaid-"] {
   z-index: -1;
   visibility: hidden;
 }
+
+::highlight(search-match) {
+  background-color: #fde047;
+  color: #111;
+}

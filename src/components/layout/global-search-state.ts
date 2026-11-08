@@ -25,6 +25,8 @@ type GlobalSearchState = {
   open: boolean;
   query: string;
   highlightedIndex: number;
+  pageHighlightQuery: string | null;
+  setPageHighlightQuery: (query: string | null) => void;
   setOpen: (open: boolean) => void;
   setQuery: (query: string) => void;
   setHighlightedIndex: (index: number) => void;
@@ -162,6 +164,8 @@ export const useGlobalSearchState = create<GlobalSearchState>()((set) => ({
   open: false,
   query: "",
   highlightedIndex: 0,
+  pageHighlightQuery: null,
+  setPageHighlightQuery: (pageHighlightQuery) => set({ pageHighlightQuery }),
   setOpen: (open) => set({ open }),
   setQuery: (query) => set({ query, highlightedIndex: 0 }),
   setHighlightedIndex: (highlightedIndex) => set({ highlightedIndex }),
